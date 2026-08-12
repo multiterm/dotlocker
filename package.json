@@ -9,7 +9,9 @@
     "typecheck": "pnpm -r typecheck",
     "lint": "pnpm -r lint",
     "format": "pnpm -r format",
-    "deploy:dev": "node scripts/workflow/deploy-dev.mjs"
+    "deploy:dev": "node scripts/workflow/deploy-dev.mjs",
+    "release": "pnpm dlx @multiterm/release@0.4.1-b.16 --yes",
+    "release:dry": "pnpm dlx @multiterm/release@0.4.1-b.16 --dry-run"
   },
   "devDependencies": {
     "@multiterm/rune": "0.4.1-b.15",
