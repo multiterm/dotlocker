@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { FileStore } from "../src/files.js";
-import { InvalidPathError, NotFoundError, PayloadTooLargeError } from "@multiterm/pluto-shared";
+import { InvalidPathError, NotFoundError, PayloadTooLargeError } from "@dotlocker/shared";
 
 describe("FileStore", () => {
   let root: string;

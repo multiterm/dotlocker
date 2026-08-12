@@ -54,7 +54,7 @@ function ReposPage() {
   const [step, setStep] = useState<1 | 2>(1);
   const [projectName, setProjectName] = useState("");
   const [runtime, setRuntime] = useState("preview");
-  const [targetDir, setTargetDir] = useState(".pluto");
+  const [targetDir, setTargetDir] = useState(".locker");
   const [formError, setFormError] = useState("");
 
   useEffect(() => {
@@ -67,13 +67,13 @@ function ReposPage() {
   }, [api, org]);
 
   const repositories = useMemo(() => summarize(files), [files]);
-  const base = server || "https://pluto.honeycluster.xyz";
-  const config = `import { definePlutoConfig } from "@multiterm/pluto/client";\n\nexport default definePlutoConfig({\n  org: "${org}",\n  repo: "${projectName}",\n  runtime: "${runtime}",\n  server: "${base}",\n  targetDir: "${targetDir}",\n});`;
+  const base = server || "https://dotlocker.dev";
+  const config = `import { defineConfig } from "@dotlocker/dotlocker/client";\n\nexport default defineConfig({\n  org: "${org}",\n  repo: "${projectName}",\n  runtime: "${runtime}",\n  server: "${base}",\n  targetDir: "${targetDir}",\n});`;
 
   const openCreateProject = () => {
     setProjectName("");
     setRuntime("preview");
-    setTargetDir(".pluto");
+    setTargetDir(".locker");
     setFormError("");
     setStep(1);
     setOpen(true);
@@ -144,7 +144,7 @@ function ReposPage() {
         <Dialog title={step === 1 ? "Create project" : `Set up ${projectName}`} onClose={() => setOpen(false)}>
           {step === 1 ? (
             <form onSubmit={createSetup}>
-              <p className="mt-0 text-sm text-[var(--pl-muted)]">Define the initial repository and runtime. Dotbase will generate the setup steps for your project.</p>
+              <p className="mt-0 text-sm text-[var(--pl-muted)]">Define the initial repository and runtime. dot.locker will generate the setup steps for your project.</p>
               <label htmlFor="project-name">Project name</label>
               <input id="project-name" autoFocus required value={projectName} onChange={(event) => setProjectName(event.target.value)} placeholder="my-project" autoComplete="off" />
               <div className="row">
@@ -159,7 +159,7 @@ function ReposPage() {
                 </div>
                 <div>
                   <label htmlFor="project-directory">Local target directory</label>
-                  <input id="project-directory" required value={targetDir} onChange={(event) => setTargetDir(event.target.value)} placeholder=".pluto" />
+                  <input id="project-directory" required value={targetDir} onChange={(event) => setTargetDir(event.target.value)} placeholder=".locker" />
                 </div>
               </div>
               {formError && <p className="err mt-3 text-xs">{formError}</p>}
@@ -172,10 +172,10 @@ function ReposPage() {
             <div>
               <p className="mt-0 text-sm text-[var(--pl-muted)]">Complete these steps in your project. It will appear as managed after its first successful sync.</p>
               <ol className="m-0 grid list-none gap-4 p-0">
-                <li className="grid grid-cols-[28px_1fr] gap-3"><span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--pl-primary)] text-xs font-bold text-[var(--pl-bg)]">1</span><div><b className="text-sm">Install Dotbase</b><pre className="copybox mt-2">pnpm add @multiterm/pluto</pre></div></li>
-                <li className="grid grid-cols-[28px_1fr] gap-3"><span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--pl-primary)] text-xs font-bold text-[var(--pl-bg)]">2</span><div><b className="text-sm">Create config/pluto.config.ts</b><pre className="copybox mt-2">{config}</pre></div></li>
+                <li className="grid grid-cols-[28px_1fr] gap-3"><span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--pl-primary)] text-xs font-bold text-[var(--pl-bg)]">1</span><div><b className="text-sm">Install dot.locker</b><pre className="copybox mt-2">pnpm add @dotlocker/dotlocker</pre></div></li>
+                <li className="grid grid-cols-[28px_1fr] gap-3"><span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--pl-primary)] text-xs font-bold text-[var(--pl-bg)]">2</span><div><b className="text-sm">Create config/dotlocker.config.ts</b><pre className="copybox mt-2">{config}</pre></div></li>
                 <li className="grid grid-cols-[28px_1fr] gap-3"><span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--pl-primary)] text-xs font-bold text-[var(--pl-bg)]">3</span><div><b className="text-sm">Create a scoped API key</b><p className="mb-0 mt-1 text-xs text-[var(--pl-muted)]">Create a write API key for <code>{org}/{projectName}/{runtime}/**</code> from the API Keys page. This is the only authentication credential required locally.</p></div></li>
-                <li className="grid grid-cols-[28px_1fr] gap-3"><span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--pl-primary)] text-xs font-bold text-[var(--pl-bg)]">4</span><div><b className="text-sm">Run the first sync</b><pre className="copybox mt-2">PLUTO_TOKEN=&lt;api-key&gt; pnpm exec pluto sync --config config/pluto.config.ts</pre></div></li>
+                <li className="grid grid-cols-[28px_1fr] gap-3"><span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--pl-primary)] text-xs font-bold text-[var(--pl-bg)]">4</span><div><b className="text-sm">Run the first sync</b><pre className="copybox mt-2">DOTLOCKER_TOKEN=&lt;api-key&gt; pnpm exec dotlocker sync --config config/dotlocker.config.ts</pre></div></li>
               </ol>
               <div className="actions justify-end border-t border-[var(--pl-line)] pt-4">
                 <button className="secondary" onClick={() => setStep(1)}>Back</button>

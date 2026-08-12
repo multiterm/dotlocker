@@ -46,7 +46,7 @@ export default defineConfig({
       // Bundle the workspace libs into the published package; keep third-party
       // and node builtins external.
       external: id => {
-        if (id.startsWith("@multiterm/pluto-")) return false;
+        if (id.startsWith("@dotlocker/")) return false;
         if (NODE_BUILTINS.has(id) || id.startsWith("node:")) return true;
         if (id.startsWith(".") || id.startsWith("/")) return false;
         return true;

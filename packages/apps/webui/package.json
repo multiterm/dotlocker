@@ -1,5 +1,5 @@
 {
-  "name": "@multiterm/pluto-webui",
+  "name": "@dotlocker/webui",
   "version": "0.2.5",
   "private": true,
   "type": "module",
@@ -12,13 +12,13 @@
     }
   },
   "dependencies": {
-    "@multiterm/pluto-gds": "workspace:*",
-    "@multiterm/pluto-ui": "workspace:*",
-    "@multiterm/pluto-ui-shared": "workspace:*",
     "@tanstack/react-form": "^1.33.0",
     "@tanstack/react-router": "^1.169.2",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "@dotlocker/gds": "workspace:*",
+    "@dotlocker/ui": "workspace:*",
+    "@dotlocker/ui-shared": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.2.15",
@@ -26,5 +26,14 @@
     "@tailwindcss/vite": "^4.1.17",
     "@vitejs/plugin-react": "^6.0.2",
     "tailwindcss": "^4.1.17"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/multiterm/dotlocker.git",
+    "directory": "packages/apps/webui"
+  },
+  "bugs": {
+    "url": "https://github.com/multiterm/dotlocker/issues"
+  },
+  "homepage": "https://dotlocker.sh"
 }

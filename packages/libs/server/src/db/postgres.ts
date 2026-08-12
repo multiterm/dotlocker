@@ -15,7 +15,7 @@ export interface OpenPostgresOptions {
 export async function openPostgresDb(
   options: OpenPostgresOptions = {},
 ): Promise<{ db: PgDB; client: postgres.Sql }> {
-  const url = options.url ?? process.env.PLUTO_DATABASE_URL ?? process.env.DATABASE_URL;
+  const url = options.url ?? process.env.DOTLOCKER_DATABASE_URL ?? process.env.PLUTO_DATABASE_URL ?? process.env.DATABASE_URL;
   if (!url)
     throw new Error(
       "PLUTO_DATABASE_URL or DATABASE_URL is required for Postgres-backed Pluto auth",

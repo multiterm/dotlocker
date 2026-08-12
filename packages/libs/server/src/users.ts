@@ -7,7 +7,7 @@ import {
   NotFoundError,
   UnauthorizedError,
   InvalidPathError,
-} from "@multiterm/pluto-shared";
+} from "@dotlocker/shared";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SCRYPT_KEYLEN = 64;

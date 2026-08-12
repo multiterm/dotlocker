@@ -12,8 +12,8 @@ import {
 } from "node:fs";
 import { dirname, join } from "node:path";
 import { createHash, randomBytes } from "node:crypto";
-import { normalizePath } from "@multiterm/pluto-shared";
-import { NotFoundError, PayloadTooLargeError } from "@multiterm/pluto-shared";
+import { normalizePath } from "@dotlocker/shared";
+import { NotFoundError, PayloadTooLargeError } from "@dotlocker/shared";
 
 export interface FileStoreOptions {
   readonly root: string;

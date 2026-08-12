@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-const serviceUrl = required('SANDBLOCKS_SERVICE_PLUTO_URL')
+const serviceUrl = required('SANDBLOCKS_SERVICE_DOTLOCKER_URL')
 
-test('Sandblocks publishes a healthy Pluto service', async () => {
+test('Sandblocks publishes a healthy dot.locker service', async () => {
   const health = await fetch(new URL('/v1/health', serviceUrl), {
     signal: AbortSignal.timeout(30_000),
   })

@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { buildServer, createOrg, createUser, grantOrgAdmin, FileStore, openDb, type DB } from "../src/server/index.js";
 import type { FastifyInstance } from "fastify";
 
-describe("Pluto Web UI (Playwright)", () => {
+describe("dot.locker Web UI (Playwright)", () => {
   let root: string;
   let db: DB;
   let app: FastifyInstance;
@@ -40,7 +40,7 @@ describe("Pluto Web UI (Playwright)", () => {
     const pageErrors: string[] = [];
     page.on("pageerror", err => pageErrors.push(err.message));
     await page.goto(baseUrl + "/");
-    await expect.poll(async () => page.getByRole("heading", { name: "Pluto Console" }).count()).toBeGreaterThan(0);
+    await expect.poll(async () => page.getByRole("heading", { name: "dot.locker Console" }).count()).toBeGreaterThan(0);
     await page.fill("#org", "acme");
     await page.fill("#email", "admin@example.com");
     await page.fill("#password", "correct-horse-battery-staple");

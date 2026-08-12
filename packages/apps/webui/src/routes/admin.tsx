@@ -61,7 +61,7 @@ function UsersPage() {
                 </>
               )}
             </form.Field>
-            <p className="muted text-sm">The email must match a verified Keyname identity. No Dotbase password is created.</p>
+            <p className="muted text-sm">The email must match a verified Keyname identity. No dot.locker password is created.</p>
             <button>Provision user</button>
           </form>
         </Dialog>
@@ -173,7 +173,7 @@ function TokensPage() {
           <div><h3 className="mb-0">API keys</h3><p className="mb-0 mt-1 text-xs text-[var(--pl-muted)]">{loading ? "Loading API keys…" : `${keys.length} keys in ${org}`}</p></div>
           <button onClick={openCreate}><span className="text-lg leading-none" aria-hidden>+</span> Create API key</button>
         </header>
-        <div className="border-b border-[var(--pl-line)] bg-[var(--pl-surface)] px-5 py-3 text-xs text-[var(--pl-muted)]">Local Dotbase configuration uses an API key as its only authentication credential. Each key grants explicit path and access rights.</div>
+        <div className="border-b border-[var(--pl-line)] bg-[var(--pl-surface)] px-5 py-3 text-xs text-[var(--pl-muted)]">Local dot.locker configuration uses an API key as its only authentication credential. Each key grants explicit path and access rights.</div>
         {error && !modal && <div className="mx-5 mt-4 rounded-[var(--pl-radius-xs)] border border-[var(--pl-danger)]/40 bg-[var(--pl-danger)]/5 px-3 py-2 text-xs text-[var(--pl-danger)]">{error}</div>}
         <div className="overflow-x-auto">
           <table className="mt-0 min-w-[880px] rounded-none border-0">
@@ -223,7 +223,7 @@ function TokensPage() {
         <Dialog title="API key created" onClose={() => setModal(null)}>
           <div className="rounded-[var(--pl-radius-xs)] border border-[var(--pl-success)]/40 bg-[var(--pl-success)]/5 p-3 text-sm text-[var(--pl-muted)]">Copy this API key now. It will not be shown again.</div>
           <label htmlFor="created-key">API key</label><textarea id="created-key" readOnly rows={3} className="w-full resize-none rounded-[var(--pl-radius-xs)] border border-[var(--pl-line)] bg-[var(--pl-bg)] p-3 font-mono text-xs text-[var(--pl-text)] outline-none" value={plaintext} />
-          <p className="text-xs text-[var(--pl-muted)]">Use it locally as <code>PLUTO_TOKEN</code>. No username or password is required.</p>
+          <p className="text-xs text-[var(--pl-muted)]">Use it locally as <code>DOTLOCKER_TOKEN</code>. No username or password is required.</p>
           <div className="actions justify-end border-t border-[var(--pl-line)] pt-4"><button className="secondary" onClick={() => void navigator.clipboard.writeText(plaintext).then(() => setCopied(true))}>{copied ? "Copied" : "Copy API key"}</button><button onClick={() => setModal(null)}>Done</button></div>
         </Dialog>
       )}
@@ -300,7 +300,7 @@ function SettingsPage() {
       <div className="card">
         <h3>Connection</h3>
         <p className="muted">
-          Dotbase uses the authenticated same-origin connection. Organizations are limited to your current grants.
+          dot.locker uses the authenticated same-origin connection. Organizations are limited to your current grants.
         </p>
         <label>API endpoint</label>
         <div className="rounded-[var(--pl-radius-xs)] border border-[var(--pl-line)] bg-[var(--pl-surface)] px-3 py-2.5 text-sm text-[var(--pl-muted)]">
@@ -330,7 +330,7 @@ function SettingsPage() {
             location.assign("/login");
           }}
         >
-          Log out of Dotbase
+          Log out of dot.locker
         </button>
       </div>
     </div>

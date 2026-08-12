@@ -1,12 +1,12 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: pluto-dev-db
+    container_name: dotlocker-dev-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: pluto
       POSTGRES_USER: pluto
-      POSTGRES_PASSWORD: pluto_dev_change_me
+      POSTGRES_PASSWORD: dotlocker_dev_change_me
     ports:
       - "54329:5432"
     healthcheck:
@@ -15,12 +15,12 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-      - pluto-dev-postgres:/var/lib/postgresql/data
+      - dotlocker-dev-postgres:/var/lib/postgresql/data
 
   pluto:
     build:
       context: .
-    container_name: pluto-dev
+    container_name: dotlocker-dev
     restart: unless-stopped
     depends_on:
       db:
@@ -29,8 +29,8 @@ services:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: "3000"
-      PLUTO_DATA_DIR: /data
-      PLUTO_DATABASE_URL: postgres://pluto:pluto_dev_change_me@db:5432/pluto
+      DOTLOCKER_DATA_DIR: /data
+      DOTLOCKER_DATABASE_URL: postgres://pluto:dotlocker_dev_change_me@db:5432/pluto
     ports:
       - "5175:3000"
     healthcheck:
@@ -40,8 +40,8 @@ services:
       retries: 5
       start_period: 20s
     volumes:
-      - pluto-dev-data:/data
+      - dotlocker-dev-data:/data
 
 volumes:
-  pluto-dev-postgres:
-  pluto-dev-data:
+  dotlocker-dev-postgres:
+  dotlocker-dev-data:

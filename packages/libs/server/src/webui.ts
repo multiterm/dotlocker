@@ -12,7 +12,7 @@ export function webUiHtml(): string {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dotbase Console</title>
+  <title>dot.locker Console</title>
   <script src="https://api.keyname.dev/auth.js"></script>
   <style>
     :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background:#050505; color:#fafafa; }
@@ -27,7 +27,7 @@ export function webUiHtml(): string {
   <main>
     <strong>+ PLUTO</strong>
     <h1>Secure file console</h1>
-    <p>The dashboard bundle is not installed. Sign in with Keyname, or build <code>@multiterm/pluto-webui</code> for the full console.</p>
+    <p>The dashboard bundle is not installed. Sign in with Keyname, or build <code>@dotlocker/webui</code> for the full console.</p>
     <button id="login">Continue with Keyname</button>
     <p id="status"></p>
   </main>

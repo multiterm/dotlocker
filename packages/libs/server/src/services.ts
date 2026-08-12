@@ -2,8 +2,8 @@
 
 import { isIP } from "node:net";
 import type { DB } from "./db.js";
-import { InvalidPathError, NotFoundError } from "@multiterm/pluto-shared";
-import { isValidOrgName, isValidSegment } from "@multiterm/pluto-shared";
+import { InvalidPathError, NotFoundError } from "@dotlocker/shared";
+import { isValidOrgName, isValidSegment } from "@dotlocker/shared";
 
 export interface ServiceRecord {
   readonly org: string;

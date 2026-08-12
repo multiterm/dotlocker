@@ -6,7 +6,7 @@ import {
   NotFoundError,
   PlutoError,
   UnauthorizedError,
-} from "@multiterm/pluto-shared";
+} from "@dotlocker/shared";
 
 export interface ClientCredentials {
   readonly server: string;

@@ -2,15 +2,15 @@
 
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import postgres from "postgres";
-import type { Access, TokenScope } from "@multiterm/pluto-shared";
-import { validateScopes } from "@multiterm/pluto-shared";
+import type { Access, TokenScope } from "@dotlocker/shared";
+import { validateScopes } from "@dotlocker/shared";
 import {
   ConflictError,
   InvalidPathError,
   NotFoundError,
   UnauthorizedError,
-} from "@multiterm/pluto-shared";
-import { isValidOrgName, isValidSegment, normalizePath } from "@multiterm/pluto-shared";
+} from "@dotlocker/shared";
+import { isValidOrgName, isValidSegment, normalizePath } from "@dotlocker/shared";
 import type { DB } from "./db.js";
 import type { UserRecord } from "./users.js";
 import {
@@ -226,7 +226,7 @@ class PgAuthStore implements AuthStore {
     }
     const [byEmail] = await this.sql`SELECT email,verified_at,created_at,totp_enabled_at,keyname_subject FROM users WHERE email=${email}`;
     if (!byEmail) {
-      if (process.env.PLUTO_KEYNAME_CLAIM_SINGLE_LEGACY_USER === "true") {
+      if ((process.env.DOTLOCKER_KEYNAME_CLAIM_SINGLE_LEGACY_USER ?? process.env.PLUTO_KEYNAME_CLAIM_SINGLE_LEGACY_USER) === "true") {
         const candidates = await this.sql`SELECT email,verified_at,created_at,totp_enabled_at FROM users WHERE keyname_subject IS NULL ORDER BY created_at LIMIT 2`;
         if (candidates.length === 1) {
           const [claimed] = await this.sql`UPDATE users SET keyname_subject=${input.subject}, verified_at=COALESCE(verified_at,${Date.now()}) WHERE email=${candidates[0].email} AND keyname_subject IS NULL RETURNING email,verified_at,created_at,totp_enabled_at`;
@@ -466,7 +466,7 @@ function resolveSqliteKeynameIdentity(
     .prepare("SELECT email,verified_at,created_at,totp_enabled_at,keyname_subject FROM users WHERE email = ?")
     .get(email) as any;
   if (!byEmail) {
-    if (process.env.PLUTO_KEYNAME_CLAIM_SINGLE_LEGACY_USER === "true") {
+    if ((process.env.DOTLOCKER_KEYNAME_CLAIM_SINGLE_LEGACY_USER ?? process.env.PLUTO_KEYNAME_CLAIM_SINGLE_LEGACY_USER) === "true") {
       const candidates = db
         .prepare("SELECT email,verified_at,created_at,totp_enabled_at FROM users WHERE keyname_subject IS NULL ORDER BY created_at LIMIT 2")
         .all() as any[];

@@ -1,6 +1,6 @@
 import { createRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Badge, Button, Card, Input, Skeleton, Text } from "@multiterm/pluto-ui";
+import { Badge, Button, Card, Input, Skeleton, Text } from "@dotlocker/ui";
 import { AppRoute } from "./app";
 import { useSession } from "~webui/lib/session";
 import type { AuditEntry } from "~webui/lib/api";
@@ -53,7 +53,7 @@ function LogsPage() {
     const href = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = href;
-    anchor.download = `dotbase-${org}-logs.json`;
+    anchor.download = `dotlocker-${org}-logs.json`;
     anchor.click();
     URL.revokeObjectURL(href);
   };

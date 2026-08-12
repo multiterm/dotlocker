@@ -1,10 +1,10 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { applyPlutoTheme, plutoThemes, plutoModes, type PlutoMode, type PlutoTheme } from "@multiterm/pluto-gds";
+import { applyPlutoTheme, plutoThemes, plutoModes, type PlutoMode, type PlutoTheme } from "@dotlocker/gds";
 
 // Shared cross-app preferences cookie (mirrors honeycluster/portal `ui-preferences`).
 // `theme` holds the light/dark mode (portal-compatible); `themeVariant` is the
 // Pluto-only palette and is ignored by other apps. Scoped to the registrable
-// parent domain (`.pluto.dev`) so Pluto's own subdomains share one preference.
+// parent domain (`.dotlocker.dev`) so dot.locker subdomains share one preference.
 const COOKIE = "ui-preferences";
 
 interface Prefs {

@@ -7,8 +7,8 @@ import { openDb } from "./db.js";
 import { FileStore } from "./files.js";
 import { buildServer } from "./http.js";
 import { createOrg, listOrgs, mintToken, listTokens, revokeToken } from "./tokens.js";
-import type { Access, TokenScope } from "@multiterm/pluto-shared";
-import { PlutoError } from "@multiterm/pluto-shared";
+import type { Access, TokenScope } from "@dotlocker/shared";
+import { PlutoError } from "@dotlocker/shared";
 import { createUser, listUsers, verifyUserEmail } from "./users.js";
 import { listServices, upsertService } from "./services.js";
 import {
@@ -29,7 +29,7 @@ const dataDirOption = {
   alias: "d",
   type: "string" as const,
   describe: "Pluto data directory (DB + ciphertext files)",
-  default: process.env.PLUTO_DATA_DIR ?? "/data",
+  default: process.env.DOTLOCKER_DATA_DIR ?? process.env.PLUTO_DATA_DIR ?? "/data",
 };
 
 // #region -- pluto serve ----------------------------------

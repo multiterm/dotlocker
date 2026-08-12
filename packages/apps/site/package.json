@@ -1,9 +1,9 @@
 {
-  "name": "@multiterm/pluto-site",
+  "name": "@dotlocker/site",
   "version": "0.2.5",
   "private": true,
   "type": "module",
-  "description": "Pluto marketing site.",
+  "description": "dot.locker marketing site.",
   "rune": {
     "extends": "../../../configs/rune.config.ts",
     "scripts": {
@@ -13,11 +13,11 @@
     }
   },
   "dependencies": {
-    "@multiterm/pluto-gds": "workspace:*",
-    "@multiterm/pluto-ui": "workspace:*",
-    "@multiterm/pluto-ui-shared": "workspace:*",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "@dotlocker/gds": "workspace:*",
+    "@dotlocker/ui": "workspace:*",
+    "@dotlocker/ui-shared": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.17",
@@ -25,5 +25,14 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
     "tailwindcss": "^4.1.17"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/multiterm/dotlocker.git",
+    "directory": "packages/apps/site"
+  },
+  "bugs": {
+    "url": "https://github.com/multiterm/dotlocker/issues"
+  },
+  "homepage": "https://dotlocker.sh"
 }

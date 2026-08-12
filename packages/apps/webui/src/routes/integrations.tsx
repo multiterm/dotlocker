@@ -1,5 +1,5 @@
 import { createRoute } from "@tanstack/react-router";
-import { Badge, Button, Card, Text } from "@multiterm/pluto-ui";
+import { Badge, Button, Card, Text } from "@dotlocker/ui";
 import { SettingsLayoutRoute } from "./settings-layout";
 
 export const IntegrationsRoute = createRoute({
@@ -28,11 +28,11 @@ const integrations: ReadonlyArray<{
       "Push and promote runtime versions from GitHub workflows using short-lived credentials.",
     status: "Guide",
     action: "View setup",
-    href: "https://github.com/super-repo/pluto",
+    href: "https://github.com/multiterm/dotlocker",
   },
   {
     name: "Kubernetes",
-    description: "Resolve immutable Dotbase versions into Secrets or mounted runtime files.",
+    description: "Resolve immutable dot.locker versions into Secrets or mounted runtime files.",
     status: "Planned",
     action: "Coming soon",
   },
@@ -47,7 +47,7 @@ const integrations: ReadonlyArray<{
     description: "Pull a pinned runtime version before starting a container workload.",
     status: "Guide",
     action: "View setup",
-    href: "https://github.com/super-repo/pluto",
+    href: "https://github.com/multiterm/dotlocker",
   },
   {
     name: "MCP server",

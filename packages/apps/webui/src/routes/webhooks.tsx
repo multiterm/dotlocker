@@ -1,6 +1,6 @@
 import { createRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { Badge, Button, Card, Input, Label, Separator, Text } from "@multiterm/pluto-ui";
+import { Badge, Button, Card, Input, Label, Separator, Text } from "@dotlocker/ui";
 import { SettingsLayoutRoute } from "./settings-layout";
 import { Dialog } from "~webui/components/Dialog";
 import { useSession } from "~webui/lib/session";
@@ -13,7 +13,7 @@ export const WebhooksRoute = createRoute({
 });
 
 const eventOptions = [
-  ["*", "All Dotbase events"],
+  ["*", "All dot.locker events"],
   ["version", "Runtime versions"],
   ["put", "File uploads"],
   ["delete", "File deletions"],
@@ -84,7 +84,7 @@ function WebhooksPage() {
           Add endpoint
         </Text>
         <Text className="mt-1 max-w-2xl text-[var(--pl-muted)]">
-          Dotbase signs each JSON payload with HMAC-SHA256. Production endpoints must use HTTPS.
+          dot.locker signs each JSON payload with HMAC-SHA256. Production endpoints must use HTTPS.
         </Text>
         <Separator className="my-5" />
         <form onSubmit={(event) => void create(event)} className="grid gap-4">
@@ -107,7 +107,7 @@ function WebhooksPage() {
                 required
                 value={url}
                 onChange={(event) => setUrl(event.target.value)}
-                placeholder="https://example.com/hooks/dotbase"
+                placeholder="https://example.com/hooks/dotlocker"
               />
             </div>
           </div>
@@ -223,7 +223,7 @@ function WebhooksPage() {
           <Card className="py-12 text-center">
             <Text className="font-semibold">No webhook endpoints yet</Text>
             <Text className="mt-1 text-[var(--pl-muted)]">
-              Add an endpoint to automate on Dotbase events.
+              Add an endpoint to automate on dot.locker events.
             </Text>
           </Card>
         )}

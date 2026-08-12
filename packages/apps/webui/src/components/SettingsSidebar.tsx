@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Text, cn } from "@multiterm/pluto-ui";
+import { Text, cn } from "@dotlocker/ui";
 
 const categories = [
   ["/settings", "General", "⌂"],

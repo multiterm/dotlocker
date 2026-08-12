@@ -1,5 +1,5 @@
 {
-  "name": "@multiterm/pluto-gds",
+  "name": "@dotlocker/gds",
   "version": "0.2.5",
   "private": true,
   "type": "module",
@@ -19,5 +19,14 @@
   },
   "devDependencies": {
     "typescript": "^6.0.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/multiterm/dotlocker.git",
+    "directory": "packages/libs/gds"
+  },
+  "bugs": {
+    "url": "https://github.com/multiterm/dotlocker/issues"
+  },
+  "homepage": "https://dotlocker.sh"
 }

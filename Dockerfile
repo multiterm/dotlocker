@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 #
-# @multiterm/pluto — built from this standalone monorepo.
+# @dotlocker/dotlocker — built from this standalone monorepo.
 #
 #   docker build -t super-repo/pluto:dev .
 #
@@ -33,7 +33,7 @@ RUN pnpm -r build
 # Materialize a self-contained deployable slice for the cli app: dist (cli +
 # bundled libs + webui assets) + resolved production node_modules. Rebuild
 # better-sqlite3 so its native binary is present in the slice.
-RUN pnpm --filter @multiterm/pluto deploy --prod --legacy /opt/pluto-deploy \
+RUN pnpm --filter @dotlocker/dotlocker deploy --prod --legacy /opt/pluto-deploy \
  && cd /opt/pluto-deploy \
  && pnpm rebuild better-sqlite3
 
@@ -56,7 +56,7 @@ VOLUME ["/data"]
 
 USER pluto
 
-ENV PLUTO_DATA_DIR=/data \
+ENV DOTLOCKER_DATA_DIR=/data \
     PORT=3000 \
     HOST=0.0.0.0 \
     NODE_ENV=production

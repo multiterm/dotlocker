@@ -1,5 +1,5 @@
 {
-  "name": "@multiterm/pluto-workspace",
+  "name": "@dotlocker/workspace",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.4.0",
@@ -17,7 +17,7 @@
     "@sandblocks/cli": "0.3.0",
     "@sandblocks/sdk": "0.3.0"
   },
-  "description": "Self-hosted runtime file platform with scoped sync, versioned storage, web administration, SDK, CLI, and MCP integrations.",
+  "description": "dot.locker workspace for secure runtime-scoped file storage, synchronization, and administration.",
   "keywords": [
     "file-sync",
     "secrets-management",
@@ -27,11 +27,11 @@
     "typescript"
   ],
   "scripts": {
-    "build": "pnpm --filter @multiterm/pluto-shared exec rune build && pnpm --filter @multiterm/pluto-client exec rune build && pnpm --filter @multiterm/pluto-server exec rune build && pnpm --filter @multiterm/pluto-ui exec rune build && pnpm --filter @multiterm/pluto-ui-shared exec rune build && pnpm --filter @multiterm/pluto-site exec rune build && pnpm --filter @multiterm/pluto-webui exec rune build && pnpm --filter @multiterm/pluto exec rune build && pnpm exec tsc -p packages/apps/mcp/tsconfig.json",
-    "test": "pnpm --filter @multiterm/pluto-client exec rune test && pnpm --filter @multiterm/pluto-server exec rune test && pnpm --filter @multiterm/pluto exec rune test",
-    "typecheck": "pnpm --filter @multiterm/pluto-client exec rune typecheck && pnpm --filter @multiterm/pluto-server exec rune typecheck && pnpm --filter @multiterm/pluto exec rune typecheck && pnpm exec tsc -p packages/apps/mcp/tsconfig.json --noEmit",
-    "lint": "pnpm --filter @multiterm/pluto-client exec rune lint && pnpm --filter @multiterm/pluto-server exec rune lint",
-    "format": "pnpm --filter @multiterm/pluto-client exec rune format && pnpm --filter @multiterm/pluto-server exec rune format",
+    "build": "pnpm --filter @dotlocker/shared exec rune build && pnpm --filter @dotlocker/client exec rune build && pnpm --filter @dotlocker/server exec rune build && pnpm --filter @dotlocker/ui exec rune build && pnpm --filter @dotlocker/ui-shared exec rune build && pnpm --filter @dotlocker/site exec rune build && pnpm --filter @dotlocker/webui exec rune build && pnpm --filter @dotlocker/dotlocker exec rune build && pnpm exec tsc -p packages/apps/mcp/tsconfig.json",
+    "test": "pnpm --filter @dotlocker/client exec rune test && pnpm --filter @dotlocker/server exec rune test && pnpm --filter @dotlocker/dotlocker exec rune test",
+    "typecheck": "pnpm --filter @dotlocker/client exec rune typecheck && pnpm --filter @dotlocker/server exec rune typecheck && pnpm --filter @dotlocker/dotlocker exec rune typecheck && pnpm exec tsc -p packages/apps/mcp/tsconfig.json --noEmit",
+    "lint": "pnpm --filter @dotlocker/client exec rune lint && pnpm --filter @dotlocker/server exec rune lint",
+    "format": "pnpm --filter @dotlocker/client exec rune format && pnpm --filter @dotlocker/server exec rune format",
     "release": "pnpm exec m-release --yes",
     "release:dry": "pnpm exec m-release --dry-run",
     "deploy-dev": "node scripts/workflow/deploy-dev.mjs",
@@ -48,10 +48,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/multiterm/pluto.git"
+    "url": "git+https://github.com/multiterm/dotlocker.git"
   },
   "bugs": {
-    "url": "https://github.com/multiterm/pluto/issues"
+    "url": "https://github.com/multiterm/dotlocker/issues"
   },
-  "homepage": "https://github.com/multiterm/pluto#readme"
+  "homepage": "https://dotlocker.sh"
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@multiterm/pluto-shared",
+  "name": "@dotlocker/shared",
   "version": "0.2.5",
   "private": true,
   "type": "module",
@@ -16,5 +16,14 @@
         "vite build -c configs/vite.config.ts"
       ]
     }
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/multiterm/dotlocker.git",
+    "directory": "packages/libs/shared"
+  },
+  "bugs": {
+    "url": "https://github.com/multiterm/dotlocker/issues"
+  },
+  "homepage": "https://dotlocker.sh"
 }

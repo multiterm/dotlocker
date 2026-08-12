@@ -1,7 +1,7 @@
 @import "tailwindcss";
-@import "@multiterm/pluto-gds/styles/tailwind/theme.css";
-@import "@multiterm/pluto-gds/styles/tailwind/typography.css";
-@import "@multiterm/pluto-ui/styles/components.css";
+@import "@dotlocker/gds/styles/tailwind/theme.css";
+@import "@dotlocker/gds/styles/tailwind/typography.css";
+@import "@dotlocker/ui/styles/components.css";
 @source "./**/*.{ts,tsx}";
 @source "../../../libs/ui/src/**/*.{ts,tsx}";
 @source "../../../libs/ui-shared/src/**/*.{ts,tsx}";

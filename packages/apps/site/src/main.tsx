@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { Button, ThemeProvider } from "@multiterm/pluto-ui";
-import { DotbaseBrand, ModeToggle } from "@multiterm/pluto-ui-shared";
+import { Button, ThemeProvider } from "@dotlocker/ui";
+import { DotlockerBrand, ModeToggle } from "@dotlocker/ui-shared";
 import "./styles.css";
 
 const features = [
@@ -12,11 +12,11 @@ const features = [
 ];
 
 function App() {
-  const consoleUrl = import.meta.env.VITE_PLUTO_CONSOLE_URL ?? "/login";
+  const consoleUrl = import.meta.env.VITE_DOTLOCKER_CONSOLE_URL ?? "/login";
   return (
     <div className="min-h-screen overflow-hidden">
       <header className="mx-auto flex h-18 max-w-[1240px] items-center justify-between border-x border-[var(--pl-line)] px-5 md:px-8">
-        <DotbaseBrand />
+        <DotlockerBrand />
         <nav className="flex items-center gap-3"><a className="hidden text-sm text-[var(--pl-muted)] md:block" href="#platform">Platform</a><ModeToggle /><Button size="sm" onClick={() => location.assign(consoleUrl)}>Open console</Button></nav>
       </header>
       <main>
@@ -25,8 +25,8 @@ function App() {
           <div className="relative max-w-[900px]">
             <p className="mb-6 text-xs font-bold uppercase tracking-[.18em] text-[var(--pl-primary)]">Secure file infrastructure</p>
             <h1 className="m-0 font-[var(--pl-font-display)] text-[clamp(3.4rem,9vw,7.5rem)] font-black leading-[.88] tracking-[-.085em]">Files for every<br />runtime.</h1>
-            <p className="mx-auto mt-8 max-w-[640px] text-lg leading-8 text-[var(--pl-muted)]">Dotbase gives teams and agents one encrypted, scoped, auditable home for the files that make software run.</p>
-            <div className="mt-9 flex flex-wrap justify-center gap-3"><Button size="lg" onClick={() => location.assign(consoleUrl)}>Continue with Keyname →</Button><a className="inline-flex min-h-11 items-center rounded-[var(--pl-radius-xs)] border border-[var(--pl-line)] bg-[var(--pl-surface)] px-5 text-sm font-semibold" href="#platform">Explore Dotbase</a></div>
+            <p className="mx-auto mt-8 max-w-[640px] text-lg leading-8 text-[var(--pl-muted)]">dot.locker gives teams and agents one encrypted, scoped, auditable home for the files that make software run.</p>
+            <div className="mt-9 flex flex-wrap justify-center gap-3"><Button size="lg" onClick={() => location.assign(consoleUrl)}>Continue with Keyname →</Button><a className="inline-flex min-h-11 items-center rounded-[var(--pl-radius-xs)] border border-[var(--pl-line)] bg-[var(--pl-surface)] px-5 text-sm font-semibold" href="#platform">Explore dot.locker</a></div>
             <p className="mt-5 text-xs text-[var(--pl-subtle)]">Authentication and identity secured by keyname.dev</p>
           </div>
         </section>
@@ -36,7 +36,7 @@ function App() {
           </div>
         </section>
       </main>
-      <footer className="mx-auto flex max-w-[1240px] items-center justify-between border border-[var(--pl-line)] p-6 text-xs text-[var(--pl-subtle)]"><DotbaseBrand className="text-sm" /><span>Identity by Keyname · Data by Dotbase</span></footer>
+      <footer className="mx-auto flex max-w-[1240px] items-center justify-between border border-[var(--pl-line)] p-6 text-xs text-[var(--pl-subtle)]"><DotlockerBrand className="text-sm" /><span>Identity by Keyname · Data by dot.locker</span></footer>
     </div>
   );
 }

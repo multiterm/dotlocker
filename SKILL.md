@@ -1,27 +1,27 @@
 ---
-name: pluto
-summary: Safely manage runtime-scoped files and Pluto cloud namespaces.
+name: dotlocker
+summary: Safely manage runtime-scoped files and dot.locker cloud namespaces.
 ---
-# Pluto
+# dot.locker
 
-Use Pluto to pull, stage, push, and inspect runtime-scoped repository files.
+Use dot.locker to pull, stage, push, and inspect runtime-scoped repository files.
 
 ## Agent workflow
 
-1. Run `pluto status` to confirm server, org, repo, runtime, and target directory.
-2. Use `pluto pull --runtime <name>` for one selected runtime or `pluto sync` for the all-runtime directory layout.
-3. Treat pulled files as secrets. Never print contents or commit `.pluto` runtime material.
+1. Run `dotlocker status` to confirm server, org, repo, runtime, and target directory.
+2. Use `dotlocker pull --runtime <name>` for one selected runtime or `dotlocker sync` for the all-runtime directory layout.
+3. Treat pulled files as secrets. Never print contents or commit `.locker` runtime material.
 4. Use narrowly scoped tokens and avoid production writes unless explicitly requested.
-5. Pluto stores bytes; Envx owns environment decryption.
+5. dot.locker stores bytes; Envx owns environment decryption.
 
 ## MCP
 
-Install `@multiterm/pluto-mcp` and configure:
+Install `@dotlocker/mcp` and configure:
 
 ```json
 {
   "mcpServers": {
-    "pluto": { "command": "pluto-mcp", "env": { "PLUTO_TOKEN": "..." } }
+    "dotlocker": { "command": "dotlocker-mcp", "env": { "DOTLOCKER_TOKEN": "..." } }
   }
 }
 ```

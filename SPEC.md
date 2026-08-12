@@ -1,4 +1,4 @@
-# Pluto — Encrypted env-file delivery server
+# dot.locker — Encrypted env-file delivery server
 
 > Self-hosted, multi-tenant HTTP server that stores and serves encrypted `.env*` files. Clients authenticate with bearer tokens scoped to hierarchical paths; the server only ever sees ciphertext, decryption happens client-side using the existing envx/dotenvx wire format.
 
@@ -21,7 +21,7 @@ Auth token controls **which files you can fetch**. `.env.keys` controls **which 
 ## Wire model
 
 ```
-client                              pluto server                fs
+client                              dotlocker server                fs
   │   GET /v1/files/acme/api/...      │                          │
   │   Authorization: Bearer sk_xxx    │                          │
   ├──────────────────────────────────►│  auth + scope match      │
@@ -143,31 +143,31 @@ There are none. Org creation and token minting happen via the operator CLI on th
 
 ## Operator CLI (server-side)
 
-The same `pluto` binary that runs the server also acts as the operator tool. Operator subcommands talk directly to the SQLite store on disk; no HTTP roundtrip. Requires shell access to the server host.
+The same `dotlocker` binary that runs the server also acts as the operator tool. Operator subcommands talk directly to the SQLite store on disk; no HTTP roundtrip. Requires shell access to the server host.
 
 ```sh
-pluto serve                                          # start the HTTP server
-pluto org create acme                                # create a new org namespace
-pluto token create --org acme \
+dotlocker serve                                          # start the HTTP server
+dotlocker org create acme                                # create a new org namespace
+dotlocker token create --org acme \
                    --scope 'acme/payments/**:read' \
                    --scope 'acme/payments/api/staging:write' \
                    --label "ci-publish" \
                    --expires 30d                     # mint a token (prints plaintext once)
-pluto token list --org acme
-pluto token revoke <id>
+dotlocker token list --org acme
+dotlocker token revoke <id>
 ```
 
 ## Client CLI (workspace-side)
 
-The same `pluto` binary, run on a developer machine or in CI, provides client subcommands that talk to a remote pluto server over HTTP. These never touch the server's SQLite or filesystem directly.
+The same `dotlocker` binary, run on a developer machine or in CI, provides client subcommands that talk to a remote dotlocker server over HTTP. These never touch the server's SQLite or filesystem directly.
 
 ```sh
-pluto init                                # one-time: write pluto.config.json at workspace root
-pluto pull                                # fetch + decrypt → write local .env.<type>
-pluto pull --out .env.local               # explicit output path
-pluto exec -- node app.js                 # fetch + decrypt → exec with env injected (no file on disk)
-pluto push .env.prod                      # encrypt locally + upload (requires write scope)
-pluto status                              # show resolved config + reachability check
+dotlocker init                                # one-time: write dotlocker.config.json at workspace root
+dotlocker pull                                # fetch + decrypt → write local .env.<type>
+dotlocker pull --out .env.local               # explicit output path
+dotlocker exec -- node app.js                 # fetch + decrypt → exec with env injected (no file on disk)
+dotlocker push .env.prod                      # encrypt locally + upload (requires write scope)
+dotlocker status                              # show resolved config + reachability check
 ```
 
 ### Required inputs
@@ -181,24 +181,24 @@ Every client subcommand needs four pieces of information:
 | `service` | path within the org (`payments/api`, may be multiple segments) | yes |
 | `env` | environment / type (`dev`, `staging`, `prod`, …) | yes |
 
-Plus `server` (the pluto HTTP endpoint). Together these compose the storage path: `<org>/<service>/.env.<env>`.
+Plus `server` (the dotlocker HTTP endpoint). Together these compose the storage path: `<org>/<service>/.env.<env>`.
 
 ### Resolution order
 
 For each required field, the CLI walks this chain and uses the first source that supplies a value:
 
 1. **CLI flag** — `--token`, `--server`, `--org`, `--service`, `--env` (or `--type` as an alias).
-2. **Environment variable** — `PLUTO_TOKEN`, `PLUTO_SERVER`, `PLUTO_ORG`, `PLUTO_SERVICE`, `PLUTO_ENV`.
-3. **Config file** — `--config <path>` flag if given; otherwise discovery walk for `pluto.config.{ts,js,json}` or `.pluto.json` from cwd up to the workspace root (same walk envx uses). A Docker user can mount a file at any path and pass `--config /mnt/pluto.json`.
+2. **Environment variable** — `DOTLOCKER_TOKEN`, `DOTLOCKER_SERVER`, `DOTLOCKER_ORG`, `DOTLOCKER_SERVICE`, `DOTLOCKER_ENV`.
+3. **Config file** — `--config <path>` flag if given; otherwise discovery walk for `dotlocker.config.{ts,js,json}` or `.locker.json` from cwd up to the workspace root (same walk envx uses). A Docker user can mount a file at any path and pass `--config /mnt/dotlocker.json`.
 4. **Interactive prompt** — only if `process.stdin.isTTY`. Each missing field is prompted in order. `token` is read with masking.
 5. **Error** — non-TTY and still missing → exit 2 with a descriptive message naming the field.
 
 ### Config file shape
 
 ```jsonc
-// pluto.config.json (workspace root, safe to commit if no token)
+// dotlocker.config.json (workspace root, safe to commit if no token)
 {
-  "server": "https://pluto.acme.internal",
+  "server": "https://dotlocker.acme.internal",
   "org": "acme",
   "service": "payments/api",
   "env": "prod"
@@ -206,23 +206,23 @@ For each required field, the CLI walks this chain and uses the first source that
 ```
 
 ```ts
-// pluto.config.ts — typed variant
-import { defineConfig } from "@multiterm/pluto/client";
+// dotlocker.config.ts — typed variant
+import { defineConfig } from "@dotlocker/dotlocker/client";
 export default defineConfig({
-  server: "https://pluto.acme.internal",
+  server: "https://dotlocker.acme.internal",
   org: "acme",
   service: "payments/api",
   env: "prod",
 });
 ```
 
-**Tokens never live in the committed config file.** They come from `PLUTO_TOKEN`, `--token`, or interactive prompt. The config schema rejects a `token` field with a load-time error to make this hard to get wrong by accident.
+**Tokens never live in the committed config file.** They come from `DOTLOCKER_TOKEN`, `--token`, or interactive prompt. The config schema rejects a `token` field with a load-time error to make this hard to get wrong by accident.
 
-### `pluto init`
+### `dotlocker init`
 
-Interactive setup that prompts for `server`, `org`, `service`, `env`, then writes a `pluto.config.json` at the workspace root. Tests reachability with the supplied token (does not persist it). Idempotent — refuses to overwrite an existing config unless `--force`.
+Interactive setup that prompts for `server`, `org`, `service`, `env`, then writes a `dotlocker.config.json` at the workspace root. Tests reachability with the supplied token (does not persist it). Idempotent — refuses to overwrite an existing config unless `--force`.
 
-### Behavior: `pluto pull`
+### Behavior: `dotlocker pull`
 
 1. Resolve config.
 2. `GET /v1/resolve/<org>/<service>?env=<env>` to get the cascade manifest.
@@ -231,11 +231,11 @@ Interactive setup that prompts for `server`, `org`, `service`, `env`, then write
 5. Decrypt each file, merge later-wins.
 6. Write to `--out` if given, else `.env.<env>` at cwd.
 
-### Behavior: `pluto exec`
+### Behavior: `dotlocker exec`
 
-Steps 1–5 as `pluto pull`, but instead of writing a file, spawn the child command (everything after `--`) with the resolved env merged onto `process.env`. Decryption happens in-memory only; no plaintext touches disk.
+Steps 1–5 as `dotlocker pull`, but instead of writing a file, spawn the child command (everything after `--`) with the resolved env merged onto `process.env`. Decryption happens in-memory only; no plaintext touches disk.
 
-### Behavior: `pluto push`
+### Behavior: `dotlocker push`
 
 1. Read the local plaintext file passed as argument.
 2. Fetch the per-service public key (cached locally; refreshed on cache miss).
@@ -243,7 +243,7 @@ Steps 1–5 as `pluto pull`, but instead of writing a file, spawn the child comm
 4. `PUT /v1/files/<org>/<service>/.env.<env>` with the resulting bytes.
 5. Server returns 204 → exit 0. Anything else → exit 1 with the server's message.
 
-### Behavior: `pluto status`
+### Behavior: `dotlocker status`
 
 Prints the resolved config (token masked), the source each field came from (flag/env/file/prompt), and the result of `GET /v1/health` against the resolved server. Non-zero exit on reachability failure.
 
@@ -251,7 +251,7 @@ Prints the resolved config (token masked), the source each field came from (flag
 
 ```
 /data/
-├── pluto.db                       # SQLite: tokens, orgs, audit
+├── dotlocker.db                       # SQLite: tokens, orgs, audit
 └── envs/
     └── <org>/
         └── <team>/

@@ -1,5 +1,5 @@
 {
-  "name": "@multiterm/pluto-ui",
+  "name": "@dotlocker/ui",
   "version": "0.2.5",
   "private": true,
   "type": "module",
@@ -19,7 +19,7 @@
     }
   },
   "dependencies": {
-    "@multiterm/pluto-gds": "workspace:*"
+    "@dotlocker/gds": "workspace:*"
   },
   "peerDependencies": {
     "react": "^19.0.0"
@@ -28,5 +28,14 @@
     "@types/react": "^19.2.15",
     "@vitejs/plugin-react": "^6.0.2",
     "vite-plugin-dts": "^5.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/multiterm/dotlocker.git",
+    "directory": "packages/libs/ui"
+  },
+  "bugs": {
+    "url": "https://github.com/multiterm/dotlocker/issues"
+  },
+  "homepage": "https://dotlocker.sh"
 }

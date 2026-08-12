@@ -1,8 +1,8 @@
-# @multiterm/pluto
+# @dotlocker/dotlocker
 
 > Self-hosted, multi-tenant file-sync server for organization/repository runtime files.
 
-Pluto stores and serves bytes exactly as provided. It does **not** know or care whether files are plaintext, encrypted, JSON, env files, certificates, manifests, or any other format. If encryption is needed, encrypt before `pluto push` and decrypt after `pluto pull` in your own application/runtime layer.
+dot.locker stores and serves bytes exactly as provided. It does **not** know or care whether files are plaintext, encrypted, JSON, env files, certificates, manifests, or any other format. If encryption is needed, encrypt before `dotlocker push` and decrypt after `dotlocker pull` in your own application/runtime layer.
 
 Files are addressed by:
 
@@ -10,30 +10,30 @@ Files are addressed by:
 <org>/<repo>/<runtime>/<relative-file-path>
 ```
 
-The client syncs a local target directory, defaulting to `.pluto`:
+The client syncs a local target directory, defaulting to `.locker`:
 
-- `pluto push` uploads files for the selected runtime from the target directory.
-- `pluto pull` downloads every file for the resolved `org/repo/runtime` and writes them into the target directory without runtime prefixes.
+- `dotlocker push` uploads files for the selected runtime from the target directory.
+- `dotlocker pull` downloads every file for the resolved `org/repo/runtime` and writes them into the target directory without runtime prefixes.
 
 ## Install
 
 ```sh
-pnpm add -D @multiterm/pluto
+pnpm add -D @dotlocker/dotlocker
 ```
 
-The same `pluto` binary runs as the server and as the workspace client.
+The same `dotlocker` binary runs as the server and as the workspace client.
 
 ## Server quickstart
 
 ```sh
 # Persist /data in a volume.
-docker run -d --name pluto -p 3000:3000 -v pluto-data:/data ghcr.io/super-repo/pluto:latest
+docker run -d --name dotlocker -p 3000:3000 -v dotlocker-data:/data ghcr.io/super-repo/dotlocker:latest
 
 # Create an org.
-docker exec -it pluto pluto org create acme
+docker exec -it dotlocker dotlocker org create acme
 
 # Mint a repo/runtime scoped token.
-docker exec -it pluto pluto token create \
+docker exec -it dotlocker dotlocker token create \
   --org acme \
   --scope 'acme/portal/**:read' \
   --scope 'acme/portal/**:write' \
@@ -46,24 +46,24 @@ The plaintext token is printed once. Store it securely.
 ## Workspace quickstart
 
 ```sh
-export PLUTO_TOKEN=plt_xxxx
+export DOTLOCKER_TOKEN=plt_xxxx
 
-# pluto.config.json, pluto.config.ts, etc.
-pluto init
+# dotlocker.config.json, dotlocker.config.ts, etc.
+dotlocker init
 
-# Upload all files from .pluto to acme/portal/<runtime>/...
-pluto push
+# Upload all files from .locker to acme/portal/<runtime>/...
+dotlocker push
 
-# Pull all files for acme/portal/<runtime>/... into .pluto, replacing the directory.
-pluto pull
+# Pull all files for acme/portal/<runtime>/... into .locker, replacing the directory.
+dotlocker pull
 
-# Sync every runtime file this token can read into .pluto/<runtime>/...
-pluto sync
+# Sync every runtime file this token can read into .locker/<runtime>/...
+dotlocker sync
 
 # Pull, then run a process.
-pluto exec -- node app.js
+dotlocker exec -- node app.js
 
-pluto status
+dotlocker status
 ```
 
 ## Configuration
@@ -71,13 +71,13 @@ pluto status
 Committed config files must not contain tokens.
 
 ```ts
-import { defineConfig } from '@multiterm/pluto/client'
+import { defineConfig } from '@dotlocker/dotlocker/client'
 
 export default defineConfig({
-  server: 'https://pluto.example.com',
+  server: 'https://dotlocker.example.com',
   org: 'acme',
   repo: 'portal',
-  targetDir: '.pluto', // optional; default is .pluto
+  targetDir: '.locker', // optional; default is .locker
   autoDetect: true,
   runtimeMap: {
     development: 'dev',
@@ -91,22 +91,22 @@ Resolution order:
 
 | Field | Sources |
 |---|---|
-| `server` | `--server`, `PLUTO_SERVER`, config, local `.pluto`, prompt |
-| `token` | `--token`, `PLUTO_TOKEN`, local `.pluto.local.json` or legacy file `.pluto`, prompt |
-| `org` | `--org`, `PLUTO_ORG`, config, local `.pluto`, prompt |
-| `repo` | `--repo`, `PLUTO_REPO`, config, local `.pluto`, prompt |
-| `runtime` | `--runtime`, `PLUTO_RUNTIME`, config, `runtimeMap[NODE_ENV]`, default `default` |
-| `targetDir` | `--target-dir`, `PLUTO_TARGET_DIR`, config, local `.pluto`, default `.pluto` |
+| `server` | `--server`, `DOTLOCKER_SERVER`, config, local `.locker`, prompt |
+| `token` | `--token`, `DOTLOCKER_TOKEN`, local `.locker.local.json` or legacy file `.locker`, prompt |
+| `org` | `--org`, `DOTLOCKER_ORG`, config, local `.locker`, prompt |
+| `repo` | `--repo`, `DOTLOCKER_REPO`, config, local `.locker`, prompt |
+| `runtime` | `--runtime`, `DOTLOCKER_RUNTIME`, config, `runtimeMap[NODE_ENV]`, default `default` |
+| `targetDir` | `--target-dir`, `DOTLOCKER_TARGET_DIR`, config, local `.locker`, default `.locker` |
 
-A machine-local `.pluto.local.json` file may contain secrets and must be gitignored. Legacy file `.pluto` is still read only when it is a file; the default `.pluto/` target directory takes precedence for file sync.
+A machine-local `.locker.local.json` file may contain secrets and must be gitignored. Legacy file `.locker` is still read only when it is a file; the default `.locker/` target directory takes precedence for file sync.
 
 ```jsonc
 {
-  "server": "https://pluto.example.com",
+  "server": "https://dotlocker.example.com",
   "org": "acme",
   "repo": "portal",
   "runtime": "preview",
-  "targetDir": ".pluto",
+  "targetDir": ".locker",
   "token": "plt_..."
 }
 ```
@@ -116,13 +116,13 @@ A machine-local `.pluto.local.json` file may contain secrets and must be gitigno
 Given:
 
 ```txt
-.pluto/
+.locker/
   config/app.json
   secrets.enc
   certs/tls.crt
 ```
 
-With `org=acme`, `repo=portal`, `runtime=preview`, `pluto push` uploads:
+With `org=acme`, `repo=portal`, `runtime=preview`, `dotlocker push` uploads:
 
 ```txt
 acme/portal/preview/config/app.json
@@ -130,56 +130,56 @@ acme/portal/preview/secrets.enc
 acme/portal/preview/certs/tls.crt
 ```
 
-Runtime selection rules for `pluto push`:
+Runtime selection rules for `dotlocker push`:
 
 - Files inside `<targetDir>/<runtime>/...` are uploaded with the runtime directory stripped.
 - Root files named `<runtime>.<name>` are uploaded with the runtime prefix stripped.
 - Root files named `<name>.<runtime>` are uploaded with the runtime suffix stripped. This supports env-style files such as `.env.preview -> .env`.
 - Unprefixed files are also uploaded for the selected runtime.
 - Known non-selected runtime directories/prefixes/suffixes such as `dev/`, `prod.`, `.preview`, and values from `runtimeMap` are ignored.
-- If an unprefixed base file and a runtime-specific file map to the same output, the runtime-specific file wins. If two equally-specific runtime files collide, Pluto errors.
+- If an unprefixed base file and a runtime-specific file map to the same output, the runtime-specific file wins. If two equally-specific runtime files collide, dot.locker errors.
 
 Example for `runtime=preview`:
 
 ```txt
-.pluto/config/app.json       -> acme/portal/preview/config/app.json
-.pluto/preview/secrets.enc   -> acme/portal/preview/secrets.enc
-.pluto/preview.flags.json    -> acme/portal/preview/flags.json
-.pluto/.env.preview          -> acme/portal/preview/.env
-.pluto/prod/secrets.enc      -> ignored
-.pluto/.env.prod             -> ignored
+.locker/config/app.json       -> acme/portal/preview/config/app.json
+.locker/preview/secrets.enc   -> acme/portal/preview/secrets.enc
+.locker/preview.flags.json    -> acme/portal/preview/flags.json
+.locker/.env.preview          -> acme/portal/preview/.env
+.locker/prod/secrets.enc      -> ignored
+.locker/.env.prod             -> ignored
 ```
 
-`pluto pull` lists the remote runtime prefix and writes files back without runtime prefixes:
+`dotlocker pull` lists the remote runtime prefix and writes files back without runtime prefixes:
 
 ```txt
-acme/portal/preview/config/app.json -> .pluto/config/app.json
-acme/portal/preview/secrets.enc     -> .pluto/secrets.enc
+acme/portal/preview/config/app.json -> .locker/config/app.json
+acme/portal/preview/secrets.enc     -> .locker/secrets.enc
 ```
 
-Pulls overwrite files they download, but they do not delete unrelated files in the target directory. After each pull, Pluto writes `.pluto/pluto-details.json` with metadata including `mode`, `cloudGenerated`, `updatedAt`, `pulledAt`, `username`, `org`, `repo`, `runtime`, `fileCount`, `totalBytes`, and the pulled file list. `username` is only included for cloud-generated pull/sync details. `pluto-details.json` is local metadata and is excluded from `pluto push`.
+Pulls overwrite files they download, but they do not delete unrelated files in the target directory. After each pull, dot.locker writes `.locker/dotlocker-details.json` with metadata including `mode`, `cloudGenerated`, `updatedAt`, `pulledAt`, `username`, `org`, `repo`, `runtime`, `fileCount`, `totalBytes`, and the pulled file list. `username` is only included for cloud-generated pull/sync details. `dotlocker-details.json` is local metadata and is excluded from `dotlocker push`.
 
 ## Cloud sync and runtime gating
 
-`pluto sync` pulls every file under `<org>/<repo>/...` that the token can read and preserves the cloud runtime directory layout locally:
+`dotlocker sync` pulls every file under `<org>/<repo>/...` that the token can read and preserves the cloud runtime directory layout locally:
 
 ```txt
-acme/portal/dev/.env     -> .pluto/dev/.env
-acme/portal/preview/.env -> .pluto/preview/.env
-acme/portal/prod/.env    -> .pluto/prod/.env
+acme/portal/dev/.env     -> .locker/dev/.env
+acme/portal/preview/.env -> .locker/preview/.env
+acme/portal/prod/.env    -> .locker/prod/.env
 ```
 
 Access is controlled by token scopes:
 
 ```sh
 # Organization admin: all repos and all runtimes in the org.
-pluto token create --org acme --scope 'acme/**:read' --scope 'acme/**:write' --label org-admin
+dotlocker token create --org acme --scope 'acme/**:read' --scope 'acme/**:write' --label org-admin
 
 # Repo admin: all runtimes for one repo.
-pluto token create --org acme --scope 'acme/portal/**:read' --scope 'acme/portal/**:write' --label portal-admin
+dotlocker token create --org acme --scope 'acme/portal/**:read' --scope 'acme/portal/**:write' --label portal-admin
 
 # Runtime-limited user: preview only for one repo.
-pluto token create --org acme --scope 'acme/portal/preview/**:read' --label portal-preview-reader
+dotlocker token create --org acme --scope 'acme/portal/preview/**:read' --label portal-preview-reader
 ```
 
 Tokens may also be associated with a verified user via `--user <email>` for operator/audit metadata. Admins can grant access either with the operator CLI or over the API using an org-admin authenticated token.
@@ -187,30 +187,30 @@ Tokens may also be associated with a verified user via `--user <email>` for oper
 Operator CLI:
 
 ```sh
-pluto grant org-admin admin@example.com --org acme
-pluto grant repo dev@example.com --org acme --repo portal --access read
-pluto grant runtime qa@example.com --org acme --repo portal --runtime preview --access read
-pluto grant list qa@example.com --org acme
+dotlocker grant org-admin admin@example.com --org acme
+dotlocker grant repo dev@example.com --org acme --repo portal --access read
+dotlocker grant runtime qa@example.com --org acme --repo portal --runtime preview --access read
+dotlocker grant list qa@example.com --org acme
 ```
 
 ## Framework-only mode
 
-You can use Pluto without the cloud server as a local runtime-file staging framework:
+You can use dot.locker without the cloud server as a local runtime-file staging framework:
 
 ```sh
-pluto stage --runtime preview
+dotlocker stage --runtime preview
 ```
 
 `stage` applies the same runtime selection rules as `push`, but writes the selected files back to unprefixed root paths locally and never contacts the server. This lets a repo organize files by runtime while applications consume stable paths.
 
 ```txt
-.pluto/config/app.json       -> .pluto/config/app.json
-.pluto/preview/secrets.enc   -> .pluto/secrets.enc
-.pluto/preview.flags.json    -> .pluto/flags.json
-.pluto/prod/secrets.enc      -> ignored
+.locker/config/app.json       -> .locker/config/app.json
+.locker/preview/secrets.enc   -> .locker/secrets.enc
+.locker/preview.flags.json    -> .locker/flags.json
+.locker/prod/secrets.enc      -> ignored
 ```
 
-`stage` also writes `.pluto/pluto-details.json` with `mode: "stage"`, `cloudGenerated: false`, and the same non-cloud metrics as cloud pulls.
+`stage` also writes `.locker/dotlocker-details.json` with `mode: "stage"`, `cloudGenerated: false`, and the same non-cloud metrics as cloud pulls.
 
 ## CLI
 
@@ -218,39 +218,39 @@ pluto stage --runtime preview
 
 | Command | Purpose |
 |---|---|
-| `pluto serve` | Start the HTTP server |
-| `pluto org create <name>` | Create an organization namespace |
-| `pluto org list` | List organizations |
-| `pluto token create --org --scope --label --expires` | Mint a scoped bearer token |
-| `pluto token list --org <org>` | List tokens |
-| `pluto token revoke <id>` | Revoke a token |
-| `pluto user ...`, `pluto service ...` | Optional operator metadata/source-warning helpers |
+| `dotlocker serve` | Start the HTTP server |
+| `dotlocker org create <name>` | Create an organization namespace |
+| `dotlocker org list` | List organizations |
+| `dotlocker token create --org --scope --label --expires` | Mint a scoped bearer token |
+| `dotlocker token list --org <org>` | List tokens |
+| `dotlocker token revoke <id>` | Revoke a token |
+| `dotlocker user ...`, `dotlocker service ...` | Optional operator metadata/source-warning helpers |
 
 ### Workspace-side
 
 | Command | Purpose |
 |---|---|
-| `pluto init` | Write `pluto.config.json` |
-| `pluto push [dir]` | Upload runtime-selected files in `dir` or `targetDir` |
-| `pluto pull [--out <dir>]` | Cloud pull one runtime into `targetDir` or `--out` as unprefixed files |
-| `pluto sync [--out <dir>]` | Cloud sync all readable repo/runtime files into runtime directories |
-| `pluto stage [dir] [--out <dir>]` | Framework-only local runtime staging; reads from `dir` or `targetDir`, writes to `targetDir` unless `--out` is provided; no server required |
-| `pluto exec -- <cmd>` | Pull then execute a command |
-| `pluto status` | Print resolved config and server health |
+| `dotlocker init` | Write `dotlocker.config.json` |
+| `dotlocker push [dir]` | Upload runtime-selected files in `dir` or `targetDir` |
+| `dotlocker pull [--out <dir>]` | Cloud pull one runtime into `targetDir` or `--out` as unprefixed files |
+| `dotlocker sync [--out <dir>]` | Cloud sync all readable repo/runtime files into runtime directories |
+| `dotlocker stage [dir] [--out <dir>]` | Framework-only local runtime staging; reads from `dir` or `targetDir`, writes to `targetDir` unless `--out` is provided; no server required |
+| `dotlocker exec -- <cmd>` | Pull then execute a command |
+| `dotlocker status` | Print resolved config and server health |
 
 All client commands accept `--server`, `--token`, `--org`, `--repo`, `--runtime`, `--target-dir`, and `--config`.
 
 ## Web UI
 
-Pluto serves its dashboard at `/`. Interactive sign-in uses Keyname's `auth.js` in-app modal; Pluto verifies the resulting Keyname access token server-side and retains its existing grants, scoped API tokens, accounts, and saved files. The modal handles per-user origin consent without a manually managed application allowlist.
+dot.locker serves its dashboard at `/`. Interactive sign-in uses Keyname's `auth.js` in-app modal; dot.locker verifies the resulting Keyname access token server-side and retains its existing grants, scoped API tokens, accounts, and saved files. The modal handles per-user origin consent without a manually managed application allowlist.
 
 ## HTTP API
 
 | Route | Purpose |
 |---|---|
 | `GET /v1/health` | Health check, no auth |
-| `POST /v1/auth/keyname/session` | Verify an auth.js modal access token and establish a Pluto session |
-| `POST /v1/auth/login` | Disabled legacy flow unless `PLUTO_ENABLE_LEGACY_AUTH=true` |
+| `POST /v1/auth/keyname/session` | Verify an auth.js modal access token and establish a dot.locker session |
+| `POST /v1/auth/login` | Disabled legacy flow unless `DOTLOCKER_ENABLE_LEGACY_AUTH=true` |
 | `POST /v1/auth/tailscale` | Disabled legacy flow unless both legacy and Tailscale flags are enabled |
 | `GET /v1/me` | Inspect token identity, scopes, and user grants |
 | `GET /v1/tokens` | List own tokens, or org tokens for org admins |
@@ -271,7 +271,7 @@ Pluto serves its dashboard at `/`. Interactive sign-in uses Keyname's `auth.js` 
 | `GET /v1/files-meta/<org>/<repo>/<runtime>` | List DB metadata visible to this token |
 | `GET /v1/audit/<org>` | Org admin reads recent audit events |
 | `GET /v1/resolve/<org>/<repo>/<runtime>` | List visible files under the runtime prefix |
-| `GET /v1/resolve/<org>/<repo>` | List visible files across all readable runtimes for `pluto sync` |
+| `GET /v1/resolve/<org>/<repo>` | List visible files across all readable runtimes for `dotlocker sync` |
 
 ## Scope grammar
 
@@ -292,7 +292,7 @@ Examples:
 
 ## Security notes
 
-- Pluto stores bytes verbatim; encryption is caller-owned.
+- dot.locker stores bytes verbatim; encryption is caller-owned.
 - Use TLS at the reverse proxy/load balancer.
 - Keep tokens short-lived and scope them to the narrowest repo/runtime prefix possible.
 - The server enforces org isolation and path normalization before touching disk.

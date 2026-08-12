@@ -4,14 +4,14 @@ import { createHash, randomBytes } from "node:crypto";
 import { readFileSync } from "node:fs";
 import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest } from "fastify";
 import rateLimit from "@fastify/rate-limit";
-import { normalizePath, isValidOrgName, isValidSegment } from "@multiterm/pluto-shared";
-import { authorize, type Access } from "@multiterm/pluto-shared";
+import { normalizePath, isValidOrgName, isValidSegment } from "@dotlocker/shared";
+import { authorize, type Access } from "@dotlocker/shared";
 import {
   ForbiddenError,
   NotFoundError,
   PlutoError,
   UnauthorizedError,
-} from "@multiterm/pluto-shared";
+} from "@dotlocker/shared";
 import { type TokenRecord } from "./tokens.js";
 import type { DB } from "./db.js";
 import type { FileStore } from "./files.js";
@@ -65,7 +65,7 @@ declare module "fastify" {
 
 export async function buildServer(opts: BuildServerOptions): Promise<FastifyInstance> {
   const { db, store, version = "dev" } = opts;
-  const pgUrl = process.env.PLUTO_DATABASE_URL ?? process.env.DATABASE_URL;
+  const pgUrl = process.env.DOTLOCKER_DATABASE_URL ?? process.env.PLUTO_DATABASE_URL ?? process.env.DATABASE_URL;
   const pgClient = opts.authStore ? null : pgUrl ? postgres(pgUrl, { max: 10 }) : null;
   if (pgClient) await migratePostgres(pgClient);
   const auth = opts.authStore ?? (pgClient ? postgresAuthStore(pgClient) : sqliteAuthStore(db));
@@ -252,8 +252,8 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
 
   app.post("/v1/auth/tailscale", async (req, reply) => {
     if (
-      process.env.PLUTO_ENABLE_LEGACY_AUTH !== "true" ||
-      process.env.PLUTO_TRUST_TAILSCALE_HEADERS !== "true"
+      (process.env.DOTLOCKER_ENABLE_LEGACY_AUTH ?? process.env.PLUTO_ENABLE_LEGACY_AUTH) !== "true" ||
+      (process.env.DOTLOCKER_TRUST_TAILSCALE_HEADERS ?? process.env.PLUTO_TRUST_TAILSCALE_HEADERS) !== "true"
     )
       return reply.code(404).send({ error: "PLUTO_NOT_FOUND" });
     const body = req.body as { org?: string; label?: string; expiresSeconds?: number } | null;
@@ -289,7 +289,7 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
   });
 
   app.post("/v1/auth/login", async (req, reply) => {
-    if (process.env.PLUTO_ENABLE_LEGACY_AUTH !== "true")
+    if ((process.env.DOTLOCKER_ENABLE_LEGACY_AUTH ?? process.env.PLUTO_ENABLE_LEGACY_AUTH) !== "true")
       return reply.code(410).send({ error: "PLUTO_KEYNAME_AUTH_REQUIRED" });
     const body = req.body as {
       email?: string;
@@ -983,16 +983,16 @@ async function resolveOrBootstrapKeynameIdentity(
   } catch (error) {
     if (
       !(error instanceof NotFoundError) ||
-      process.env.PLUTO_BOOTSTRAP_FIRST_KEYNAME_USER !== "true" ||
+      (process.env.DOTLOCKER_BOOTSTRAP_FIRST_KEYNAME_USER ?? process.env.PLUTO_BOOTSTRAP_FIRST_KEYNAME_USER) !== "true" ||
       !(await auth.isEmpty())
     ) throw error;
 
     const email = identity.email.trim().toLowerCase();
-    const allowedEmails = (process.env.PLUTO_BOOTSTRAP_KEYNAME_EMAILS ?? "")
+    const allowedEmails = (process.env.DOTLOCKER_BOOTSTRAP_KEYNAME_EMAILS ?? process.env.PLUTO_BOOTSTRAP_KEYNAME_EMAILS ?? "")
       .split(",")
       .map((value) => value.trim().toLowerCase())
       .filter(Boolean);
-    const allowedDomains = (process.env.PLUTO_BOOTSTRAP_KEYNAME_DOMAINS ?? "")
+    const allowedDomains = (process.env.DOTLOCKER_BOOTSTRAP_KEYNAME_DOMAINS ?? process.env.PLUTO_BOOTSTRAP_KEYNAME_DOMAINS ?? "")
       .split(",")
       .map((value) => value.trim().toLowerCase().replace(/^@/, ""))
       .filter(Boolean);
@@ -1004,7 +1004,7 @@ async function resolveOrBootstrapKeynameIdentity(
       password: randomBytes(48).toString("base64url"),
       verified: true,
     });
-    await auth.createOrganization(process.env.PLUTO_BOOTSTRAP_ORG ?? "honeycluster", email);
+    await auth.createOrganization(process.env.DOTLOCKER_BOOTSTRAP_ORG ?? process.env.PLUTO_BOOTSTRAP_ORG ?? "honeycluster", email);
     return auth.resolveKeynameIdentity(identity);
   }
 }
@@ -1062,7 +1062,7 @@ function setAuthCookies(
   expiresAt: number,
 ): void {
   const maxAge = Math.max(60, Math.floor((expiresAt - Date.now()) / 1000));
-  const secure = process.env.PLUTO_COOKIE_SECURE === "true" || process.env.NODE_ENV === "production";
+  const secure = (process.env.DOTLOCKER_COOKIE_SECURE ?? process.env.PLUTO_COOKIE_SECURE) === "true" || process.env.NODE_ENV === "production";
   const attrs = `Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure ? "; Secure" : ""}`;
   reply.header("Set-Cookie", [
     `auth_token=${encodeURIComponent(token)}; ${attrs}`,

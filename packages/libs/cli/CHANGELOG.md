@@ -1,4 +1,4 @@
-# @multiterm/pluto changelog
+# @dotlocker/dotlocker changelog
 
 ## [0.2.12-b.0] - 2026-08-12
 

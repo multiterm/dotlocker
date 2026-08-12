@@ -1,5 +1,5 @@
 {
-  "name": "@multiterm/pluto-server",
+  "name": "@dotlocker/server",
   "version": "0.2.5",
   "private": true,
   "type": "module",
@@ -19,16 +19,25 @@
   },
   "dependencies": {
     "@fastify/rate-limit": "^10.0.0",
-    "@multiterm/pluto-shared": "workspace:*",
     "better-sqlite3": "^11.0.0",
     "drizzle-orm": "^0.45.2",
     "fastify": "^5.0.0",
     "postgres": "^3.4.9",
     "yargs": "^17.7.0",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "@dotlocker/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.10",
     "@types/yargs": "^17.0.33"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/multiterm/dotlocker.git",
+    "directory": "packages/libs/server"
+  },
+  "bugs": {
+    "url": "https://github.com/multiterm/dotlocker/issues"
+  },
+  "homepage": "https://dotlocker.sh"
 }

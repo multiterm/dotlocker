@@ -1,5 +1,5 @@
-import { themeLabels, type PlutoTheme } from "@multiterm/pluto-gds";
-import { usePlutoTheme } from "@multiterm/pluto-ui";
+import { themeLabels, type PlutoTheme } from "@dotlocker/gds";
+import { usePlutoTheme } from "@dotlocker/ui";
 
 const control = "grid h-9 place-items-center rounded-[var(--pl-radius-xs)] border border-[var(--pl-line)] bg-[var(--pl-surface)] text-xs text-[var(--pl-muted)] transition-colors hover:border-[var(--pl-line-strong)] hover:text-[var(--pl-text)]";
 

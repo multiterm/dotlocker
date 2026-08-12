@@ -1,11 +1,11 @@
 // #region -- Top-level package surface ---------------------
 
 // Server-side (operator) surface.
-export * from "@multiterm/pluto-server";
+export * from "@dotlocker/server";
 
 // Client-side (workspace) surface — re-exported under the bare package import
-// so that `import { defineConfig } from "@multiterm/pluto"` works for users
-// who don't want the subpath. The "@multiterm/pluto/client" subpath is the
+// so that `import { defineConfig } from "@dotlocker/dotlocker"` works for users
+// who don't want the subpath. The "@dotlocker/dotlocker/client" subpath is the
 // preferred form for client code; this re-export keeps single-import setups
 // frictionless.
 export {
@@ -16,7 +16,7 @@ export {
   loadConfigFile,
   discoverConfigFile,
   clientConfigSchema,
-} from "@multiterm/pluto-client";
+} from "@dotlocker/client";
 
 export type {
   ClientConfig,
@@ -28,8 +28,8 @@ export type {
   ClientCredentials,
   ResolveResponse,
   LoginResponse,
-} from "@multiterm/pluto-client";
+} from "@dotlocker/client";
 
-export * from "@multiterm/pluto-shared";
+export * from "@dotlocker/shared";
 
 // #endregion ------------------------------------------------

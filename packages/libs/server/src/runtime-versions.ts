@@ -2,7 +2,7 @@
 
 import { createHash } from "node:crypto";
 import type { DB } from "./db.js";
-import { ConflictError } from "@multiterm/pluto-shared";
+import { ConflictError } from "@dotlocker/shared";
 
 export const SHORT_VERSION_LENGTH = 12;
 

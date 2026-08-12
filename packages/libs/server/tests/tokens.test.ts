@@ -15,7 +15,7 @@ import {
   InvalidPathError,
   NotFoundError,
   UnauthorizedError,
-} from "@multiterm/pluto-shared";
+} from "@dotlocker/shared";
 
 describe("token store", () => {
   let db: DB;

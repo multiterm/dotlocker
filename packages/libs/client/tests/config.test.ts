@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { resolveClient, resolveFramework, discoverConfigFile, discoverLocalSecretFile, loadConfigFile, loadConfigFileAsync, loadLocalSecretFile } from "../src/index.js";
-import { ConfigError } from "@multiterm/pluto-shared";
+import { ConfigError } from "@dotlocker/shared";
 
 describe("client config resolution", () => {
   let cwd: string;
@@ -26,7 +26,7 @@ describe("client config resolution", () => {
     const r = await resolveClient({ cwd, env: {}, flags: {}, prompt: null });
     expect(r.repo).toBe("portal");
     expect(r.runtime).toBe("preview");
-    expect(r.targetDir).toBe(".pluto");
+    expect(r.targetDir).toBe(".locker");
   });
 
   it("loads typed config", async () => {
@@ -68,6 +68,6 @@ describe("client config resolution", () => {
     expect(r.token).toBeUndefined();
     expect(r.repo).toBe("portal");
     expect(r.runtime).toBe("preview");
-    expect(r.targetDir).toBe(".pluto");
+    expect(r.targetDir).toBe(".locker");
   });
 });

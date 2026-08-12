@@ -1,4 +1,4 @@
-# Pluto product and platform roadmap
+# dot.locker product and platform roadmap
 
 This document captures the next architecture and dashboard work after content-addressed runtime versions. Priorities are ordered by correctness and operational risk, not visual impact.
 
@@ -7,7 +7,7 @@ This document captures the next architecture and dashboard work after content-ad
 - Organization/repository/runtime scoped files and API keys.
 - Organization-wide API keys using `<org>/**` read and write scopes.
 - SHA-256 runtime trees with 64-character long hashes, 12-character short hashes, parent links, immutable manifests, and deduplicated blobs.
-- Runtime history API and `pluto versions`.
+- Runtime history API and `dotlocker versions`.
 - Staged content-addressed object uploads, atomic committed-head reads, and compare-and-swap pushes.
 - Keyname-backed dashboard sessions, grants, audit records, and file metadata.
 
@@ -19,14 +19,14 @@ Objects upload without changing the visible runtime, the server validates the co
 
 ### Historical pull, checkout, and rollback
 
-- `pluto pull --version <hash>` reads an immutable tree without changing its head.
-- `pluto rollback <hash>` appends a new version whose tree matches the selected historical version.
+- `dotlocker pull --version <hash>` reads an immutable tree without changing its head.
+- `dotlocker rollback <hash>` appends a new version whose tree matches the selected historical version.
 - API endpoints resolve version manifests and versioned file bytes.
 - Rollback never deletes history or moves a head backward invisibly.
 
 ### Optimistic concurrency — protocol implemented
 
-Pushes include the parent hash observed before staging. If another writer moves the head, the server returns `409 PLUTO_CONFLICT` with expected and current hashes. A future explicit `--expected-version` flag will support deployment policy and scripting use cases.
+Pushes include the parent hash observed before staging. If another writer moves the head, the server returns `409 DOTLOCKER_CONFLICT` with expected and current hashes. A future explicit `--expected-version` flag will support deployment policy and scripting use cases.
 
 ### Hash reference resolution
 
@@ -48,11 +48,11 @@ Provide overlap-based rotation, `lastUsedAt`, last source, stale-key warnings, n
 
 ### Commit metadata
 
-Capture message, actor, Pluto client version, source Git SHA, CI provider/job URL, and deployment metadata. Keep tree identity content-addressed while commit identity includes parent and metadata in a canonical format.
+Capture message, actor, dot.locker client version, source Git SHA, CI provider/job URL, and deployment metadata. Keep tree identity content-addressed while commit identity includes parent and metadata in a canonical format.
 
 ### Diff API and CLI
 
-`pluto diff <a> <b>` reports added, modified, and deleted files using manifests without downloading bytes. The dashboard should render the same API.
+`dotlocker diff <a> <b>` reports added, modified, and deleted files using manifests without downloading bytes. The dashboard should render the same API.
 
 ### Tags, channels, and protected runtimes
 
@@ -78,7 +78,7 @@ Provide a dedicated integrations catalog for GitHub Actions, GitLab CI, Kubernet
 
 ### Keypost-aligned dashboard system
 
-Match the Keypost console structure: collapsible primary sidebar, grouped navigation, compact top toolbar, page-owned headers, fixed operational footer, and a secondary Settings sidebar. Reuse and extend Pluto `gds`, `ui`, and `ui-shared` packages instead of creating route-local design primitives.
+Match the Keypost console structure: collapsible primary sidebar, grouped navigation, compact top toolbar, page-owned headers, fixed operational footer, and a secondary Settings sidebar. Reuse and extend dot.locker `gds`, `ui`, and `ui-shared` packages instead of creating route-local design primitives.
 
 ## P2 — scale and operations
 

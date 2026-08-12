@@ -9,7 +9,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const distCli = resolve(__dirname, "..", "dist", "cli.js");
 const hasDistCli = existsSync(distCli);
 
-describe("pluto built CLI (dist/cli.js)", () => {
+describe("dotlocker built CLI (dist/cli.js)", () => {
   it.skipIf(!hasDistCli)("emits a non-empty bundle (> 2kB)", () => {
     // The entry is a thin launcher; the real code lives in dist/chunks/*, so
     // measure the entry plus its chunks.
@@ -29,7 +29,7 @@ describe("pluto built CLI (dist/cli.js)", () => {
       stdio: ["ignore", "pipe", "pipe"],
     });
 
-    expect(stdout).toContain("pluto");
+    expect(stdout).toContain("dotlocker");
     expect(stdout).toContain("serve");
     expect(stdout).toContain("pull");
     expect(stdout).toContain("exec");

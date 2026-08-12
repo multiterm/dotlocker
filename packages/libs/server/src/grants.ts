@@ -6,9 +6,9 @@ import {
   ForbiddenError,
   InvalidPathError,
   NotFoundError,
-} from "@multiterm/pluto-shared";
-import { isValidOrgName, isValidSegment, normalizePath } from "@multiterm/pluto-shared";
-import type { Access } from "@multiterm/pluto-shared";
+} from "@dotlocker/shared";
+import { isValidOrgName, isValidSegment, normalizePath } from "@dotlocker/shared";
+import type { Access } from "@dotlocker/shared";
 import { getUser } from "./users.js";
 
 export type GrantAccess = "read" | "write" | "admin";

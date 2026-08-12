@@ -13,7 +13,7 @@ export default defineConfig({
     emptyOutDir: true,
     lib: { entry: { index: resolve(root, "src/index.ts") }, formats: ["es"] },
     rollupOptions: {
-      external: ["react", "react/jsx-runtime", "@multiterm/pluto-gds", "@multiterm/pluto-ui"],
+      external: ["react", "react/jsx-runtime", "@dotlocker/gds", "@dotlocker/ui"],
       output: { entryFileNames: "[name].js" },
     },
   },

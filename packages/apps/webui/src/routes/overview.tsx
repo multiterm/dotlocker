@@ -34,14 +34,14 @@ function OverviewPage() {
         <section className="card">
           <p className="mb-3 mt-0 text-[10px] font-bold uppercase tracking-[.11em] text-[var(--pl-subtle)]">Session</p>
           <div className="flex items-center gap-2 text-lg font-semibold text-[var(--pl-text)]"><span className="h-2 w-2 rounded-full bg-[var(--pl-success)]" /> Active</div>
-          <p className="mb-0 mt-1 text-xs text-[var(--pl-muted)]">{expiresAt ? `Expires ${new Date(expiresAt).toLocaleString()}` : "Managed securely by Dotbase"}</p>
+          <p className="mb-0 mt-1 text-xs text-[var(--pl-muted)]">{expiresAt ? `Expires ${new Date(expiresAt).toLocaleString()}` : "Managed securely by dot.locker"}</p>
         </section>
       </div>
 
       <div className="grid cols-2">
         <section className="card">
           <h3>Workspace</h3>
-          <p className="muted">Dotbase keeps files isolated by organization, repository, and runtime while preserving a complete audit trail.</p>
+          <p className="muted">dot.locker keeps files isolated by organization, repository, and runtime while preserving a complete audit trail.</p>
           <dl className="mt-5 grid gap-3 text-sm">
             <div className="flex items-center justify-between gap-4 border-b border-[var(--pl-line)] pb-3"><dt className="text-[var(--pl-muted)]">Organization</dt><dd className="m-0 font-semibold text-[var(--pl-text)]">{session.org}</dd></div>
             <div className="flex items-center justify-between gap-4 border-b border-[var(--pl-line)] pb-3"><dt className="text-[var(--pl-muted)]">Identity provider</dt><dd className="m-0 font-semibold text-[var(--pl-text)]">Keyname</dd></div>

@@ -1,5 +1,5 @@
 import { createRoute, Outlet, useMatches } from "@tanstack/react-router";
-import { ScrollArea, Text } from "@multiterm/pluto-ui";
+import { ScrollArea, Text } from "@dotlocker/ui";
 import { AppRoute } from "./app";
 import { SettingsSidebar } from "~webui/components/SettingsSidebar";
 
@@ -12,10 +12,10 @@ export const SettingsLayoutRoute = createRoute({
 
 const headers: Record<string, [string, string]> = {
   "/settings": ["Settings", "Organization, connection, and dashboard preferences."],
-  "/settings/webhooks": ["Webhooks", "Deliver signed Dotbase events to your systems."],
+  "/settings/webhooks": ["Webhooks", "Deliver signed dot.locker events to your systems."],
   "/settings/integrations": [
     "Integrations",
-    "Connect Dotbase to deployment and automation platforms.",
+    "Connect dot.locker to deployment and automation platforms.",
   ],
 };
 

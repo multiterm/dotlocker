@@ -4,14 +4,14 @@ import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import type { DB } from "./db.js";
 import { getUser } from "./users.js";
 import { maybeGetService } from "./services.js";
-import { validateScopes, type TokenScope } from "@multiterm/pluto-shared";
-import { isValidOrgName } from "@multiterm/pluto-shared";
+import { validateScopes, type TokenScope } from "@dotlocker/shared";
+import { isValidOrgName } from "@dotlocker/shared";
 import {
   ConflictError,
   InvalidPathError,
   NotFoundError,
   UnauthorizedError,
-} from "@multiterm/pluto-shared";
+} from "@dotlocker/shared";
 
 const TOKEN_PREFIX = "plt_";
 const ID_BYTES = 9; // 12 base64url chars

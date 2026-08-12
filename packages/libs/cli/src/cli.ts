@@ -1,14 +1,14 @@
-// #region -- pluto unified CLI entry -----------------------
+// #region -- dotlocker unified CLI entry ------------------
 
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import { operatorCommands } from "@multiterm/pluto-server";
-import { clientCommands } from "@multiterm/pluto-client";
-import { PlutoError } from "@multiterm/pluto-shared";
+import { operatorCommands } from "@dotlocker/server";
+import { clientCommands } from "@dotlocker/client";
+import { PlutoError } from "@dotlocker/shared";
 
 async function main(): Promise<void> {
   let parser = yargs(hideBin(process.argv))
-    .scriptName("pluto")
+    .scriptName("dotlocker")
     .usage("$0 <command> [options]")
     .strict()
     .demandCommand(1, "")

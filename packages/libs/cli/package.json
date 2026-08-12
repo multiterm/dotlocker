@@ -1,9 +1,10 @@
 {
-  "name": "@multiterm/pluto",
-  "description": "Self-hosted multi-tenant runtime file service and CLI with scoped access, versioned storage, sync, and administrative web UI.",
+  "name": "@dotlocker/dotlocker",
+  "description": "dot.locker CLI, server, and SDK for secure runtime-scoped file storage and synchronization.",
   "version": "0.2.12-b.0",
   "type": "module",
   "bin": {
+    "dotlocker": "dist/cli.js",
     "pluto": "dist/cli.js"
   },
   "exports": {
@@ -62,18 +63,18 @@
   },
   "devDependencies": {
     "@types/yargs": "^17.0.33",
-    "@multiterm/pluto-client": "workspace:*",
-    "@multiterm/pluto-server": "workspace:*",
-    "@multiterm/pluto-shared": "workspace:*",
-    "@multiterm/pluto-webui": "workspace:*"
+    "@dotlocker/client": "workspace:*",
+    "@dotlocker/server": "workspace:*",
+    "@dotlocker/shared": "workspace:*",
+    "@dotlocker/webui": "workspace:*"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/multiterm/pluto.git",
+    "url": "git+https://github.com/multiterm/dotlocker.git",
     "directory": "packages/libs/cli"
   },
   "bugs": {
-    "url": "https://github.com/multiterm/pluto/issues"
+    "url": "https://github.com/multiterm/dotlocker/issues"
   },
-  "homepage": "https://github.com/multiterm/pluto#readme"
+  "homepage": "https://dotlocker.sh"
 }

@@ -6,18 +6,18 @@ import { pipeline } from 'node:stream/promises'
 import { createWriteStream } from 'node:fs'
 import { join, resolve } from 'node:path'
 
-const dataDir = resolve(process.env.PLUTO_DATA_DIR ?? '/data')
-const archiveUrl = process.env.PLUTO_BOOTSTRAP_ARCHIVE_URL?.trim()
+const dataDir = resolve(process.env.DOTLOCKER_DATA_DIR ?? process.env.PLUTO_DATA_DIR ?? '/data')
+const archiveUrl = (process.env.DOTLOCKER_BOOTSTRAP_ARCHIVE_URL ?? process.env.PLUTO_BOOTSTRAP_ARCHIVE_URL)?.trim()
 
 await mkdir(dataDir, { recursive: true })
 if (archiveUrl && !(await exists(join(dataDir, 'pluto.db')))) {
-  const archive = join(dataDir, `.pluto-bootstrap-${process.pid}.tgz`)
+  const archive = join(dataDir, `.dotlocker-bootstrap-${process.pid}.tgz`)
   const response = await fetch(archiveUrl, { signal: AbortSignal.timeout(120_000) })
-  if (!response.ok || !response.body) throw new Error(`Pluto bootstrap download failed (${response.status})`)
+  if (!response.ok || !response.body) throw new Error(`dot.locker bootstrap download failed (${response.status})`)
   await pipeline(Readable.fromWeb(response.body), createWriteStream(archive, { mode: 0o600 }))
   await command('tar', ['-xzf', archive, '-C', dataDir])
   await command('rm', ['-f', archive])
-  process.stdout.write('Initialized Pluto preview data from managed bootstrap archive\n')
+  process.stdout.write('Initialized dot.locker preview data from managed bootstrap archive\n')
 }
 
 const cli = resolve('dist/cli.js')

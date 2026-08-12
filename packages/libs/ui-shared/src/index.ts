@@ -1,7 +1,7 @@
 export { ModeToggle, ThemeVariantSelect } from "./theme-controls";
 export {
-  DotbaseBrand,
-  DotbaseWatermark,
+  DotlockerBrand,
+  DotlockerWatermark,
   PlutoWatermark,
-  type DotbaseBrandProps,
+  type DotlockerBrandProps,
 } from "./watermark";

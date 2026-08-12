@@ -47,12 +47,12 @@ importers:
 
   packages/apps/mcp:
     dependencies:
+      '@dotlocker/dotlocker':
+        specifier: workspace:*
+        version: link:../../libs/cli
       '@modelcontextprotocol/sdk':
         specifier: ^1.29.0
         version: 1.30.0(zod@4.4.3)
-      '@multiterm/pluto':
-        specifier: workspace:*
-        version: link:../../libs/cli
       zod:
         specifier: ^4.0.0
         version: 4.4.3
@@ -66,13 +66,13 @@ importers:
 
   packages/apps/site:
     dependencies:
-      '@multiterm/pluto-gds':
+      '@dotlocker/gds':
         specifier: workspace:*
         version: link:../../libs/gds
-      '@multiterm/pluto-ui':
+      '@dotlocker/ui':
         specifier: workspace:*
         version: link:../../libs/ui
-      '@multiterm/pluto-ui-shared':
+      '@dotlocker/ui-shared':
         specifier: workspace:*
         version: link:../../libs/ui-shared
       react:
@@ -100,13 +100,13 @@ importers:
 
   packages/apps/webui:
     dependencies:
-      '@multiterm/pluto-gds':
+      '@dotlocker/gds':
         specifier: workspace:*
         version: link:../../libs/gds
-      '@multiterm/pluto-ui':
+      '@dotlocker/ui':
         specifier: workspace:*
         version: link:../../libs/ui
-      '@multiterm/pluto-ui-shared':
+      '@dotlocker/ui-shared':
         specifier: workspace:*
         version: link:../../libs/ui-shared
       '@tanstack/react-form':
@@ -168,16 +168,16 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
-      '@multiterm/pluto-client':
+      '@dotlocker/client':
         specifier: workspace:*
         version: link:../client
-      '@multiterm/pluto-server':
+      '@dotlocker/server':
         specifier: workspace:*
         version: link:../server
-      '@multiterm/pluto-shared':
+      '@dotlocker/shared':
         specifier: workspace:*
         version: link:../shared
-      '@multiterm/pluto-webui':
+      '@dotlocker/webui':
         specifier: workspace:*
         version: link:../../apps/webui
       '@types/yargs':
@@ -186,7 +186,7 @@ importers:
 
   packages/libs/client:
     dependencies:
-      '@multiterm/pluto-shared':
+      '@dotlocker/shared':
         specifier: workspace:*
         version: link:../shared
       jiti:
@@ -217,12 +217,12 @@ importers:
 
   packages/libs/server:
     dependencies:
+      '@dotlocker/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@fastify/rate-limit':
         specifier: ^10.0.0
         version: 10.3.0
-      '@multiterm/pluto-shared':
-        specifier: workspace:*
-        version: link:../shared
       better-sqlite3:
         specifier: ^11.0.0
         version: 11.10.0
@@ -253,7 +253,7 @@ importers:
 
   packages/libs/ui:
     dependencies:
-      '@multiterm/pluto-gds':
+      '@dotlocker/gds':
         specifier: workspace:*
         version: link:../gds
       react:
@@ -272,10 +272,10 @@ importers:
 
   packages/libs/ui-shared:
     dependencies:
-      '@multiterm/pluto-gds':
+      '@dotlocker/gds':
         specifier: workspace:*
         version: link:../gds
-      '@multiterm/pluto-ui':
+      '@dotlocker/ui':
         specifier: workspace:*
         version: link:../ui
       react:

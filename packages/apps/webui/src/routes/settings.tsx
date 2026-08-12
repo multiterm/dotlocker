@@ -1,6 +1,6 @@
 import { createRoute } from "@tanstack/react-router";
-import { Card, Separator, Text } from "@multiterm/pluto-ui";
-import { ModeToggle, ThemeVariantSelect } from "@multiterm/pluto-ui-shared";
+import { Card, Separator, Text } from "@dotlocker/ui";
+import { ModeToggle, ThemeVariantSelect } from "@dotlocker/ui-shared";
 import { SettingsLayoutRoute } from "./settings-layout";
 import { useSession } from "~webui/lib/session";
 
@@ -43,7 +43,7 @@ function SettingsPage() {
           Appearance
         </Text>
         <Text className="mt-1 text-[var(--pl-muted)]">
-          Choose how the Dotbase dashboard looks on this device.
+          Choose how the dot.locker dashboard looks on this device.
         </Text>
         <Separator className="my-5" />
         <div className="flex flex-wrap items-center justify-between gap-5">

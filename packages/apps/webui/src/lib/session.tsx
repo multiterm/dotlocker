@@ -16,22 +16,22 @@ const SessionContext = createContext<SessionState | null>(null);
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [server, setServerRaw] = useState(() => {
-    localStorage.removeItem("pluto.server");
+    localStorage.removeItem("dotlocker.server");
     return "";
   });
-  const [org, setOrgRaw] = useState(() => localStorage.getItem("pluto.org") || "honeycluster");
+  const [org, setOrgRaw] = useState(() => localStorage.getItem("dotlocker.org") || "honeycluster");
   const [me, setMe] = useState<MeResponse | null>(null);
   const api = useMemo(() => new PlutoApi(server), [server]);
   const setServer = useCallback((value: string) => {
-    localStorage.setItem("pluto.server", value);
+    localStorage.setItem("dotlocker.server", value);
     setServerRaw(value);
   }, []);
   const setOrg = useCallback((value: string) => {
-    localStorage.setItem("pluto.org", value);
+    localStorage.setItem("dotlocker.org", value);
     setOrgRaw(value);
   }, []);
   const logout = useCallback(() => {
-    localStorage.removeItem("pluto.token");
+    localStorage.removeItem("dotlocker.token");
     setMe(null);
   }, []);
   const value = useMemo(

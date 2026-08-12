@@ -1,6 +1,6 @@
 import { createRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
-import { Skeleton } from "@multiterm/pluto-ui";
+import { Skeleton } from "@dotlocker/ui";
 import { AppRoute } from "./app";
 import { Dialog } from "~webui/components/Dialog";
 import { useSession } from "~webui/lib/session";

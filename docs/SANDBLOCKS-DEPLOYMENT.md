@@ -1,6 +1,6 @@
 # Sandblocks deployment
 
-The root [`sandblocks.yml`](../sandblocks.yml) deploys Pluto as one isolated service, exposes `/v1/health`, and runs a post-deployment HTTP acceptance check. It follows the same version-2 manifest and managed-environment model used by Honeycluster Portal.
+The root [`sandblocks.yml`](../sandblocks.yml) deploys dot.locker as one isolated service, exposes `/v1/health`, and runs a post-deployment HTTP acceptance check. It follows the same version-2 manifest and managed-environment model used by Honeycluster Portal.
 
 ## Local client configuration
 
@@ -30,19 +30,19 @@ The manifest intentionally contains no secret names, values, provider references
 
 Upload the complete contents of:
 
-- `.sandblocks/environments/preview.env` to the `pluto / preview` managed environment.
-- `.sandblocks/environments/production.env` to the `pluto / production` managed environment.
+- `.sandblocks/environments/preview.env` to the `dotlocker / preview` managed environment.
+- `.sandblocks/environments/production.env` to the `dotlocker / production` managed environment.
 
 Use the Sandblocks dashboard/API environment editor for the configured project. Values are write-only managed deployment data and are injected into setup, build, service, and check phases without entering source bundles or image layers.
 
-At minimum, Pluto needs `NODE_ENV`, `HOST`, `PORT`, `PLUTO_DATA_DIR`, and a durable `PLUTO_DATABASE_URL`. Add authentication, Keyname, webhook, and integration variables required by your installation to the local file before upload.
+At minimum, dot.locker needs `NODE_ENV`, `HOST`, `PORT`, `DOTLOCKER_DATA_DIR`, and a durable `DOTLOCKER_DATABASE_URL`. Add authentication, Keyname, webhook, and integration variables required by your installation to the local file before upload.
 
 ## Abby PostgreSQL layout
 
-Pluto uses the existing PostgreSQL 16 service on Abby rather than creating a database inside a Sandblocks sandbox:
+dot.locker uses the existing PostgreSQL 16 service on Abby rather than creating a database inside a Sandblocks sandbox:
 
 - Tailnet endpoint: `100.114.99.85:54329`.
-- Physical cluster data: `/vol/nvme/docker/pluto/postgres`.
+- Physical cluster data (legacy host path): `/vol/nvme/docker/pluto/postgres`.
 - Preview database/login: `pluto_preview`.
 - Production database/login: `pluto_prod`.
 - Root-only credential source on Abby: `/vol/nvme/docker/pluto/runtime-databases.env`.
@@ -51,7 +51,7 @@ PostgreSQL owns the physical directory and stores databases in internal OID path
 
 The local ignored files `.sandblocks/environments/preview.env` and `.sandblocks/environments/production.env` contain the corresponding connection URLs and are the source files to upload to Sandblocks.
 
-The preview was initialized from a transactionally consistent online backup of the legacy Abby SQLite database and its encrypted `data/files` objects. `scripts/workflow/sandblocks-start.mjs` supports this one-time initialization through the write-only `PLUTO_BOOTSTRAP_ARCHIVE_URL` managed environment value when its local data directory is empty. Remove that managed value and stop the temporary archive server immediately after a successful deployment. The current Abby Pluto app and original `/vol/nvme/docker/pluto/data/pluto.db*` files remain untouched.
+The preview was initialized from a transactionally consistent online backup of the legacy Abby SQLite database and its encrypted `data/files` objects. `scripts/workflow/sandblocks-start.mjs` supports this one-time initialization through the write-only `DOTLOCKER_BOOTSTRAP_ARCHIVE_URL` managed environment value when its local data directory is empty. Remove that managed value and stop the temporary archive server immediately after a successful deployment. The current legacy Abby Pluto app and original `/vol/nvme/docker/pluto/data/pluto.db*` files remain untouched.
 
 ## Register and deploy
 
@@ -79,4 +79,4 @@ SANDBLOCKS_ENVIRONMENT=preview pnpm sandblocks:destroy
 
 ## Persistence
 
-Sandblocks service filesystems are replaceable. PostgreSQL authentication metadata is durable on Abby through `PLUTO_DATABASE_URL`; current Pluto file metadata/version operations and uploaded runtime bytes still use the bootstrapped local SQLite database and `PLUTO_DATA_DIR`. Preview currently uses `/tmp/pluto-data` because the constrained service cannot create `/data`. Configure durable Sandblocks storage and complete Pluto's PostgreSQL file-metadata migration before treating either runtime as production-ready.
+Sandblocks service filesystems are replaceable. PostgreSQL authentication metadata is durable on Abby through `DOTLOCKER_DATABASE_URL`; current dot.locker file metadata/version operations and uploaded runtime bytes still use the bootstrapped local SQLite database and `DOTLOCKER_DATA_DIR`. Preview currently uses `/tmp/dotlocker-data` because the constrained service cannot create `/data`. Configure durable Sandblocks storage and complete dot.locker's PostgreSQL file-metadata migration before treating either runtime as production-ready.

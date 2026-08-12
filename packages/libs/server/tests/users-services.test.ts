@@ -9,7 +9,7 @@ import {
   mintToken,
   type DB,
 } from "../src/index.js";
-import { UnauthorizedError } from "@multiterm/pluto-shared";
+import { UnauthorizedError } from "@dotlocker/shared";
 
 describe("users and services", () => {
   let db: DB;

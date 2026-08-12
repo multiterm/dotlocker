@@ -1,17 +1,17 @@
 import type { HTMLAttributes } from "react";
-import { cn } from "@multiterm/pluto-ui";
-import wordmarkUrl from "./assets/dotbase-wordmark.svg";
-import markUrl from "./assets/dotbase-mark.svg";
+import { cn } from "@dotlocker/ui";
+import wordmarkUrl from "./assets/dotlocker-wordmark.svg";
+import markUrl from "./assets/dotlocker-mark.svg";
 
-export interface DotbaseBrandProps extends HTMLAttributes<HTMLSpanElement> {
+export interface DotlockerBrandProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: "wordmark" | "mark";
 }
 
-export function DotbaseBrand({ variant = "wordmark", className, ...props }: DotbaseBrandProps) {
+export function DotlockerBrand({ variant = "wordmark", className, ...props }: DotlockerBrandProps) {
   const mark = variant === "mark";
   return (
     <span
-      aria-label="Dotbase"
+      aria-label="dot.locker"
       className={cn("inline-flex shrink-0 items-center", className)}
       {...props}
     >
@@ -28,7 +28,7 @@ export function DotbaseBrand({ variant = "wordmark", className, ...props }: Dotb
   );
 }
 
-export const DotbaseWatermark = DotbaseBrand;
+export const DotlockerWatermark = DotlockerBrand;
 
-/** @deprecated Use DotbaseBrand. */
-export const PlutoWatermark = DotbaseBrand;
+/** @deprecated Use DotlockerBrand. */
+export const PlutoWatermark = DotlockerBrand;

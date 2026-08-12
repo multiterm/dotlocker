@@ -3,7 +3,7 @@
 import { createHmac, randomBytes, randomUUID } from "node:crypto";
 import type { DB } from "./db.js";
 import type { AuditEntry } from "./audit.js";
-import { InvalidPathError, NotFoundError } from "@multiterm/pluto-shared";
+import { InvalidPathError, NotFoundError } from "@dotlocker/shared";
 
 export interface WebhookRecord {
   readonly id: string;

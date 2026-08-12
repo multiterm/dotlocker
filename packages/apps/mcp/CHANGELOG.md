@@ -1,4 +1,4 @@
-# @multiterm/pluto-mcp changelog
+# @dotlocker/mcp changelog
 
 ## [0.1.0-b.1] - 2026-08-12
 

@@ -14,7 +14,7 @@ import {
   type ResolvedFramework,
 } from "./config.js";
 import { PlutoClient } from "./http.js";
-import { ConfigError, PlutoError } from "@multiterm/pluto-shared";
+import { ConfigError, PlutoError } from "@dotlocker/shared";
 
 interface CommonFlags extends CliFlags {
   readonly cwd?: string;
@@ -22,12 +22,12 @@ interface CommonFlags extends CliFlags {
 
 function commonOptions(yargs: Argv): Argv<CommonFlags> {
   return yargs
-    .option("server", { type: "string", describe: "Pluto server URL" })
-    .option("token", { type: "string", describe: "Bearer token (env: PLUTO_TOKEN)" })
+    .option("server", { type: "string", describe: "dot.locker server URL" })
+    .option("token", { type: "string", describe: "Bearer token (env: DOTLOCKER_TOKEN; legacy: PLUTO_TOKEN)" })
     .option("org", { type: "string" })
     .option("repo", { type: "string", describe: "Repository namespace under org" })
     .option("runtime", { type: "string", describe: "Runtime namespace (dev, preview, prod, ...)" })
-    .option("target-dir", { type: "string", describe: "Local directory to sync (default: .pluto)" })
+    .option("target-dir", { type: "string", describe: "Local directory to sync (default: .locker)" })
     .option("config", {
       type: "string",
       alias: "c",
@@ -45,7 +45,7 @@ async function resolve(flags: CommonFlags): Promise<ResolvedClient> {
 
 async function interactivePrompt(field: "server" | "token" | "org" | "repo"): Promise<string> {
   const meta = {
-    server: { message: "Pluto server URL", mask: false },
+    server: { message: "dot.locker server URL", mask: false },
     token: { message: "Auth token", mask: true },
     org: { message: "Organization", mask: false },
     repo: { message: "Repository", mask: false },
@@ -63,7 +63,7 @@ async function interactivePrompt(field: "server" | "token" | "org" | "repo"): Pr
 
 const initCommand: CommandModule<unknown, CommonFlags & { readonly force?: boolean }> = {
   command: "init",
-  describe: "Write pluto.config.json at the workspace root",
+  describe: "Write dotlocker.config.json at the workspace root",
   builder: (y) =>
     commonOptions(y).option("force", {
       type: "boolean",
@@ -71,7 +71,7 @@ const initCommand: CommandModule<unknown, CommonFlags & { readonly force?: boole
       describe: "Overwrite existing config file",
     }) as Argv<CommonFlags & { force?: boolean }>,
   handler: async (args) => {
-    const target = join(args.cwd ?? process.cwd(), "pluto.config.json");
+    const target = join(args.cwd ?? process.cwd(), "dotlocker.config.json");
     if (existsSync(target) && !args.force) {
       process.stderr.write(`'${target}' exists. Re-run with --force to overwrite.\n`);
       process.exit(1);
@@ -110,7 +110,7 @@ const stageCommand: CommandModule<
 > = {
   command: "stage [dir]",
   describe:
-    "Framework-only: stage files for the selected runtime locally without contacting Pluto cloud",
+    "Framework-only: stage files for the selected runtime locally without contacting dot.locker cloud",
   builder: (y) =>
     commonOptions(y)
       .positional("dir", {
@@ -150,7 +150,7 @@ const execCommand: CommandModule<unknown, CommonFlags> = {
     const rest = args._.map(String).filter((a) => a !== "exec");
     const [bin, ...rest2] = rest;
     if (!bin) {
-      process.stderr.write("usage: pluto exec -- <command> [args...]\n");
+      process.stderr.write("usage: dotlocker exec -- <command> [args...]\n");
       process.exit(2);
     }
     const r = await resolve(args);
@@ -234,17 +234,17 @@ const loginCommand: CommandModule<
       CommonFlags & { email?: string; password?: string; totp?: string }
     >,
   handler: async (args) => {
-    const server = args.server ?? process.env.PLUTO_SERVER;
-    const org = args.org ?? process.env.PLUTO_ORG;
-    const email = args.email ?? process.env.PLUTO_EMAIL;
-    const password = args.password ?? process.env.PLUTO_PASSWORD;
+    const server = args.server ?? process.env.DOTLOCKER_SERVER ?? process.env.PLUTO_SERVER;
+    const org = args.org ?? process.env.DOTLOCKER_ORG ?? process.env.PLUTO_ORG;
+    const email = args.email ?? process.env.DOTLOCKER_EMAIL ?? process.env.PLUTO_EMAIL;
+    const password = args.password ?? process.env.DOTLOCKER_PASSWORD ?? process.env.PLUTO_PASSWORD;
     if (!server || !org || !email || !password)
       throw new ConfigError(
         "PLUTO_CONFIG_MISSING",
-        "login requires --server/PLUTO_SERVER, --org/PLUTO_ORG, --email/PLUTO_EMAIL, and --password/PLUTO_PASSWORD",
+        "login requires --server/DOTLOCKER_SERVER, --org/DOTLOCKER_ORG, --email/DOTLOCKER_EMAIL, and --password/DOTLOCKER_PASSWORD",
       );
     const client = new PlutoClient({ server, token: "" });
-    const res = await client.login(email, password, org, args.totp ?? process.env.PLUTO_TOTP);
+    const res = await client.login(email, password, org, args.totp ?? process.env.DOTLOCKER_TOTP ?? process.env.PLUTO_TOTP);
     process.stdout.write(`${res.token}\n`);
   },
 };
@@ -362,7 +362,7 @@ interface RuntimeFile {
   readonly specificity: number;
 }
 
-const DETAILS_FILE = "pluto-details.json";
+const DETAILS_FILE = "locker-details.json";
 
 function listRuntimeFiles(
   root: string,
@@ -465,6 +465,7 @@ function writeDetails(
 
 function currentUser(): string {
   return (
+    process.env.DOTLOCKER_USER ??
     process.env.PLUTO_USER ??
     process.env.GIT_AUTHOR_EMAIL ??
     process.env.USER ??

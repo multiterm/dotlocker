@@ -1,6 +1,6 @@
 import { Link, Outlet, useMatches, useNavigate } from "@tanstack/react-router";
-import { Badge, Button, ScrollArea, Text, cn } from "@multiterm/pluto-ui";
-import { DotbaseBrand, ModeToggle, ThemeVariantSelect } from "@multiterm/pluto-ui-shared";
+import { Badge, Button, ScrollArea, Text, cn } from "@dotlocker/ui";
+import { DotlockerBrand, ModeToggle, ThemeVariantSelect } from "@dotlocker/ui-shared";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Dialog } from "~webui/components/Dialog";
 import { useSession } from "~webui/lib/session";
@@ -35,7 +35,7 @@ const titles: Record<string, [string, string]> = {
   "/repos": ["Repositories", "Manage projects and runtime repositories."],
   "/users": ["Users", "Provision accounts for Keyname sign-in."],
   "/tokens": ["API Keys", "Manage scoped keys and their access rights."],
-  "/logs": ["Admin logs", "Review all recorded Dotbase organization events."],
+  "/logs": ["Admin logs", "Review all recorded dot.locker organization events."],
 };
 
 const sideLink =
@@ -242,14 +242,14 @@ export function AppShell() {
   const matches = useMatches();
   const pathname = matches.at(-1)?.pathname ?? "/";
   const settingsPage = matches.some((match) => match.staticData.shellLayout === "secondary");
-  const [title, subtitle] = titles[pathname] ?? ["Dotbase", "Runtime-aware file infrastructure."];
+  const [title, subtitle] = titles[pathname] ?? ["dot.locker", "Runtime-aware file infrastructure."];
   const [loggingOut, setLoggingOut] = useState(false);
   const [switchingOrg, setSwitchingOrg] = useState(false);
   const [addOrgOpen, setAddOrgOpen] = useState(false);
   const [newOrgName, setNewOrgName] = useState("");
   const [orgError, setOrgError] = useState("");
   const [collapsed, setCollapsed] = useState(
-    () => localStorage.getItem("pluto.sidebar.collapsed") === "1",
+    () => localStorage.getItem("dotlocker.sidebar.collapsed") === "1",
   );
   const initials = (me?.token.userEmail ?? "P").slice(0, 2).toUpperCase();
 
@@ -313,7 +313,7 @@ export function AppShell() {
   const toggleSidebar = () => {
     setCollapsed((current) => {
       const next = !current;
-      localStorage.setItem("pluto.sidebar.collapsed", next ? "1" : "0");
+      localStorage.setItem("dotlocker.sidebar.collapsed", next ? "1" : "0");
       return next;
     });
   };
@@ -333,8 +333,8 @@ export function AppShell() {
               collapsed ? "lg:justify-center lg:px-2" : "px-5",
             )}
           >
-            <DotbaseBrand className={cn("text-[var(--pl-text)]", collapsed && "lg:hidden")} />
-            {collapsed && <DotbaseBrand variant="mark" className="hidden lg:inline-flex" />}
+            <DotlockerBrand className={cn("text-[var(--pl-text)]", collapsed && "lg:hidden")} />
+            {collapsed && <DotlockerBrand variant="mark" className="hidden lg:inline-flex" />}
           </div>
 
           <div
@@ -383,10 +383,10 @@ export function AppShell() {
             <div className="mx-3 mb-4 rounded-[var(--pl-radius-sm)] border border-[var(--pl-line)] bg-[var(--pl-surface)] p-3.5 max-lg:hidden">
               <Text variant="title">Need help?</Text>
               <Text className="mt-1 text-xs leading-relaxed text-[var(--pl-muted)]">
-                Find setup guides and API references in Dotbase documentation.
+                Find setup guides and API references in dot.locker documentation.
               </Text>
               <a
-                href="https://github.com/super-repo/pluto"
+                href="https://github.com/multiterm/dotlocker"
                 className="mt-3 inline-flex text-xs font-semibold text-[var(--pl-primary)] no-underline hover:underline"
               >
                 View documentation →
@@ -470,11 +470,11 @@ export function AppShell() {
       <footer className="z-40 flex min-h-12 w-full flex-wrap items-center justify-between gap-2 border-t border-[var(--pl-line)] bg-[color-mix(in_srgb,var(--pl-elevated)_96%,transparent)] px-6 py-3 text-[11px] text-[var(--pl-subtle)] backdrop-blur-lg max-sm:px-4">
         <div className="flex items-center gap-3">
           <span className="font-semibold text-[var(--pl-muted)]">
-            Dotbase Runtime Infrastructure
+            dot.locker Runtime Infrastructure
           </span>
           <span>v0.2.5</span>
         </div>
-        <span>© {new Date().getFullYear()} Dotbase</span>
+        <span>© {new Date().getFullYear()} dot.locker</span>
         <span className="inline-flex items-center gap-2 text-[var(--pl-muted)]">
           <i className="h-2 w-2 rounded-full bg-[var(--pl-success)]" />
           All systems operational

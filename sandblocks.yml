@@ -1,5 +1,5 @@
 version: 2
-name: pluto
+name: dotlocker
 
 workspace:
   image: node:22-bookworm
@@ -20,7 +20,7 @@ tasks:
       - packages/libs/ui-shared/dist
 
 services:
-  pluto:
+  dotlocker:
     root: packages/libs/cli
     command: [node, ../../../scripts/workflow/sandblocks-start.mjs]
     port: 3000
@@ -28,7 +28,7 @@ services:
     resources: { memory: 2g, cpus: "2" }
 
 checks:
-  pluto-preview:
+  dotlocker-health:
     image: ./docker/images/Dockerfile.sandblocks-e2e
     timeout: 2m
     resources: { memory: 512m, cpus: "1" }
@@ -36,13 +36,19 @@ checks:
 environments:
   preview:
     pipeline: [build]
-    services: [pluto]
-    checks: [pluto-preview]
+    services: [dotlocker]
+    checks: [dotlocker-health]
     routing:
+      baseDomain: dotlocker.dev
+      stableDomains:
+        dotlocker: dotlocker.dev
       sso: true
   production:
     pipeline: [build]
-    services: [pluto]
-    checks: [pluto-preview]
+    services: [dotlocker]
+    checks: [dotlocker-health]
     routing:
+      baseDomain: dotlocker.sh
+      stableDomains:
+        dotlocker: dotlocker.sh
       sso: true

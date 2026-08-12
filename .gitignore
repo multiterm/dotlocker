@@ -11,3 +11,6 @@ dist
 
 config/release.config.local.mjs
 release.config.local.mjs
+
+.locker/
+.locker.local.json

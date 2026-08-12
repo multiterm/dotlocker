@@ -1,1 +1,1 @@
-export * from "@multiterm/pluto-server";
+export * from "@dotlocker/server";

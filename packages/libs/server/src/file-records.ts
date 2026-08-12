@@ -2,7 +2,7 @@
 
 import { createHash } from "node:crypto";
 import type { DB } from "./db.js";
-import { normalizePath } from "@multiterm/pluto-shared";
+import { normalizePath } from "@dotlocker/shared";
 
 export interface FileRecord {
   readonly path: string;

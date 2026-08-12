@@ -4,7 +4,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, resolve } from "node:path";
 import { createJiti } from "jiti";
 import { z } from "zod";
-import { ConfigError } from "@multiterm/pluto-shared";
+import { ConfigError } from "@dotlocker/shared";
 
 const NAME_RE = /^[a-z0-9][a-z0-9._-]{0,62}$/;
 
@@ -21,7 +21,7 @@ export const clientConfigSchema = z.object({
   runtimeMap: z.record(z.string(), z.string()).optional(),
   token: z
     .never({
-      error: "'token' must not be set in config files; use PLUTO_TOKEN env var or --token flag",
+      error: "'token' must not be set in config files; use DOTLOCKER_TOKEN env var or --token flag",
     })
     .optional(),
 });
@@ -85,6 +85,12 @@ export function discoverConfigFile(opts: ConfigDiscoveryOptions): string | null 
     return existsSync(abs) ? abs : null;
   }
   const candidates = [
+    "dotlocker.config.ts",
+    "dotlocker.config.mjs",
+    "dotlocker.config.js",
+    "dotlocker.config.json",
+    ".locker.json",
+    // Legacy Pluto names remain readable for one migration cycle.
     "pluto.config.ts",
     "pluto.config.mjs",
     "pluto.config.js",
@@ -107,7 +113,7 @@ export function discoverConfigFile(opts: ConfigDiscoveryOptions): string | null 
 export function discoverLocalSecretFile(cwd: string): string | null {
   let dir = resolve(cwd);
   for (let i = 0; i < 32; i++) {
-    for (const name of [".pluto.local.json", ".pluto"]) {
+    for (const name of [".locker.local.json", ".locker", ".pluto.local.json", ".pluto"]) {
       const p = resolve(dir, name);
       if (existsSync(p) && statSync(p).isFile()) return p;
     }
@@ -221,8 +227,9 @@ export async function resolveFramework(
       sources[field] = "flag";
       continue;
     }
-    const envName = `PLUTO_${field.toUpperCase()}`;
-    const fromEnv = env[envName];
+    const envName = `DOTLOCKER_${field.toUpperCase()}`;
+    const legacyEnvName = `PLUTO_${field.toUpperCase()}`;
+    const fromEnv = env[envName] ?? env[legacyEnvName];
     if (fromEnv) {
       out[field] = fromEnv;
       sources[field] = "env";
@@ -262,7 +269,7 @@ export async function resolveFramework(
     }
     throw new ConfigError(
       "PLUTO_CONFIG_MISSING",
-      `field '${field}' is required (set --${field}, PLUTO_${field.toUpperCase()}, or add to ${configPath ?? "pluto.config.json"})`,
+      `field '${field}' is required (set --${field}, DOTLOCKER_${field.toUpperCase()}, or add to ${configPath ?? "dotlocker.config.json"})`,
       field,
     );
   }
@@ -270,6 +277,7 @@ export async function resolveFramework(
   const detectedRuntime = detectRuntime(fileConfig, env);
   const runtime =
     opts.flags.runtime ??
+    env.DOTLOCKER_RUNTIME ??
     env.PLUTO_RUNTIME ??
     fileConfig.runtime ??
     localSecret.runtime ??
@@ -278,7 +286,7 @@ export async function resolveFramework(
   out.runtime = runtime;
   sources.runtime = opts.flags.runtime
     ? "flag"
-    : env.PLUTO_RUNTIME
+    : env.DOTLOCKER_RUNTIME || env.PLUTO_RUNTIME
       ? "env"
       : fileConfig.runtime || localSecret.runtime || detectedRuntime
         ? "config"
@@ -286,14 +294,15 @@ export async function resolveFramework(
 
   const targetDir =
     opts.flags.targetDir ??
+    env.DOTLOCKER_TARGET_DIR ??
     env.PLUTO_TARGET_DIR ??
     fileConfig.targetDir ??
     localSecret.targetDir ??
-    ".pluto";
+    ".locker";
   out.targetDir = targetDir;
   sources.targetDir = opts.flags.targetDir
     ? "flag"
-    : env.PLUTO_TARGET_DIR
+    : env.DOTLOCKER_TARGET_DIR || env.PLUTO_TARGET_DIR
       ? "env"
       : fileConfig.targetDir || localSecret.targetDir
         ? "config"
@@ -329,7 +338,7 @@ function runtimeNames(config: ClientConfig, current: string): readonly string[] 
 
 function detectRuntime(config: ClientConfig, env: NodeJS.ProcessEnv): string | null {
   if (config.autoDetect === false) return null;
-  const raw = env.PLUTO_RUNTIME_ENV ?? env.NODE_ENV;
+  const raw = env.DOTLOCKER_RUNTIME_ENV ?? env.PLUTO_RUNTIME_ENV ?? env.NODE_ENV;
   if (!raw) return null;
   const defaults: Record<string, string> = {
     production: "prod",

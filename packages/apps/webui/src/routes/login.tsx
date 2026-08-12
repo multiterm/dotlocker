@@ -1,6 +1,6 @@
 import { createRoute, useNavigate } from "@tanstack/react-router";
-import { Button } from "@multiterm/pluto-ui";
-import { DotbaseBrand, ModeToggle, ThemeVariantSelect } from "@multiterm/pluto-ui-shared";
+import { Button } from "@dotlocker/ui";
+import { DotlockerBrand, ModeToggle, ThemeVariantSelect } from "@dotlocker/ui-shared";
 import { useState } from "react";
 import { RootRoute } from "./root";
 import { useSession } from "~webui/lib/session";
@@ -70,9 +70,9 @@ function LoginPage() {
       <main className="relative z-[1] w-[min(440px,100%)] rounded-[var(--pl-radius-md)] border border-[var(--pl-line)] bg-[var(--pl-elevated)] px-7 py-8 shadow-[0_18px_55px_rgb(0_0_0/.12)] sm:px-9 sm:py-9">
         <div className="mb-7 text-center">
           <div className="mb-6 flex justify-center">
-            <DotbaseBrand className="text-[var(--pl-text)]" />
+            <DotlockerBrand className="text-[var(--pl-text)]" />
           </div>
-          <h1 className="m-0 text-xl font-semibold tracking-[-.025em]">Sign in to Dotbase</h1>
+          <h1 className="m-0 text-xl font-semibold tracking-[-.025em]">Sign in to dot.locker</h1>
           <p className="mx-auto mt-2 max-w-sm text-[13px] leading-5 text-[var(--pl-muted)]">
             Secure file infrastructure for teams, runtimes, and autonomous agents.
           </p>
@@ -102,7 +102,7 @@ function LoginPage() {
           <KeynameMark />
         </div>
         <p className="mt-5 border-t border-[var(--pl-line)] pt-4 text-center text-[11px] leading-4 text-[var(--pl-subtle)]">
-          Keyname handles credentials, passkeys, providers, and MFA. Dotbase never receives your password.
+          Keyname handles credentials, passkeys, providers, and MFA. dot.locker never receives your password.
         </p>
       </main>
     </div>
