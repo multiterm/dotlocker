@@ -37,6 +37,20 @@ Use the Sandblocks dashboard/API environment editor for the configured project. 
 
 At minimum, Pluto needs `NODE_ENV`, `HOST`, `PORT`, `PLUTO_DATA_DIR`, and a durable `PLUTO_DATABASE_URL`. Add authentication, Keyname, webhook, and integration variables required by your installation to the local file before upload.
 
+## Abby PostgreSQL layout
+
+Pluto uses the existing PostgreSQL 16 service on Abby rather than creating a database inside a Sandblocks sandbox:
+
+- Tailnet endpoint: `100.114.99.85:54329`.
+- Physical cluster data: `/vol/nvme/docker/pluto/postgres`.
+- Preview database/login: `pluto_preview`.
+- Production database/login: `pluto_prod`.
+- Root-only credential source on Abby: `/vol/nvme/docker/pluto/runtime-databases.env`.
+
+PostgreSQL owns the physical directory and stores databases in internal OID paths, so preview and production are isolated as separate databases and roles—not manually managed subfolders. Do not rename or edit anything below the PostgreSQL data directory.
+
+The local ignored files `.sandblocks/environments/preview.env` and `.sandblocks/environments/production.env` contain the corresponding connection URLs and are the source files to upload to Sandblocks. The existing legacy `pluto` database and `/vol/nvme/docker/pluto/data/pluto.db*` SQLite files are not used by the new Sandblocks runtimes.
+
 ## Register and deploy
 
 ```sh
@@ -63,4 +77,4 @@ SANDBLOCKS_ENVIRONMENT=preview pnpm sandblocks:destroy
 
 ## Persistence
 
-Sandblocks service filesystems are replaceable. Configure PostgreSQL through `PLUTO_DATABASE_URL` and use a project-managed durable database. Do not depend on `/data` surviving sandbox replacement unless the target Sandblocks project explicitly attaches durable storage.
+Sandblocks service filesystems are replaceable. PostgreSQL metadata is durable on Abby through `PLUTO_DATABASE_URL`; uploaded runtime file bytes still use `PLUTO_DATA_DIR`. Do not depend on `/data` surviving sandbox replacement unless the target Sandblocks project explicitly attaches durable storage. Configure durable Sandblocks storage for `/data` before treating either runtime as production-ready.
