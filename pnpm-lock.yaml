@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@multiterm/release':
-        specifier: 0.4.1-b.18
-        version: 0.4.1-b.18
+        specifier: 0.4.1-b.19
+        version: 0.4.1-b.19
       '@multiterm/rune':
         specifier: 0.4.1-b.15
         version: 0.4.1-b.15
@@ -39,52 +39,6 @@ importers:
         specifier: ^4.1.6
         version: 4.1.8(@types/node@25.9.1)(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
 
-  packages/apps/cli:
-    dependencies:
-      '@fastify/rate-limit':
-        specifier: ^10.0.0
-        version: 10.3.0
-      better-sqlite3:
-        specifier: ^11.0.0
-        version: 11.10.0
-      drizzle-orm:
-        specifier: ^0.45.2
-        version: 0.45.2(@types/better-sqlite3@7.6.13)(better-sqlite3@11.10.0)(postgres@3.4.9)
-      fastify:
-        specifier: ^5.0.0
-        version: 5.8.5
-      jiti:
-        specifier: ^2.7.0
-        version: 2.7.0
-      postgres:
-        specifier: ^3.4.9
-        version: 3.4.9
-      prompts:
-        specifier: ^2.4.2
-        version: 2.4.2
-      yargs:
-        specifier: ^17.7.0
-        version: 17.7.2
-      zod:
-        specifier: ^4.4.3
-        version: 4.4.3
-    devDependencies:
-      '@multiterm/pluto-client':
-        specifier: workspace:*
-        version: link:../../libs/client
-      '@multiterm/pluto-server':
-        specifier: workspace:*
-        version: link:../../libs/server
-      '@multiterm/pluto-shared':
-        specifier: workspace:*
-        version: link:../../libs/shared
-      '@multiterm/pluto-webui':
-        specifier: workspace:*
-        version: link:../webui
-      '@types/yargs':
-        specifier: ^17.0.33
-        version: 17.0.35
-
   packages/apps/mcp:
     dependencies:
       '@modelcontextprotocol/sdk':
@@ -92,7 +46,7 @@ importers:
         version: 1.30.0(zod@4.4.3)
       '@multiterm/pluto':
         specifier: workspace:*
-        version: link:../cli
+        version: link:../../libs/cli
       zod:
         specifier: ^4.0.0
         version: 4.4.3
@@ -177,6 +131,52 @@ importers:
       tailwindcss:
         specifier: ^4.1.17
         version: 4.3.2
+
+  packages/libs/cli:
+    dependencies:
+      '@fastify/rate-limit':
+        specifier: ^10.0.0
+        version: 10.3.0
+      better-sqlite3:
+        specifier: ^11.0.0
+        version: 11.10.0
+      drizzle-orm:
+        specifier: ^0.45.2
+        version: 0.45.2(@types/better-sqlite3@7.6.13)(better-sqlite3@11.10.0)(postgres@3.4.9)
+      fastify:
+        specifier: ^5.0.0
+        version: 5.8.5
+      jiti:
+        specifier: ^2.7.0
+        version: 2.7.0
+      postgres:
+        specifier: ^3.4.9
+        version: 3.4.9
+      prompts:
+        specifier: ^2.4.2
+        version: 2.4.2
+      yargs:
+        specifier: ^17.7.0
+        version: 17.7.2
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      '@multiterm/pluto-client':
+        specifier: workspace:*
+        version: link:../client
+      '@multiterm/pluto-server':
+        specifier: workspace:*
+        version: link:../server
+      '@multiterm/pluto-shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@multiterm/pluto-webui':
+        specifier: workspace:*
+        version: link:../../apps/webui
+      '@types/yargs':
+        specifier: ^17.0.33
+        version: 17.0.35
 
   packages/libs/client:
     dependencies:
@@ -516,8 +516,8 @@ packages:
   '@multiterm/release-sdk@0.4.1-b.18':
     resolution: {integrity: sha512-vH0zJvuj7KQY0vu/Yfy4GONzpz5flNqLL7BB/csNTEjoBkZgb081fPhFCicIRp/etRZTczHtvlWAsaN67CEqyw==}
 
-  '@multiterm/release@0.4.1-b.18':
-    resolution: {integrity: sha512-50HsyRLfQSbUvFE80z50L2bTfgl2tUDTo/7mHaHn/2URTam5qc3JOmLD3K0rhxfsNVSTNnu1pby+YmcBnXPzgg==}
+  '@multiterm/release@0.4.1-b.19':
+    resolution: {integrity: sha512-FiCdoMvpUHZz8wX/r+2qeeDr4V8YXszPFhGpIXZ4WT1W9lDfv/0kK7kpLipbisKt6RkJdquirIu5Ea/NKQaPvg==}
     hasBin: true
 
   '@multiterm/rune@0.4.1-b.15':
@@ -2497,7 +2497,7 @@ snapshots:
 
   '@multiterm/release-sdk@0.4.1-b.18': {}
 
-  '@multiterm/release@0.4.1-b.18':
+  '@multiterm/release@0.4.1-b.19':
     dependencies:
       '@multiterm/release-sdk': 0.4.1-b.18
 

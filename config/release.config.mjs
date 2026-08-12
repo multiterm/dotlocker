@@ -1,6 +1,6 @@
 export default {
   versioning: 'independent',
-  packages: ['packages/apps/cli', 'packages/apps/mcp'],
+  packages: ['packages/apps/mcp', 'packages/libs/cli'],
   branches: ['develop', 'main'],
   branchChannels: { develop: 'beta', main: 'latest' },
   prereleaseIds: { beta: 'b' },

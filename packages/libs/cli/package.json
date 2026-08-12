@@ -45,7 +45,7 @@
       "build": [
         "vite build -c configs/vite.config.ts",
         "rm -rf dist/webui",
-        "cp -R ../webui/dist dist/webui"
+        "cp -R ../../apps/webui/dist dist/webui"
       ]
     }
   },
