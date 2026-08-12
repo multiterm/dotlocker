@@ -40,8 +40,6 @@ environments:
     checks: [dotlocker-health]
     routing:
       baseDomain: dotlocker.dev
-      stableDomains:
-        dotlocker: preview.dotlocker.dev
       sso: true
   production:
     pipeline: [build]

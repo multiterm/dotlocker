@@ -71,7 +71,7 @@ SANDBLOCKS_ENVIRONMENT=production pnpm sandblocks:status
 sandblocks sandbox promote --project "$SANDBLOCKS_PROJECT_ID" --sandbox <sandbox-id>
 ```
 
-Use the candidate URL from `status` for final browser and health verification before promotion. `preview.dotlocker.dev` remains the stable non-production alias; neither production domain moves merely because checks pass.
+Use the immutable candidate URL from `status` for final browser and health verification before promotion. Preview deployments have no stable alias; neither production domain moves merely because checks pass.
 
 Redeploy or destroy the selected environment with:
 
