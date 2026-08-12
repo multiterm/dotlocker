@@ -2,6 +2,10 @@ packages:
   - packages/libs/*
   - packages/apps/*
 
+# Multiterm beta packages are pinned and integrity-locked but intentionally
+# consumed immediately by this integration workspace.
+minimumReleaseAge: 0
+
 allowBuilds:
   better-sqlite3: true
   esbuild: true

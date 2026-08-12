@@ -25,6 +25,11 @@ const tableMap = [
   ["runtime_grants", "runtime_grants"],
   ["file_records", "file_records"],
   ["audit", "audit"],
+  ["runtime_versions", "runtime_versions"],
+  ["runtime_version_files", "runtime_version_files"],
+  ["runtime_heads", "runtime_heads"],
+  ["webhook_endpoints", "webhook_endpoints"],
+  ["webhook_deliveries", "webhook_deliveries"],
 ] as const;
 
 const columns: Record<(typeof tableMap)[number][0], readonly string[]> = {
@@ -70,6 +75,18 @@ const columns: Record<(typeof tableMap)[number][0], readonly string[]> = {
     "deleted_at",
   ],
   audit: ["id", "ts", "org", "token_id", "action", "path", "status", "ip", "warning"],
+  runtime_versions: [
+    "hash", "short_hash", "tree_hash", "parent_hash", "org", "repo", "runtime", "created_at", "created_by",
+  ],
+  runtime_version_files: ["version_hash", "path", "sha256", "size"],
+  runtime_heads: ["org", "repo", "runtime", "version_hash"],
+  webhook_endpoints: [
+    "id", "org", "name", "url", "events", "signing_secret", "enabled", "created_at", "updated_at",
+    "last_delivered_at", "last_status",
+  ],
+  webhook_deliveries: [
+    "id", "webhook_id", "event", "payload", "status", "response_status", "error", "created_at", "completed_at",
+  ],
 };
 
 try {
@@ -84,6 +101,10 @@ try {
 
   await sql.begin(async (tx) => {
     for (const [sourceTable, targetTable] of tableMap) {
+      if (!sourceTableExists(sourceTable)) {
+        process.stdout.write(`${sourceTable}: source table absent; skipped\n`);
+        continue;
+      }
       const selectedColumns = columns[sourceTable];
       const rows = source
         .prepare(`SELECT ${selectedColumns.map(quoteIdentifier).join(", ")} FROM ${quoteIdentifier(sourceTable)}`)
@@ -102,6 +123,7 @@ try {
   });
 
   for (const [sourceTable, targetTable] of tableMap) {
+    if (!sourceTableExists(sourceTable)) continue;
     const sourceCount = Number(
       (source.prepare(`SELECT COUNT(*) AS count FROM ${quoteIdentifier(sourceTable)}`).get() as { count: number }).count,
     );
@@ -116,6 +138,14 @@ try {
 } finally {
   source.close();
   await sql.end();
+}
+
+function sourceTableExists(table: string): boolean {
+  return Boolean(
+    source
+      .prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?")
+      .get(table),
+  );
 }
 
 function quoteIdentifier(value: string): string {

@@ -3,7 +3,7 @@ name: pluto
 
 workspace:
   image: node:22-bookworm
-  setup: [corepack, pnpm, install, --frozen-lockfile]
+  setup: [corepack, pnpm, install, --frozen-lockfile, --config.minimumReleaseAge=0]
 
 tasks:
   build:
@@ -22,7 +22,7 @@ tasks:
 services:
   pluto:
     root: packages/libs/cli
-    command: [corepack, pnpm, exec, pluto, serve]
+    command: [node, ../../../scripts/workflow/sandblocks-start.mjs]
     port: 3000
     health: /v1/health
     resources: { memory: 2g, cpus: "2" }

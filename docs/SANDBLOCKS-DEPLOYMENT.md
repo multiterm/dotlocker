@@ -49,7 +49,9 @@ Pluto uses the existing PostgreSQL 16 service on Abby rather than creating a dat
 
 PostgreSQL owns the physical directory and stores databases in internal OID paths, so preview and production are isolated as separate databases and roles—not manually managed subfolders. Do not rename or edit anything below the PostgreSQL data directory.
 
-The local ignored files `.sandblocks/environments/preview.env` and `.sandblocks/environments/production.env` contain the corresponding connection URLs and are the source files to upload to Sandblocks. The existing legacy `pluto` database and `/vol/nvme/docker/pluto/data/pluto.db*` SQLite files are not used by the new Sandblocks runtimes.
+The local ignored files `.sandblocks/environments/preview.env` and `.sandblocks/environments/production.env` contain the corresponding connection URLs and are the source files to upload to Sandblocks.
+
+The preview was initialized from a transactionally consistent online backup of the legacy Abby SQLite database and its encrypted `data/files` objects. `scripts/workflow/sandblocks-start.mjs` supports this one-time initialization through the write-only `PLUTO_BOOTSTRAP_ARCHIVE_URL` managed environment value when its local data directory is empty. Remove that managed value and stop the temporary archive server immediately after a successful deployment. The current Abby Pluto app and original `/vol/nvme/docker/pluto/data/pluto.db*` files remain untouched.
 
 ## Register and deploy
 
@@ -77,4 +79,4 @@ SANDBLOCKS_ENVIRONMENT=preview pnpm sandblocks:destroy
 
 ## Persistence
 
-Sandblocks service filesystems are replaceable. PostgreSQL metadata is durable on Abby through `PLUTO_DATABASE_URL`; uploaded runtime file bytes still use `PLUTO_DATA_DIR`. Do not depend on `/data` surviving sandbox replacement unless the target Sandblocks project explicitly attaches durable storage. Configure durable Sandblocks storage for `/data` before treating either runtime as production-ready.
+Sandblocks service filesystems are replaceable. PostgreSQL authentication metadata is durable on Abby through `PLUTO_DATABASE_URL`; current Pluto file metadata/version operations and uploaded runtime bytes still use the bootstrapped local SQLite database and `PLUTO_DATA_DIR`. Preview currently uses `/tmp/pluto-data` because the constrained service cannot create `/data`. Configure durable Sandblocks storage and complete Pluto's PostgreSQL file-metadata migration before treating either runtime as production-ready.
