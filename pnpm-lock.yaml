@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@multiterm/rune':
-        specifier: file:../rune/multiterm-rune-0.4.1-b.15.tgz
-        version: file:../rune/multiterm-rune-0.4.1-b.15.tgz
+        specifier: 0.4.1-b.15
+        version: 0.4.1-b.15
       '@types/node':
         specifier: ^25.8.0
         version: 25.9.1
@@ -475,9 +475,8 @@ packages:
     resolution: {integrity: sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==}
     engines: {node: '>=8'}
 
-  '@multiterm/rune@file:../rune/multiterm-rune-0.4.1-b.15.tgz':
-    resolution: {integrity: sha512-paKP+emnBtiG/hIma00p2f5dwvq+bphQhdXSfKmvUI+T5mXAnwlvQijbTeL1xBiF0QXOY/FO+hmJWMRcNn6KhQ==, tarball: file:../rune/multiterm-rune-0.4.1-b.15.tgz}
-    version: 0.4.1-b.15
+  '@multiterm/rune@0.4.1-b.15':
+    resolution: {integrity: sha512-paKP+emnBtiG/hIma00p2f5dwvq+bphQhdXSfKmvUI+T5mXAnwlvQijbTeL1xBiF0QXOY/FO+hmJWMRcNn6KhQ==}
     hasBin: true
 
   '@napi-rs/wasm-runtime@1.1.4':
@@ -2166,7 +2165,7 @@ snapshots:
 
   '@lukeed/ms@2.0.2': {}
 
-  '@multiterm/rune@file:../rune/multiterm-rune-0.4.1-b.15.tgz':
+  '@multiterm/rune@0.4.1-b.15':
     dependencies:
       '@anthropic-ai/sdk': 0.39.0
       tsx: 4.23.12
