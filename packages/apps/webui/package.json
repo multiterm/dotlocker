@@ -1,0 +1,36 @@
+{
+  "name": "@multiterm/pluto-webui",
+  "version": "0.2.5",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "rune build",
+    "dev": "vite -c configs/vite.config.ts",
+    "test": "echo \"pluto-webui: e2e is run separately (playwright)\"",
+    "typecheck": "rune typecheck",
+    "lint": "rune lint",
+    "format": "rune format"
+  },
+  "rune": {
+    "extends": "../../../configs/rune.config.ts",
+    "scripts": {
+      "build": ["vite build -c configs/vite.config.ts"]
+    }
+  },
+  "dependencies": {
+    "@multiterm/pluto-gds": "workspace:*",
+    "@multiterm/pluto-ui": "workspace:*",
+    "@multiterm/pluto-ui-shared": "workspace:*",
+    "@tanstack/react-form": "^1.33.0",
+    "@tanstack/react-router": "^1.169.2",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@tailwindcss/vite": "^4.1.17",
+    "@vitejs/plugin-react": "^6.0.2",
+    "tailwindcss": "^4.1.17"
+  }
+}

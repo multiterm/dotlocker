@@ -1,0 +1,32 @@
+{
+  "name": "@multiterm/pluto-site",
+  "version": "0.2.5",
+  "private": true,
+  "type": "module",
+  "description": "Pluto marketing site.",
+  "scripts": {
+    "build": "rune build",
+    "dev": "vite -c configs/vite.config.ts",
+    "typecheck": "rune typecheck",
+    "lint": "rune lint",
+    "format": "rune format"
+  },
+  "rune": {
+    "extends": "../../../configs/rune.config.ts",
+    "scripts": { "build": ["vite build -c configs/vite.config.ts"] }
+  },
+  "dependencies": {
+    "@multiterm/pluto-gds": "workspace:*",
+    "@multiterm/pluto-ui": "workspace:*",
+    "@multiterm/pluto-ui-shared": "workspace:*",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.17",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "tailwindcss": "^4.1.17"
+  }
+}

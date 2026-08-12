@@ -1,0 +1,56 @@
+@layer base {
+  [data-mode='light'],
+  [data-theme='Aurora'][data-mode='light'] {
+    --pltgds-color-base1: #f6f8ff;
+    --pltgds-color-base2: #eaf0ff;
+    --pltgds-color-surface1: rgb(255 255 255 / .78);
+    --pltgds-color-surface2: rgb(255 255 255 / .68);
+    --pltgds-color-surface3: #ffffff;
+    --pltgds-color-border1: rgb(21 31 53 / .12);
+    --pltgds-color-border2: rgb(21 31 53 / .20);
+    --pltgds-color-text1: #0b1222;
+    --pltgds-color-text2: #526179;
+    --pltgds-color-text3: #7a8598;
+    --pltgds-color-brand1: #7ac70c;
+    --pltgds-color-brand2: #6d4cff;
+    --pltgds-color-brand3: #0891b2;
+    --pltgds-color-danger: #e11d48;
+    --pltgds-color-warning: #d97706;
+    --pltgds-color-success: #059669;
+    --pltgds-color-glow1: rgb(163 255 18 / .18);
+    --pltgds-color-glow2: rgb(124 92 255 / .16);
+    --pltgds-color-grid: rgb(15 23 42 / .11);
+  }
+  [data-theme='Midnight'][data-mode='light'] { --pltgds-color-brand1:#2563eb; --pltgds-color-brand2:#7c3aed; --pltgds-color-brand3:#0891b2; }
+  [data-theme='Paper'][data-mode='light'] { --pltgds-color-base1:#fbfaf7; --pltgds-color-base2:#f1eadf; --pltgds-color-surface1:rgb(255 253 247/.86); --pltgds-color-surface3:#fffdf7; --pltgds-color-text1:#17120b; --pltgds-color-text2:#675f53; --pltgds-color-brand1:#111827; --pltgds-color-brand2:#9333ea; --pltgds-color-brand3:#059669; }
+  [data-theme='Mono'][data-mode='light'] { --pltgds-color-base1:#f7f7f7; --pltgds-color-base2:#eeeeee; --pltgds-color-surface1:#ffffff; --pltgds-color-surface2:#fafafa; --pltgds-color-surface3:#ffffff; --pltgds-color-border1:rgb(0 0 0/.11); --pltgds-color-border2:rgb(0 0 0/.20); --pltgds-color-text1:#111111; --pltgds-color-text2:#525252; --pltgds-color-text3:#737373; --pltgds-color-brand1:#171717; --pltgds-color-brand2:#525252; --pltgds-color-brand3:#262626; --pltgds-color-danger:#e11d48; --pltgds-color-warning:#d97706; --pltgds-color-success:#059669; --pltgds-color-glow1:rgb(0 0 0/.04); --pltgds-color-glow2:rgb(0 0 0/.025); --pltgds-color-grid:rgb(0 0 0/.07); }
+}
+
+@media (prefers-color-scheme: light) {
+  @layer base {
+    [data-theme='Aurora'][data-mode='system'] {
+      --pltgds-color-base1: #f6f8ff;
+      --pltgds-color-base2: #eaf0ff;
+      --pltgds-color-surface1: rgb(255 255 255 / .78);
+      --pltgds-color-surface2: rgb(255 255 255 / .68);
+      --pltgds-color-surface3: #ffffff;
+      --pltgds-color-border1: rgb(21 31 53 / .13);
+      --pltgds-color-border2: rgb(21 31 53 / .22);
+      --pltgds-color-text1: #0b1222;
+      --pltgds-color-text2: #526179;
+      --pltgds-color-text3: #7a8598;
+      --pltgds-color-brand1: #7ac70c;
+      --pltgds-color-brand2: #6d4cff;
+      --pltgds-color-brand3: #0891b2;
+      --pltgds-color-danger: #e11d48;
+      --pltgds-color-warning: #d97706;
+      --pltgds-color-success: #059669;
+      --pltgds-color-glow1: rgb(163 255 18 / .18);
+      --pltgds-color-glow2: rgb(124 92 255 / .16);
+      --pltgds-color-grid: rgb(15 23 42 / .07);
+    }
+    [data-theme='Midnight'][data-mode='system'] { --pltgds-color-brand1:#2563eb; --pltgds-color-brand2:#7c3aed; --pltgds-color-brand3:#0891b2; }
+    [data-theme='Paper'][data-mode='system'] { --pltgds-color-base1:#fbfaf7; --pltgds-color-base2:#f1eadf; --pltgds-color-surface1:rgb(255 253 247/.86); --pltgds-color-surface3:#fffdf7; --pltgds-color-text1:#17120b; --pltgds-color-text2:#675f53; --pltgds-color-brand1:#111827; --pltgds-color-brand2:#9333ea; --pltgds-color-brand3:#059669; }
+    [data-theme='Mono'][data-mode='system'] { --pltgds-color-base1:#f7f7f7; --pltgds-color-base2:#eeeeee; --pltgds-color-surface1:#ffffff; --pltgds-color-surface2:#fafafa; --pltgds-color-surface3:#ffffff; --pltgds-color-border1:rgb(0 0 0/.11); --pltgds-color-border2:rgb(0 0 0/.20); --pltgds-color-text1:#111111; --pltgds-color-text2:#525252; --pltgds-color-text3:#737373; --pltgds-color-brand1:#171717; --pltgds-color-brand2:#525252; --pltgds-color-brand3:#262626; --pltgds-color-danger:#e11d48; --pltgds-color-warning:#d97706; --pltgds-color-success:#059669; --pltgds-color-glow1:rgb(0 0 0/.04); --pltgds-color-glow2:rgb(0 0 0/.025); --pltgds-color-grid:rgb(0 0 0/.07); }
+  }
+}

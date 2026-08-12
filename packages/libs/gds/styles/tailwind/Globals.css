@@ -1,0 +1,54 @@
+@layer base {
+  :root {
+    --pltgds-typography-font-family-display: "Unbounded", "Space Grotesk", Inter, ui-sans-serif, system-ui, sans-serif;
+    --pltgds-typography-font-family-sans: "Inter Tight", Inter, ui-sans-serif, system-ui, sans-serif;
+    --pltgds-typography-font-family-mono: "Space Mono", "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+    --pltgds-typography-font-weight-regular: 400;
+    --pltgds-typography-font-weight-medium: 500;
+    --pltgds-typography-font-weight-semibold: 650;
+    --pltgds-typography-font-weight-bold: 800;
+    --pltgds-typography-font-weight-black: 950;
+    --pltgds-typography-font-size-xs: 12px;
+    --pltgds-typography-font-size-sm: 14px;
+    --pltgds-typography-font-size-base: 16px;
+    --pltgds-typography-font-size-lg: 18px;
+    --pltgds-typography-font-size-xl: 22px;
+    --pltgds-typography-font-size-2xl: 30px;
+    --pltgds-typography-font-size-3xl: 44px;
+    --pltgds-typography-font-size-4xl: 68px;
+    --pltgds-typography-letter-spacing-tight: -0.06em;
+    --pltgds-typography-letter-spacing-normal: 0;
+    --pltgds-typography-letter-spacing-spread: 0.1em;
+    --pltgds-radius-xs: 8px;
+    --pltgds-radius-sm: 12px;
+    --pltgds-radius-md: 16px;
+    --pltgds-radius-lg: 22px;
+    --pltgds-radius-xl: 30px;
+    --pltgds-motion-ease: cubic-bezier(.22,1,.36,1);
+    --pltgds-shadow-soft: 0 18px 60px rgb(0 0 0 / .18);
+    --pltgds-shadow-hard: 0 28px 110px rgb(0 0 0 / .36);
+  }
+
+  /* Semantic component modes: data-mode remaps component-local color tokens.
+   * This mirrors the Portal GDS API while remaining palette-independent. */
+  [data-mode='Primary'] {
+    --pltgds-modes-color8: var(--pltgds-color-brand1);
+    --pltgds-modes-color9: var(--pltgds-color-brand1);
+  }
+  [data-mode='Secondary'] {
+    --pltgds-modes-color8: var(--pltgds-color-text2);
+    --pltgds-modes-color9: var(--pltgds-color-text2);
+  }
+  [data-mode='Danger'] {
+    --pltgds-modes-color8: var(--pltgds-color-danger);
+    --pltgds-modes-color9: var(--pltgds-color-danger);
+  }
+  [data-mode='Success'] {
+    --pltgds-modes-color8: var(--pltgds-color-success);
+    --pltgds-modes-color9: var(--pltgds-color-success);
+  }
+  [data-mode='Warning'] {
+    --pltgds-modes-color8: var(--pltgds-color-warning);
+    --pltgds-modes-color9: var(--pltgds-color-warning);
+  }
+}

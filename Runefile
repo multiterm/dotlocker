@@ -1,0 +1,4 @@
+# Pluto workspace tasks
+
+deploy-dev: node scripts/workflow/deploy-dev.mjs
+deploy-dev-stratus: node scripts/workflow/deploy-dev.mjs

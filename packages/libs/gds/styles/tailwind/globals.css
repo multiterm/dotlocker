@@ -1,0 +1,44 @@
+@layer base {
+  * {
+    box-sizing: border-box;
+    border-color: var(--color-border);
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background:
+      radial-gradient(circle at 8% -8%, color-mix(in oklab, var(--color-primary) 35%, transparent), transparent 34rem),
+      radial-gradient(circle at 95% 0%, color-mix(in oklab, var(--color-accent) 26%, transparent), transparent 30rem),
+      var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-primary) 45%, transparent);
+  }
+}
+
+@layer components {
+  .pluto-focus {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-ring) 30%, transparent);
+  }
+}

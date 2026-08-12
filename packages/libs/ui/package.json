@@ -1,0 +1,38 @@
+{
+  "name": "@multiterm/pluto-ui",
+  "version": "0.2.5",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles/components.css": "./styles/components.css"
+  },
+  "scripts": {
+    "build": "rune build",
+    "dev": "rune dev",
+    "test": "rune test",
+    "typecheck": "rune typecheck",
+    "lint": "rune lint",
+    "format": "rune format"
+  },
+  "rune": {
+    "extends": "../../../configs/rune.config.ts",
+    "scripts": {
+      "build": ["vite build -c configs/vite.config.ts"]
+    }
+  },
+  "dependencies": {
+    "@multiterm/pluto-gds": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.15",
+    "@vitejs/plugin-react": "^6.0.2",
+    "vite-plugin-dts": "^5.0.0"
+  }
+}

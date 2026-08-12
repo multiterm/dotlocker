@@ -1,0 +1,229 @@
+@import "tailwindcss";
+@import "@multiterm/pluto-gds/styles/tailwind/theme.css";
+@import "@multiterm/pluto-gds/styles/tailwind/typography.css";
+@import "@multiterm/pluto-ui/styles/components.css";
+
+@source "../**/*.{ts,tsx}";
+@source "../../../../libs/ui/src/**/*.{ts,tsx}";
+@source "../../../../libs/ui-shared/src/**/*.{ts,tsx}";
+
+@custom-variant mode-dark (&:where([data-mode='dark'], [data-mode='dark'] *));
+@custom-variant mode-light (&:where([data-mode='light'], [data-mode='light'] *));
+
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--pl-bg);
+    color: var(--pl-text);
+    font-family: var(--pl-font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  code,
+  pre {
+    font-family: var(--pl-font-mono);
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--pl-primary) 28%, transparent);
+  }
+}
+
+@keyframes pl-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pl-popover-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.pl-page-enter {
+  animation: pl-page-enter 180ms var(--pl-ease) both;
+}
+
+.pl-popover-enter {
+  transform-origin: top center;
+  animation: pl-popover-enter 140ms var(--pl-ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pl-page-enter,
+  .pl-popover-enter {
+    animation: none;
+  }
+}
+
+@layer components {
+  .cols-2 {
+    @apply grid-cols-1 gap-5 xl:grid-cols-2;
+  }
+
+  .cols-3 {
+    @apply grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3;
+  }
+
+  .card {
+    @apply min-w-0 overflow-x-auto rounded-[var(--pl-radius-sm)] border border-[var(--pl-line)] bg-[var(--pl-elevated)] p-5;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.035), 0 8px 24px rgb(0 0 0 / 0.025);
+  }
+
+  .card h3,
+  .modal h3 {
+    @apply m-0 mb-2 text-[15px] font-semibold tracking-[-0.015em] text-[var(--pl-text)];
+  }
+
+  .card > p:first-of-type {
+    @apply mt-1;
+  }
+
+  .muted {
+    @apply text-[var(--pl-muted)];
+  }
+
+  .err {
+    @apply text-[var(--pl-danger)];
+  }
+
+  .card label,
+  .modal label {
+    @apply mb-1.5 mt-4 block text-xs font-semibold text-[var(--pl-text)];
+  }
+
+  .card input:not([type="checkbox"]),
+  .card select,
+  .modal input:not([type="checkbox"]),
+  .modal select {
+    @apply h-10 w-full rounded-[var(--pl-radius-xs)] border border-[var(--pl-line)] bg-[var(--pl-surface)] px-3 text-sm text-[var(--pl-text)] outline-none transition-colors placeholder:text-[var(--pl-subtle)];
+  }
+
+  .card input:focus,
+  .card select:focus,
+  .modal input:focus,
+  .modal select:focus {
+    border-color: var(--pl-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--pl-primary) 14%, transparent);
+  }
+
+  .card input[type="file"] {
+    @apply h-auto cursor-pointer py-2 file:mr-3 file:rounded-[var(--pl-radius-xs)] file:border-0 file:bg-[var(--pl-surface-2)] file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-[var(--pl-text)];
+  }
+
+  .row {
+    @apply grid grid-cols-1 items-end gap-3 sm:grid-cols-2;
+  }
+
+  .row > * {
+    @apply min-w-0;
+  }
+
+  .actions {
+    @apply mt-4 flex flex-wrap items-center gap-2.5;
+  }
+
+  .card button,
+  .modal button {
+    @apply inline-flex min-h-9 cursor-pointer items-center justify-center rounded-[var(--pl-radius-xs)] border border-[var(--pl-primary)] bg-[var(--pl-primary)] px-3.5 py-2 text-sm font-semibold text-[var(--pl-bg)] transition-[background-color,border-color,color,filter] hover:brightness-95 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .card button.secondary,
+  .modal button.secondary {
+    @apply border-[var(--pl-line)] bg-[var(--pl-surface)] text-[var(--pl-text)] hover:border-[var(--pl-line-strong)] hover:bg-[var(--pl-surface-2)];
+  }
+
+  .card button.danger,
+  .modal button.danger {
+    @apply border-[var(--pl-danger)] bg-[var(--pl-danger)] text-white;
+  }
+
+  .card button.inline,
+  .modal button.inline {
+    @apply min-h-8 px-2.5 py-1 text-xs;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-[var(--pl-line)] bg-[var(--pl-surface)] px-2.5 py-1.5 text-xs font-medium text-[var(--pl-muted)];
+  }
+
+  .card table {
+    @apply mt-3 w-full min-w-[680px] border-separate border-spacing-0 overflow-hidden rounded-[var(--pl-radius-xs)] border border-[var(--pl-line)];
+  }
+
+  .card th,
+  .card td {
+    @apply border-b border-[var(--pl-line)] px-3 py-2.5 text-left align-middle;
+  }
+
+  .card tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .card th {
+    @apply bg-[var(--pl-surface)] text-[10px] font-bold uppercase tracking-[.1em] text-[var(--pl-subtle)];
+  }
+
+  .card td {
+    @apply text-sm text-[var(--pl-muted)];
+  }
+
+  .card code {
+    @apply text-xs text-[var(--pl-text)];
+  }
+
+  .card pre,
+  .copybox {
+    @apply mt-4 max-h-[420px] overflow-auto rounded-[var(--pl-radius-xs)] border border-[var(--pl-line)] bg-[var(--pl-bg)] p-3 text-xs leading-5 text-[var(--pl-muted)];
+  }
+
+  .modal-backdrop {
+    @apply fixed inset-0 z-50 grid place-items-center bg-black/55 p-4 backdrop-blur-sm;
+  }
+
+  .modal {
+    @apply max-h-[85vh] w-full max-w-2xl overflow-auto rounded-[var(--pl-radius-sm)] border border-[var(--pl-line)] bg-[var(--pl-elevated)] p-5 text-[var(--pl-text)];
+    box-shadow: var(--pl-shadow-hard);
+  }
+
+  .modal-head {
+    @apply mb-4 flex items-center justify-between gap-4 border-b border-[var(--pl-line)] pb-3;
+  }
+
+  .modal-head h3 {
+    @apply mb-0;
+  }
+}

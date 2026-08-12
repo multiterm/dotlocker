@@ -1,0 +1,40 @@
+{
+  "name": "@multiterm/pluto-server",
+  "version": "0.2.5",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rune build",
+    "dev": "rune dev",
+    "test": "rune test",
+    "typecheck": "rune typecheck",
+    "lint": "rune lint",
+    "format": "rune format"
+  },
+  "rune": {
+    "extends": "../../../configs/rune.config.ts",
+    "scripts": {
+      "build": ["vite build -c configs/vite.config.ts"]
+    }
+  },
+  "dependencies": {
+    "@fastify/rate-limit": "^10.0.0",
+    "@multiterm/pluto-shared": "workspace:*",
+    "better-sqlite3": "^11.0.0",
+    "drizzle-orm": "^0.45.2",
+    "fastify": "^5.0.0",
+    "postgres": "^3.4.9",
+    "yargs": "^17.7.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.10",
+    "@types/yargs": "^17.0.33"
+  }
+}

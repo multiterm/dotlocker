@@ -1,0 +1,8 @@
+@layer components {
+  .pltgds-typography-display-hero { font-family: var(--pltgds-typography-font-family-display); font-size: clamp(48px, 7.5vw, 96px); line-height: .9; letter-spacing: -.085em; font-weight: 950; }
+  .pltgds-typography-display-page { font-family: var(--pltgds-typography-font-family-display); font-size: clamp(34px, 4vw, 58px); line-height: .96; letter-spacing: -.075em; font-weight: 900; }
+  .pltgds-typography-title { font-family: var(--pltgds-typography-font-family-display); font-size: 22px; line-height: 28px; letter-spacing: -.035em; font-weight: 800; }
+  .pltgds-typography-label-medium-regular { font-family: var(--pltgds-typography-font-family-sans); font-size: 14px; line-height: 20px; font-weight: 400; }
+  .pltgds-typography-label-medium-medium { font-family: var(--pltgds-typography-font-family-sans); font-size: 14px; line-height: 20px; font-weight: 650; }
+  .pltgds-typography-label-small-caps { font-family: var(--pltgds-typography-font-family-sans); font-size: 11px; line-height: 16px; font-weight: 850; letter-spacing: .11em; text-transform: uppercase; }
+}
