@@ -5,7 +5,7 @@ export default {
   branchChannels: { develop: 'beta', main: 'latest' },
   prereleaseIds: { beta: 'b' },
   packageManager: 'pnpm',
-  checks: ['rune build', 'rune test'],
+  checks: ['pnpm build', 'pnpm test'],
   access: 'public',
   github: true,
 };
