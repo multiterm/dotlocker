@@ -1,6 +1,11 @@
-# @multiterm/pluto
+# Pluto
 
-> Self-hosted, multi-tenant file-sync server for organization/repository runtime files.
+[![CI](https://img.shields.io/github/actions/workflow/status/multiterm/pluto/ci.yml?branch=develop&label=CI)](https://github.com/multiterm/pluto/actions)
+[![npm](https://img.shields.io/npm/v/@multiterm/pluto?label=%40multiterm%2Fpluto)](https://www.npmjs.com/package/@multiterm/pluto)
+[![npm downloads](https://img.shields.io/npm/dm/@multiterm/pluto)](https://www.npmjs.com/package/@multiterm/pluto)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
+> Self-hosted, multi-tenant runtime file platform with scoped synchronization, version history, web administration, CLI/SDK access, and MCP tooling.
 
 Pluto stores and serves bytes exactly as provided. It does **not** know or care whether files are plaintext, encrypted, JSON, env files, certificates, manifests, or any other format. If encryption is needed, encrypt before `pluto push` and decrypt after `pluto pull` in your own application/runtime layer.
 

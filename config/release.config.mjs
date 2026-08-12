@@ -8,17 +8,4 @@ export default {
   checks: ['rune build', 'rune test'],
   access: 'public',
   github: true,
-  localWorkspaceDirectories: [
-    '../../haystack/core',
-    '../../keyname/core',
-    '../../sandblocks/core',
-    '../../keypost/core',
-    '../../WRLD/honeycluster/cron',
-    '../../WRLD/honeycluster/indexer',
-    '../../WRLD/honeycluster/validators',
-    '../../WRLD/honeycluster/portal',
-    '../../WRLD/honeycluster/drones',
-    '../../WRLD/crossmark/core',
-  ],
-  updateLocalWorkspaceLockfiles: false,
 };

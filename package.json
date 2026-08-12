@@ -12,6 +12,16 @@
     "typescript": "^6.0.3",
     "vite": "^8.0.11",
     "vite-plugin-dts": "^5.0.0",
-    "vitest": "^4.1.6"
-  }
+    "vitest": "^4.1.6",
+    "@multiterm/release": "0.4.1-b.18"
+  },
+  "description": "Self-hosted runtime file platform with scoped sync, versioned storage, web administration, SDK, CLI, and MCP integrations.",
+  "keywords": [
+    "file-sync",
+    "secrets-management",
+    "self-hosted",
+    "mcp",
+    "cli",
+    "typescript"
+  ]
 }

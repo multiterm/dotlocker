@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@multiterm/release':
+        specifier: 0.4.1-b.18
+        version: 0.4.1-b.18
       '@multiterm/rune':
         specifier: 0.4.1-b.15
         version: 0.4.1-b.15
@@ -509,6 +512,13 @@ packages:
     peerDependenciesMeta:
       '@cfworker/json-schema':
         optional: true
+
+  '@multiterm/release-sdk@0.4.1-b.18':
+    resolution: {integrity: sha512-vH0zJvuj7KQY0vu/Yfy4GONzpz5flNqLL7BB/csNTEjoBkZgb081fPhFCicIRp/etRZTczHtvlWAsaN67CEqyw==}
+
+  '@multiterm/release@0.4.1-b.18':
+    resolution: {integrity: sha512-50HsyRLfQSbUvFE80z50L2bTfgl2tUDTo/7mHaHn/2URTam5qc3JOmLD3K0rhxfsNVSTNnu1pby+YmcBnXPzgg==}
+    hasBin: true
 
   '@multiterm/rune@0.4.1-b.15':
     resolution: {integrity: sha512-paKP+emnBtiG/hIma00p2f5dwvq+bphQhdXSfKmvUI+T5mXAnwlvQijbTeL1xBiF0QXOY/FO+hmJWMRcNn6KhQ==}
@@ -2484,6 +2494,12 @@ snapshots:
       zod-to-json-schema: 3.25.2(zod@4.4.3)
     transitivePeerDependencies:
       - supports-color
+
+  '@multiterm/release-sdk@0.4.1-b.18': {}
+
+  '@multiterm/release@0.4.1-b.18':
+    dependencies:
+      '@multiterm/release-sdk': 0.4.1-b.18
 
   '@multiterm/rune@0.4.1-b.15':
     dependencies:

@@ -1,6 +1,6 @@
 {
   "name": "@multiterm/pluto",
-  "description": "Self-hosted, multi-tenant file server for syncing runtime-scoped repository files.",
+  "description": "Self-hosted multi-tenant runtime file service and CLI with scoped access, versioned storage, sync, and administrative web UI.",
   "version": "0.2.11",
   "type": "module",
   "bin": {
@@ -31,10 +31,12 @@
     "access": "public"
   },
   "keywords": [
-    "files",
-    "sync",
+    "file-sync",
+    "self-hosted",
+    "secrets-management",
+    "cli",
     "server",
-    "cli"
+    "typescript"
   ],
   "license": "MIT",
   "rune": {

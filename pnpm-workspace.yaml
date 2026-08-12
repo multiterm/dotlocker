@@ -8,3 +8,5 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - '@multiterm/rune@0.4.1-b.15'
+  - '@multiterm/release-sdk@0.4.1-b.18'
+  - '@multiterm/release@0.4.1-b.18'

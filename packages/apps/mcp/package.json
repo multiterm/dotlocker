@@ -23,5 +23,12 @@
   "devDependencies": {
     "@types/node": "^25.0.0",
     "typescript": "^6.0.0"
-  }
+  },
+  "description": "Model Context Protocol server for safely inspecting Pluto configuration and runtime file metadata.",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "file-sync",
+    "agent-tools"
+  ]
 }
