@@ -32,6 +32,14 @@ export type { TokenRecord, MintTokenInput, MintTokenResult } from "./tokens.js";
 
 export { FileStore } from "./files.js";
 export type { FileStoreOptions } from "./files.js";
+export {
+  FilesystemObjectStore,
+  S3ObjectStore,
+  objectStoreFromEnvironment,
+} from "./object-store.js";
+export type { ObjectStore, S3ObjectStoreOptions } from "./object-store.js";
+export { SqliteMetadataStore, PostgresMetadataStore } from "./metadata-store.js";
+export type { MetadataStore } from "./metadata-store.js";
 
 export {
   grantOrgAdmin,
@@ -62,7 +70,11 @@ export {
   listRuntimeVersions,
   SHORT_VERSION_LENGTH,
 } from "./runtime-versions.js";
-export type { RuntimeVersion, RuntimeVersionFile, CommitRuntimeVersionResult } from "./runtime-versions.js";
+export type {
+  RuntimeVersion,
+  RuntimeVersionFile,
+  CommitRuntimeVersionResult,
+} from "./runtime-versions.js";
 
 export { recordAudit, recentAudit } from "./audit.js";
 export type { AuditAction, AuditEntry } from "./audit.js";

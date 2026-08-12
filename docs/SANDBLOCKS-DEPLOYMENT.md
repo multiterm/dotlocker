@@ -82,4 +82,11 @@ SANDBLOCKS_ENVIRONMENT=preview pnpm sandblocks:destroy
 
 ## Persistence
 
-Sandblocks service filesystems are replaceable. PostgreSQL authentication metadata is durable on Abby through `DOTLOCKER_DATABASE_URL`; current dot.locker file metadata/version operations and uploaded runtime bytes still use the bootstrapped local SQLite database and `DOTLOCKER_DATA_DIR`. Preview currently uses `/tmp/dotlocker-data` because the constrained service cannot create `/data`. Configure durable Sandblocks storage and complete dot.locker's PostgreSQL file-metadata migration before treating either runtime as production-ready.
+Sandblocks service filesystems are replaceable. Dotlocker deployments therefore use two durable services on Abby:
+
+- PostgreSQL through `DOTLOCKER_DATABASE_URL` for users, grants, file metadata, runtime versions, and heads.
+- Garage through the `DOTLOCKER_S3_*` managed variables for encrypted file bodies and content-addressed objects.
+
+Preview and production use separate databases, Garage buckets, and scoped Garage access keys. The Garage S3 endpoint is `http://100.114.99.85:3900` over Tailscale; credentials are write-only Sandblocks managed values and must never be committed. Filesystem storage remains the local-development fallback when `DOTLOCKER_S3_ENDPOINT` is absent.
+
+The one-time migration utility is `scripts/workflow/migrate-object-storage.mjs`. It uploads the existing encrypted object tree without decrypting it and imports SQLite file/version metadata into PostgreSQL. Keep the source backup until object counts, hashes, authenticated listing, and download tests pass.

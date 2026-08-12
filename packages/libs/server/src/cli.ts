@@ -5,6 +5,7 @@ import { mkdirSync } from "node:fs";
 import type { Argv, CommandModule } from "yargs";
 import { openDb } from "./db.js";
 import { FileStore } from "./files.js";
+import { objectStoreFromEnvironment } from "./object-store.js";
 import { buildServer } from "./http.js";
 import { createOrg, listOrgs, mintToken, listTokens, revokeToken } from "./tokens.js";
 import type { Access, TokenScope } from "@dotlocker/shared";
@@ -57,7 +58,7 @@ const serveCommand: CommandModule<unknown, ServeArgs> = {
   handler: async (args) => {
     mkdirSync(args.data, { recursive: true });
     const db = openDb(join(args.data, "pluto.db"));
-    const store = new FileStore({ root: join(args.data, "files") });
+    const store = objectStoreFromEnvironment(new FileStore({ root: join(args.data, "files") }));
     const app = await buildServer({ db, store, logger: true });
     await app.listen({ port: args.port, host: args.host });
     // Fastify logs the listening line itself when logger=true.

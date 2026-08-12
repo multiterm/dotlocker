@@ -6,29 +6,21 @@ import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest }
 import rateLimit from "@fastify/rate-limit";
 import { normalizePath, isValidOrgName, isValidSegment } from "@dotlocker/shared";
 import { authorize, type Access } from "@dotlocker/shared";
-import {
-  ForbiddenError,
-  NotFoundError,
-  PlutoError,
-  UnauthorizedError,
-} from "@dotlocker/shared";
+import { ForbiddenError, NotFoundError, PlutoError, UnauthorizedError } from "@dotlocker/shared";
 import { type TokenRecord } from "./tokens.js";
 import type { DB } from "./db.js";
-import type { FileStore } from "./files.js";
+import { FileStore } from "./files.js";
+import { FilesystemObjectStore, type ObjectStore } from "./object-store.js";
 import { recentAudit, recordAudit, type AuditAction } from "./audit.js";
 import { maybeGetService, serviceWarningForRequest } from "./services.js";
 import { verifyUserEmail } from "./users.js";
 import { type GrantAccess } from "./grants.js";
-import { listFileRecords, markFileDeleted, upsertFileRecord } from "./file-records.js";
+import type { RuntimeVersionFile } from "./runtime-versions.js";
 import {
-  commitRuntimeVersion,
-  getRuntimeHead,
-  getRuntimeHeadFile,
-  hasRuntimeHead,
-  listCommittedStoragePaths,
-  listRuntimeVersions,
-  type RuntimeVersionFile,
-} from "./runtime-versions.js";
+  PostgresMetadataStore,
+  SqliteMetadataStore,
+  type MetadataStore,
+} from "./metadata-store.js";
 import { postgresAuthStore, sqliteAuthStore, type AuthStore } from "./auth-store.js";
 import postgres from "postgres";
 import { migratePostgres } from "./db/postgres-migrate.js";
@@ -46,7 +38,8 @@ const MAX_BODY_BYTES = 256 * 1024;
 
 export interface BuildServerOptions {
   readonly db: DB;
-  readonly store: FileStore;
+  readonly store: ObjectStore | FileStore;
+  readonly metadataStore?: MetadataStore;
   readonly version?: string;
   readonly rateLimit?: {
     readonly defaultsPerMinute?: number;
@@ -64,11 +57,19 @@ declare module "fastify" {
 }
 
 export async function buildServer(opts: BuildServerOptions): Promise<FastifyInstance> {
-  const { db, store, version = "dev" } = opts;
-  const pgUrl = process.env.DOTLOCKER_DATABASE_URL ?? process.env.PLUTO_DATABASE_URL ?? process.env.DATABASE_URL;
+  const { db, version = "dev" } = opts;
+  const store =
+    opts.store instanceof FileStore ? new FilesystemObjectStore(opts.store) : opts.store;
+  const pgUrl =
+    process.env.DOTLOCKER_DATABASE_URL ??
+    process.env.PLUTO_DATABASE_URL ??
+    process.env.DATABASE_URL;
   const pgClient = opts.authStore ? null : pgUrl ? postgres(pgUrl, { max: 10 }) : null;
   if (pgClient) await migratePostgres(pgClient);
   const auth = opts.authStore ?? (pgClient ? postgresAuthStore(pgClient) : sqliteAuthStore(db));
+  const metadata =
+    opts.metadataStore ??
+    (pgClient ? new PostgresMetadataStore(pgClient) : new SqliteMetadataStore(db));
 
   const app = Fastify({
     logger: opts.logger ?? false,
@@ -234,17 +235,24 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
       if (priorCookie) {
         try {
           const prior = await auth.verifyToken(priorCookie);
-          if (prior.userEmail === user.email && isSessionToken(prior)) await auth.revokeToken(prior.id);
+          if (prior.userEmail === user.email && isSessionToken(prior))
+            await auth.revokeToken(prior.id);
         } catch {
           // An absent, expired, or already-revoked prior cookie is safe to ignore.
         }
       }
       setAuthCookies(reply, plaintext, record.id, expiresAt);
-      recordAudit(db, { org, tokenId: record.id, action: "auth", path: "keyname/session", status: 200, ip: req.ip });
+      recordAudit(db, {
+        org,
+        tokenId: record.id,
+        action: "auth",
+        path: "keyname/session",
+        status: 200,
+        ip: req.ip,
+      });
       return reply.send({ org, orgs, userEmail: user.email, expiresAt });
     } catch (err: unknown) {
-      if (err instanceof PlutoError)
-        return reply.code(err.status || 500).send({ error: err.code });
+      if (err instanceof PlutoError) return reply.code(err.status || 500).send({ error: err.code });
       app.log.warn(err);
       return reply.code(401).send({ error: "PLUTO_KEYNAME_AUTH_FAILED" });
     }
@@ -252,8 +260,10 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
 
   app.post("/v1/auth/tailscale", async (req, reply) => {
     if (
-      (process.env.DOTLOCKER_ENABLE_LEGACY_AUTH ?? process.env.PLUTO_ENABLE_LEGACY_AUTH) !== "true" ||
-      (process.env.DOTLOCKER_TRUST_TAILSCALE_HEADERS ?? process.env.PLUTO_TRUST_TAILSCALE_HEADERS) !== "true"
+      (process.env.DOTLOCKER_ENABLE_LEGACY_AUTH ?? process.env.PLUTO_ENABLE_LEGACY_AUTH) !==
+        "true" ||
+      (process.env.DOTLOCKER_TRUST_TAILSCALE_HEADERS ??
+        process.env.PLUTO_TRUST_TAILSCALE_HEADERS) !== "true"
     )
       return reply.code(404).send({ error: "PLUTO_NOT_FOUND" });
     const body = req.body as { org?: string; label?: string; expiresSeconds?: number } | null;
@@ -289,7 +299,9 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
   });
 
   app.post("/v1/auth/login", async (req, reply) => {
-    if ((process.env.DOTLOCKER_ENABLE_LEGACY_AUTH ?? process.env.PLUTO_ENABLE_LEGACY_AUTH) !== "true")
+    if (
+      (process.env.DOTLOCKER_ENABLE_LEGACY_AUTH ?? process.env.PLUTO_ENABLE_LEGACY_AUTH) !== "true"
+    )
       return reply.code(410).send({ error: "PLUTO_KEYNAME_AUTH_REQUIRED" });
     const body = req.body as {
       email?: string;
@@ -325,7 +337,14 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
         userEmail: user.email,
       });
       setAuthCookies(reply, plaintext, record.id, expiresAt);
-      recordAudit(db, { org, tokenId: record.id, action: "auth", path: "login", status: 200, ip: req.ip });
+      recordAudit(db, {
+        org,
+        tokenId: record.id,
+        action: "auth",
+        path: "login",
+        status: 200,
+        ip: req.ip,
+      });
       return reply.send({
         token: plaintext,
         tokenId: record.id,
@@ -350,7 +369,14 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
       return reply.code(403).send({ error: "PLUTO_FORBIDDEN" });
     await auth.switchTokenOrg(token.id, body.org);
     const scopes = [{ path: `${body.org}/_session`, access: "read" as const }];
-    recordAudit(db, { org: body.org, tokenId: token.id, action: "auth", path: "switch-org", status: 200, ip: req.ip });
+    recordAudit(db, {
+      org: body.org,
+      tokenId: token.id,
+      action: "auth",
+      path: "switch-org",
+      status: 200,
+      ip: req.ip,
+    });
     return reply.send({
       token: {
         id: token.id,
@@ -386,7 +412,7 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
         expiresAt: token.expiresAt,
       },
       identityEmail: token.userEmail
-        ? (await auth.keynameIdentity(token.userEmail)) ?? token.userEmail
+        ? ((await auth.keynameIdentity(token.userEmail)) ?? token.userEmail)
         : undefined,
       orgs: token.userEmail ? await auth.accessibleOrgs(token.userEmail) : [],
       grants: token.userEmail ? await auth.listUserGrants(token.userEmail, token.org) : [],
@@ -557,7 +583,14 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
         repo: body.repo ?? null,
         runtime: body.runtime ?? null,
       });
-      audit(db, req, token, "grant", [org, body.repo, body.runtime, body.email].filter(Boolean).join("/"), 204);
+      audit(
+        db,
+        req,
+        token,
+        "grant",
+        [org, body.repo, body.runtime, body.email].filter(Boolean).join("/"),
+        204,
+      );
       return reply.code(204).send();
     } catch (err: unknown) {
       if (err instanceof PlutoError) return reply.code(err.status || 500).send({ error: err.code });
@@ -715,7 +748,7 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
     if (!org || org !== token.org || !isValidOrgName(org))
       return reply.code(403).send({ error: "PLUTO_FORBIDDEN" });
     const records = [];
-    for (const r of listFileRecords(db, org, repo, runtime))
+    for (const r of await metadata.listFiles(org, repo, runtime))
       if (
         authorize(token.scopes, r.path, "read") ||
         (await auth.authorizeGrant(token.userEmail, r.path, "read"))
@@ -736,12 +769,20 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
       const segments = parsed.joined.split("/");
       const [org, repo, runtime, ...relativeParts] = segments;
       const committedFile =
-        repo && runtime && relativeParts.length > 0 && hasRuntimeHead(db, org, repo, runtime)
-          ? getRuntimeHeadFile(db, org, repo, runtime, relativeParts.join("/"))
+        repo && runtime && relativeParts.length > 0 && (await metadata.hasHead(org, repo, runtime))
+          ? await metadata.headFile(org, repo, runtime, relativeParts.join("/"))
           : null;
-      if (repo && runtime && relativeParts.length > 0 && hasRuntimeHead(db, org, repo, runtime) && !committedFile)
+      if (
+        repo &&
+        runtime &&
+        relativeParts.length > 0 &&
+        (await metadata.hasHead(org, repo, runtime)) &&
+        !committedFile
+      )
         throw new NotFoundError(`'${parsed.joined}' not found in the committed runtime`);
-      const buf = committedFile ? store.readBlob(committedFile.sha256) : store.read(parsed.joined);
+      const buf = committedFile
+        ? await store.readBlob(committedFile.sha256)
+        : await store.read(parsed.joined);
       audit(db, req, token, "get", parsed.joined, 200);
       return reply.header("Content-Type", "application/octet-stream").send(buf);
     } catch (err: unknown) {
@@ -771,9 +812,9 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
       return reply.code(400).send({ error: "PLUTO_INVALID_BODY" });
     }
     try {
-      store.write(parsed.joined, body);
-      store.writeBlob(body);
-      upsertFileRecord(db, parsed.joined, body, token.userEmail);
+      await store.write(parsed.joined, body);
+      await store.writeBlob(body);
+      await metadata.upsertFile(parsed.joined, body, token.userEmail);
       audit(db, req, token, "put", parsed.joined, 204);
       return reply.code(204).send();
     } catch (err: unknown) {
@@ -794,11 +835,11 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
       return reply.code(parsed.status).send({ error: parsed.code });
     }
     try {
-      store.delete(parsed.joined);
+      await store.delete(parsed.joined);
     } catch (err: unknown) {
       if (!(err instanceof NotFoundError)) throw err;
     }
-    markFileDeleted(db, parsed.joined);
+    await metadata.markDeleted(parsed.joined);
     audit(db, req, token, "delete", parsed.joined, 204);
     return reply.code(204).send();
   });
@@ -816,7 +857,8 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
       !isValidSegment(repo) ||
       !isValidSegment(runtime) ||
       !/^[a-f0-9]{64}$/.test(sha256)
-    ) return reply.code(400).send({ error: "PLUTO_INVALID_PATH" });
+    )
+      return reply.code(400).send({ error: "PLUTO_INVALID_PATH" });
     const prefix = `${org}/${repo}/${runtime}`;
     const authorized = await parseAndAuthorize(auth, token, `${prefix}/_`, "write");
     if (authorized instanceof PlutoError)
@@ -826,7 +868,7 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
     if (!Buffer.isBuffer(req.body)) return reply.code(400).send({ error: "PLUTO_INVALID_BODY" });
     if (createHash("sha256").update(req.body).digest("hex") !== sha256)
       return reply.code(409).send({ error: "PLUTO_OBJECT_HASH_MISMATCH" });
-    store.writeBlob(req.body);
+    await store.writeBlob(req.body);
     return reply.code(204).send();
   });
 
@@ -843,23 +885,26 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
       files?: RuntimeVersionFile[];
       expectedParentHash?: string | null;
     } | null;
-    if (!Array.isArray(body?.files))
-      return reply.code(400).send({ error: "PLUTO_INVALID_BODY" });
+    if (!Array.isArray(body?.files)) return reply.code(400).send({ error: "PLUTO_INVALID_BODY" });
 
     try {
       const manifest = new Map<string, RuntimeVersionFile>();
       for (const file of body.files) {
         const fullPath = normalizePath(`${prefix}/${file.path}`).joined;
         const relativePath = fullPath.slice(prefix.length + 1);
-        if (!fullPath.startsWith(`${prefix}/`) || relativePath !== file.path || manifest.has(relativePath))
+        if (
+          !fullPath.startsWith(`${prefix}/`) ||
+          relativePath !== file.path ||
+          manifest.has(relativePath)
+        )
           return reply.code(400).send({ error: "PLUTO_INVALID_BODY" });
-        const object = store.readBlob(file.sha256);
+        const object = await store.readBlob(file.sha256);
         if (object.length !== file.size)
           return reply.code(409).send({ error: "PLUTO_VERSION_MANIFEST_MISMATCH" });
         manifest.set(relativePath, file);
       }
 
-      const result = commitRuntimeVersion(db, {
+      const result = await metadata.commitVersion({
         org,
         repo,
         runtime,
@@ -871,16 +916,18 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
       if (result.created) {
         for (const file of body.files) {
           const fullPath = `${prefix}/${file.path}`;
-          const object = store.readBlob(file.sha256);
-          store.write(fullPath, object);
-          upsertFileRecord(db, fullPath, object, token.userEmail);
+          const object = await store.readBlob(file.sha256);
+          await store.write(fullPath, object);
+          await metadata.upsertFile(fullPath, object, token.userEmail);
         }
-        for (const current of listFileRecords(db, org, repo, runtime)) {
+        for (const current of await metadata.listFiles(org, repo, runtime)) {
           if (manifest.has(current.relPath)) continue;
-          try { store.delete(current.path); } catch (err: unknown) {
+          try {
+            await store.delete(current.path);
+          } catch (err: unknown) {
             if (!(err instanceof NotFoundError)) throw err;
           }
-          markFileDeleted(db, current.path);
+          await metadata.markDeleted(current.path);
         }
       }
 
@@ -888,7 +935,7 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
       return reply.code(result.created ? 201 : 200).send(result);
     } catch (err: unknown) {
       if (err instanceof PlutoError) {
-        const currentHash = getRuntimeHead(db, org, repo, runtime)?.hash ?? null;
+        const currentHash = (await metadata.head(org, repo, runtime))?.hash ?? null;
         return reply.code(err.status || 400).send({
           error: err.code,
           ...(err.status === 409
@@ -909,7 +956,7 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
     const authorized = await parseAndAuthorize(auth, token, `${prefix}/_`, "read");
     if (authorized instanceof PlutoError)
       return reply.code(authorized.status).send({ error: authorized.code });
-    return reply.send({ version: getRuntimeHead(db, org, repo, runtime) });
+    return reply.send({ version: await metadata.head(org, repo, runtime) });
   });
 
   app.get("/v1/runtimes/:org/:repo/:runtime/versions", async (req, reply) => {
@@ -921,7 +968,7 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
     const authorized = await parseAndAuthorize(auth, token, `${prefix}/_`, "read");
     if (authorized instanceof PlutoError)
       return reply.code(authorized.status).send({ error: authorized.code });
-    return reply.send({ versions: listRuntimeVersions(db, org, repo, runtime) });
+    return reply.send({ versions: await metadata.versions(org, repo, runtime) });
   });
 
   app.get("/v1/resolve/*", async (req, reply) => {
@@ -943,11 +990,13 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
 
     const repo = prefixParts[0]!;
     const runtime = prefixParts[1];
-    const committed = listCommittedStoragePaths(db, org, repo, runtime);
-    const legacy = store.list([org, ...prefixParts].join("/")).filter((path) => {
+    const committed = await metadata.committedPaths(org, repo, runtime);
+    const legacy = [];
+    for (const path of await store.list([org, ...prefixParts].join("/"))) {
       const [pathOrg, pathRepo, pathRuntime] = path.split("/");
-      return !pathRepo || !pathRuntime || !hasRuntimeHead(db, pathOrg!, pathRepo, pathRuntime);
-    });
+      if (!pathRepo || !pathRuntime || !(await metadata.hasHead(pathOrg!, pathRepo, pathRuntime)))
+        legacy.push(path);
+    }
     const allFiles = [...new Set([...legacy, ...committed])].sort();
     const visible = [];
     for (const p of allFiles)
@@ -983,16 +1032,26 @@ async function resolveOrBootstrapKeynameIdentity(
   } catch (error) {
     if (
       !(error instanceof NotFoundError) ||
-      (process.env.DOTLOCKER_BOOTSTRAP_FIRST_KEYNAME_USER ?? process.env.PLUTO_BOOTSTRAP_FIRST_KEYNAME_USER) !== "true" ||
+      (process.env.DOTLOCKER_BOOTSTRAP_FIRST_KEYNAME_USER ??
+        process.env.PLUTO_BOOTSTRAP_FIRST_KEYNAME_USER) !== "true" ||
       !(await auth.isEmpty())
-    ) throw error;
+    )
+      throw error;
 
     const email = identity.email.trim().toLowerCase();
-    const allowedEmails = (process.env.DOTLOCKER_BOOTSTRAP_KEYNAME_EMAILS ?? process.env.PLUTO_BOOTSTRAP_KEYNAME_EMAILS ?? "")
+    const allowedEmails = (
+      process.env.DOTLOCKER_BOOTSTRAP_KEYNAME_EMAILS ??
+      process.env.PLUTO_BOOTSTRAP_KEYNAME_EMAILS ??
+      ""
+    )
       .split(",")
       .map((value) => value.trim().toLowerCase())
       .filter(Boolean);
-    const allowedDomains = (process.env.DOTLOCKER_BOOTSTRAP_KEYNAME_DOMAINS ?? process.env.PLUTO_BOOTSTRAP_KEYNAME_DOMAINS ?? "")
+    const allowedDomains = (
+      process.env.DOTLOCKER_BOOTSTRAP_KEYNAME_DOMAINS ??
+      process.env.PLUTO_BOOTSTRAP_KEYNAME_DOMAINS ??
+      ""
+    )
       .split(",")
       .map((value) => value.trim().toLowerCase().replace(/^@/, ""))
       .filter(Boolean);
@@ -1004,7 +1063,10 @@ async function resolveOrBootstrapKeynameIdentity(
       password: randomBytes(48).toString("base64url"),
       verified: true,
     });
-    await auth.createOrganization(process.env.DOTLOCKER_BOOTSTRAP_ORG ?? process.env.PLUTO_BOOTSTRAP_ORG ?? "honeycluster", email);
+    await auth.createOrganization(
+      process.env.DOTLOCKER_BOOTSTRAP_ORG ?? process.env.PLUTO_BOOTSTRAP_ORG ?? "honeycluster",
+      email,
+    );
     return auth.resolveKeynameIdentity(identity);
   }
 }
@@ -1062,7 +1124,9 @@ function setAuthCookies(
   expiresAt: number,
 ): void {
   const maxAge = Math.max(60, Math.floor((expiresAt - Date.now()) / 1000));
-  const secure = (process.env.DOTLOCKER_COOKIE_SECURE ?? process.env.PLUTO_COOKIE_SECURE) === "true" || process.env.NODE_ENV === "production";
+  const secure =
+    (process.env.DOTLOCKER_COOKIE_SECURE ?? process.env.PLUTO_COOKIE_SECURE) === "true" ||
+    process.env.NODE_ENV === "production";
   const attrs = `Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure ? "; Secure" : ""}`;
   reply.header("Set-Cookie", [
     `auth_token=${encodeURIComponent(token)}; ${attrs}`,

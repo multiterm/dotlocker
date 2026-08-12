@@ -51,6 +51,7 @@
     }
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1109.0",
     "@fastify/rate-limit": "^10.0.0",
     "better-sqlite3": "^11.0.0",
     "drizzle-orm": "^0.45.2",
@@ -62,11 +63,11 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/yargs": "^17.0.33",
     "@dotlocker/client": "workspace:*",
     "@dotlocker/server": "workspace:*",
     "@dotlocker/shared": "workspace:*",
-    "@dotlocker/webui": "workspace:*"
+    "@dotlocker/webui": "workspace:*",
+    "@types/yargs": "^17.0.33"
   },
   "repository": {
     "type": "git",
