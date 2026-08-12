@@ -41,7 +41,7 @@ environments:
     routing:
       baseDomain: dotlocker.dev
       stableDomains:
-        dotlocker: dotlocker.dev
+        dotlocker: preview.dotlocker.dev
       sso: true
   production:
     pipeline: [build]
@@ -50,5 +50,5 @@ environments:
     routing:
       baseDomain: dotlocker.sh
       stableDomains:
-        dotlocker: dotlocker.sh
+        dotlocker: [dotlocker.dev, dotlocker.sh]
       sso: true

@@ -63,12 +63,15 @@ pnpm sandblocks:preview
 pnpm sandblocks:status
 ```
 
-For production:
+For production, deployment and promotion are separate operations. A successful deployment remains available only at its immutable candidate URL until a releaser explicitly promotes it. Promotion atomically points both `dotlocker.dev` and `dotlocker.sh` at that revision:
 
 ```sh
 pnpm sandblocks:production
 SANDBLOCKS_ENVIRONMENT=production pnpm sandblocks:status
+sandblocks sandbox promote --project "$SANDBLOCKS_PROJECT_ID" --sandbox <sandbox-id>
 ```
+
+Use the candidate URL from `status` for final browser and health verification before promotion. `preview.dotlocker.dev` remains the stable non-production alias; neither production domain moves merely because checks pass.
 
 Redeploy or destroy the selected environment with:
 
