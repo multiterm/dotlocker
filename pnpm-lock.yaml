@@ -8,9 +8,9 @@ importers:
 
   .:
     devDependencies:
-      '@super-repo/rune':
-        specifier: 0.4.1-b.5
-        version: 0.4.1-b.5
+      '@multiterm/rune':
+        specifier: file:../rune/multiterm-rune-0.4.1-b.15.tgz
+        version: file:../rune/multiterm-rune-0.4.1-b.15.tgz
       '@types/node':
         specifier: ^25.8.0
         version: 25.9.1
@@ -66,16 +66,16 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
-      '@super-repo/pluto-client':
+      '@multiterm/pluto-client':
         specifier: workspace:*
         version: link:../../libs/client
-      '@super-repo/pluto-server':
+      '@multiterm/pluto-server':
         specifier: workspace:*
         version: link:../../libs/server
-      '@super-repo/pluto-shared':
+      '@multiterm/pluto-shared':
         specifier: workspace:*
         version: link:../../libs/shared
-      '@super-repo/pluto-webui':
+      '@multiterm/pluto-webui':
         specifier: workspace:*
         version: link:../webui
       '@types/yargs':
@@ -84,13 +84,13 @@ importers:
 
   packages/apps/site:
     dependencies:
-      '@super-repo/pluto-gds':
+      '@multiterm/pluto-gds':
         specifier: workspace:*
         version: link:../../libs/gds
-      '@super-repo/pluto-ui':
+      '@multiterm/pluto-ui':
         specifier: workspace:*
         version: link:../../libs/ui
-      '@super-repo/pluto-ui-shared':
+      '@multiterm/pluto-ui-shared':
         specifier: workspace:*
         version: link:../../libs/ui-shared
       react:
@@ -102,7 +102,7 @@ importers:
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.17
-        version: 4.3.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+        version: 4.3.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12))
       '@types/react':
         specifier: ^19.2.15
         version: 19.2.16
@@ -111,20 +111,20 @@ importers:
         version: 19.2.3(@types/react@19.2.16)
       '@vitejs/plugin-react':
         specifier: ^6.0.2
-        version: 6.0.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+        version: 6.0.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12))
       tailwindcss:
         specifier: ^4.1.17
         version: 4.3.2
 
   packages/apps/webui:
     dependencies:
-      '@super-repo/pluto-gds':
+      '@multiterm/pluto-gds':
         specifier: workspace:*
         version: link:../../libs/gds
-      '@super-repo/pluto-ui':
+      '@multiterm/pluto-ui':
         specifier: workspace:*
         version: link:../../libs/ui
-      '@super-repo/pluto-ui-shared':
+      '@multiterm/pluto-ui-shared':
         specifier: workspace:*
         version: link:../../libs/ui-shared
       '@tanstack/react-form':
@@ -142,7 +142,7 @@ importers:
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.17
-        version: 4.3.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+        version: 4.3.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12))
       '@types/react':
         specifier: ^19.2.15
         version: 19.2.16
@@ -151,14 +151,14 @@ importers:
         version: 19.2.3(@types/react@19.2.16)
       '@vitejs/plugin-react':
         specifier: ^6.0.2
-        version: 6.0.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+        version: 6.0.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12))
       tailwindcss:
         specifier: ^4.1.17
         version: 4.3.2
 
   packages/libs/client:
     dependencies:
-      '@super-repo/pluto-shared':
+      '@multiterm/pluto-shared':
         specifier: workspace:*
         version: link:../shared
       jiti:
@@ -192,7 +192,7 @@ importers:
       '@fastify/rate-limit':
         specifier: ^10.0.0
         version: 10.3.0
-      '@super-repo/pluto-shared':
+      '@multiterm/pluto-shared':
         specifier: workspace:*
         version: link:../shared
       better-sqlite3:
@@ -225,7 +225,7 @@ importers:
 
   packages/libs/ui:
     dependencies:
-      '@super-repo/pluto-gds':
+      '@multiterm/pluto-gds':
         specifier: workspace:*
         version: link:../gds
       react:
@@ -237,17 +237,17 @@ importers:
         version: 19.2.16
       '@vitejs/plugin-react':
         specifier: ^6.0.2
-        version: 6.0.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+        version: 6.0.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12))
       vite-plugin-dts:
         specifier: ^5.0.0
-        version: 5.0.2(esbuild@0.28.0)(rolldown@1.0.3)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+        version: 5.0.2(esbuild@0.28.0)(rolldown@1.0.3)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12))
 
   packages/libs/ui-shared:
     dependencies:
-      '@super-repo/pluto-gds':
+      '@multiterm/pluto-gds':
         specifier: workspace:*
         version: link:../gds
-      '@super-repo/pluto-ui':
+      '@multiterm/pluto-ui':
         specifier: workspace:*
         version: link:../ui
       react:
@@ -259,10 +259,10 @@ importers:
         version: 19.2.16
       '@vitejs/plugin-react':
         specifier: ^6.0.2
-        version: 6.0.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+        version: 6.0.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12))
       vite-plugin-dts:
         specifier: ^5.0.0
-        version: 5.0.2(esbuild@0.28.0)(rolldown@1.0.3)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
+        version: 5.0.2(esbuild@0.28.0)(rolldown@1.0.3)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12))
 
 packages:
 
@@ -475,6 +475,11 @@ packages:
     resolution: {integrity: sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==}
     engines: {node: '>=8'}
 
+  '@multiterm/rune@file:../rune/multiterm-rune-0.4.1-b.15.tgz':
+    resolution: {integrity: sha512-paKP+emnBtiG/hIma00p2f5dwvq+bphQhdXSfKmvUI+T5mXAnwlvQijbTeL1xBiF0QXOY/FO+hmJWMRcNn6KhQ==, tarball: file:../rune/multiterm-rune-0.4.1-b.15.tgz}
+    version: 0.4.1-b.15
+    hasBin: true
+
   '@napi-rs/wasm-runtime@1.1.4':
     resolution: {integrity: sha512-3NQNNgA1YSlJb/kMH1ildASP9HW7/7kYnRI2szWJaofaS1hWmbGI4H+d3+22aGzXXN9IJ+n+GiFVcGipJP18ow==}
     peerDependencies:
@@ -608,10 +613,6 @@ packages:
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
-
-  '@super-repo/rune@0.4.1-b.5':
-    resolution: {integrity: sha512-r3ZPRe5PlruDq3SpTLIjznE+MSJNTSdEaolPxSZtfg1of/oGoaR1a8g/N9Yqs3pp1JW+4mynJgY0j4B6hB0a9w==}
-    hasBin: true
 
   '@tailwindcss/node@4.3.2':
     resolution: {integrity: sha512-yWP/sqEcBLaD8JuA6zNwxoYKr75qxTioYwlRwekj5Jr/I5GXnoJfjetH/psLUIv74cYTH2lBUEzBkinthoYcBg==}
@@ -1802,6 +1803,11 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
+  tsx@4.23.12:
+    resolution: {integrity: sha512-FDf4L4sYzKtzWYhU/Xm0AQFdTjdIxNo9ElTf2mxXM6k8YMHXzYUe4yODVaXP4V9uMFbVg8c0qyBccK2OOxb45Q==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+
   tunnel-agent@0.6.0:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
 
@@ -2160,6 +2166,13 @@ snapshots:
 
   '@lukeed/ms@2.0.2': {}
 
+  '@multiterm/rune@file:../rune/multiterm-rune-0.4.1-b.15.tgz':
+    dependencies:
+      '@anthropic-ai/sdk': 0.39.0
+      tsx: 4.23.12
+    transitivePeerDependencies:
+      - encoding
+
   '@napi-rs/wasm-runtime@1.1.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
       '@emnapi/core': 1.10.0
@@ -2242,13 +2255,6 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@super-repo/rune@0.4.1-b.5':
-    dependencies:
-      '@anthropic-ai/sdk': 0.39.0
-      tsx: 4.22.4
-    transitivePeerDependencies:
-      - encoding
-
   '@tailwindcss/node@4.3.2':
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -2310,12 +2316,12 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.3.2
       '@tailwindcss/oxide-win32-x64-msvc': 4.3.2
 
-  '@tailwindcss/vite@4.3.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))':
+  '@tailwindcss/vite@4.3.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12))':
     dependencies:
       '@tailwindcss/node': 4.3.2
       '@tailwindcss/oxide': 4.3.2
       tailwindcss: 4.3.2
-      vite: 8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)
+      vite: 8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12)
 
   '@tanstack/devtools-event-client@0.4.3': {}
 
@@ -2421,10 +2427,10 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  '@vitejs/plugin-react@6.0.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))':
+  '@vitejs/plugin-react@6.0.2(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)
+      vite: 8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12)
 
   '@vitest/expect@4.1.8':
     dependencies:
@@ -3302,6 +3308,12 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
+  tsx@4.23.12:
+    dependencies:
+      esbuild: 0.28.0
+    optionalDependencies:
+      fsevents: 2.3.3
+
   tunnel-agent@0.6.0:
     dependencies:
       safe-buffer: 5.2.1
@@ -3332,6 +3344,24 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  unplugin-dts@1.0.2(esbuild@0.28.0)(rolldown@1.0.3)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12)):
+    dependencies:
+      '@rollup/pluginutils': 5.4.0
+      '@volar/typescript': 2.4.28
+      compare-versions: 6.1.1
+      debug: 4.4.3
+      kolorist: 1.8.0
+      local-pkg: 1.2.1
+      magic-string: 0.30.21
+      typescript: 6.0.3
+      unplugin: 2.3.11
+    optionalDependencies:
+      esbuild: 0.28.0
+      rolldown: 1.0.3
+      vite: 8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12)
+    transitivePeerDependencies:
+      - supports-color
+
   unplugin@2.3.11:
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -3359,6 +3389,20 @@ snapshots:
       - typescript
       - webpack
 
+  vite-plugin-dts@5.0.2(esbuild@0.28.0)(rolldown@1.0.3)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12)):
+    dependencies:
+      unplugin-dts: 1.0.2(esbuild@0.28.0)(rolldown@1.0.3)(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12))
+    optionalDependencies:
+      vite: 8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12)
+    transitivePeerDependencies:
+      - '@rspack/core'
+      - '@vue/language-core'
+      - esbuild
+      - rolldown
+      - supports-color
+      - typescript
+      - webpack
+
   vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4):
     dependencies:
       lightningcss: 1.32.0
@@ -3372,6 +3416,20 @@ snapshots:
       fsevents: 2.3.3
       jiti: 2.7.0
       tsx: 4.22.4
+
+  vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.23.12):
+    dependencies:
+      lightningcss: 1.32.0
+      picomatch: 4.0.4
+      postcss: 8.5.15
+      rolldown: 1.0.3
+      tinyglobby: 0.2.17
+    optionalDependencies:
+      '@types/node': 25.9.1
+      esbuild: 0.28.0
+      fsevents: 2.3.3
+      jiti: 2.7.0
+      tsx: 4.23.12
 
   vitest@4.1.8(@types/node@25.9.1)(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)):
     dependencies:

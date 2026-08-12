@@ -12,7 +12,7 @@
     "deploy:dev": "node scripts/workflow/deploy-dev.mjs"
   },
   "devDependencies": {
-    "@multiterm/rune": "0.4.1-b.5",
+    "@multiterm/rune": "0.4.1-b.15",
     "@types/node": "^25.8.0",
     "prettier": "^3.8.3",
     "tsc-alias": "^1.8.16",
