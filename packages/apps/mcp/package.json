@@ -1,6 +1,6 @@
 {
   "name": "@multiterm/pluto-mcp",
-  "version": "0.1.0-b.0",
+  "version": "0.1.0-b.1",
   "type": "module",
   "bin": {
     "pluto-mcp": "dist/index.js"

@@ -1,7 +1,7 @@
 {
   "name": "@multiterm/pluto",
   "description": "Self-hosted multi-tenant runtime file service and CLI with scoped access, versioned storage, sync, and administrative web UI.",
-  "version": "0.2.11",
+  "version": "0.2.12-b.0",
   "type": "module",
   "bin": {
     "pluto": "dist/cli.js"
