@@ -7,6 +7,26 @@
 
 > Self-hosted, multi-tenant runtime file platform with scoped synchronization, version history, web administration, CLI/SDK access, and MCP tooling.
 
+## Quick links
+
+- [Documentation](./docs/)
+- [Examples](./examples/)
+- [Package layout](./docs/package-layout.md)
+- [Product roadmap](./docs/PRODUCT_ROADMAP.md)
+- [CLI package documentation](./packages/libs/cli/README.md)
+- [Issues](https://github.com/multiterm/pluto/issues)
+- [Releases](https://github.com/multiterm/pluto/releases)
+
+## Monorepo quicklinks
+
+| Package/application | Path | Purpose |
+| --- | --- | --- |
+| [`@multiterm/pluto`](./packages/libs/cli/) | `packages/libs/cli` | Public server, workspace CLI, and SDK entry points |
+| [`@multiterm/pluto-mcp`](./packages/apps/mcp/) | `packages/apps/mcp` | Deployable MCP runtime |
+| [Web UI](./packages/apps/webui/) | `packages/apps/webui` | Private administration application |
+| [Site](./packages/apps/site/) | `packages/apps/site` | Private marketing application |
+| [Internal libraries](./packages/libs/) | `packages/libs/*` | Client, server, UI, design-system, and shared modules |
+
 Pluto stores and serves bytes exactly as provided. It does **not** know or care whether files are plaintext, encrypted, JSON, env files, certificates, manifests, or any other format. If encryption is needed, encrypt before `pluto push` and decrypt after `pluto pull` in your own application/runtime layer.
 
 Files are addressed by:
@@ -323,6 +343,10 @@ Examples:
 - Webhook payloads are signed as `HMAC-SHA256(<timestamp>.<raw-body>)`; verify `X-Pluto-Timestamp` and `X-Pluto-Signature` before processing.
 - Production webhook destinations require HTTPS. Signing secrets are returned only when an endpoint is created.
 
+## Contributing, security, and support
+
+Use [GitHub Issues](https://github.com/multiterm/pluto/issues) for reproducible defects and proposals. Do not attach access tokens, synchronized file contents, or webhook signing secrets. Submit vulnerabilities through GitHub's private security advisory workflow.
+
 ## License
 
-MIT
+Released under the [MIT License](./LICENSE).

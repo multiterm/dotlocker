@@ -30,5 +30,15 @@
     "model-context-protocol",
     "file-sync",
     "agent-tools"
-  ]
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/multiterm/pluto.git",
+    "directory": "packages/apps/mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/multiterm/pluto/issues"
+  },
+  "homepage": "https://github.com/multiterm/pluto#readme"
 }

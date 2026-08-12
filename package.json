@@ -34,5 +34,14 @@
     "release:dry": "pnpm exec m-release --dry-run",
     "deploy-dev": "node scripts/workflow/deploy-dev.mjs",
     "deploy-dev-stratus": "node scripts/workflow/deploy-dev.mjs"
-  }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/multiterm/pluto.git"
+  },
+  "bugs": {
+    "url": "https://github.com/multiterm/pluto/issues"
+  },
+  "homepage": "https://github.com/multiterm/pluto#readme"
 }

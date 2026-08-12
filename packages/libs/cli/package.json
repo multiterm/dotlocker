@@ -66,5 +66,14 @@
     "@multiterm/pluto-server": "workspace:*",
     "@multiterm/pluto-shared": "workspace:*",
     "@multiterm/pluto-webui": "workspace:*"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/multiterm/pluto.git",
+    "directory": "packages/libs/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/multiterm/pluto/issues"
+  },
+  "homepage": "https://github.com/multiterm/pluto#readme"
 }
