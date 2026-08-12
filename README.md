@@ -12,6 +12,7 @@
 - [Documentation](./docs/)
 - [Examples](./examples/)
 - [Package layout](./docs/package-layout.md)
+- [Sandblocks deployment](./docs/SANDBLOCKS-DEPLOYMENT.md)
 - [Product roadmap](./docs/PRODUCT_ROADMAP.md)
 - [CLI package documentation](./packages/libs/cli/README.md)
 - [Issues](https://github.com/multiterm/pluto/issues)

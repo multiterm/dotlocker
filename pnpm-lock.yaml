@@ -9,11 +9,17 @@ importers:
   .:
     devDependencies:
       '@multiterm/release':
-        specifier: 0.4.1-b.19
-        version: 0.4.1-b.19
+        specifier: 0.4.1-b.20
+        version: 0.4.1-b.20
       '@multiterm/rune':
-        specifier: 0.4.1-b.15
-        version: 0.4.1-b.15
+        specifier: 0.4.1-b.17
+        version: 0.4.1-b.17(typescript@6.0.3)
+      '@sandblocks/cli':
+        specifier: 0.3.0
+        version: 0.3.0
+      '@sandblocks/sdk':
+        specifier: 0.3.0
+        version: 0.3.0
       '@types/node':
         specifier: ^25.8.0
         version: 25.9.1
@@ -483,6 +489,10 @@ packages:
     peerDependencies:
       hono: ^4
 
+  '@isaacs/fs-minipass@4.0.1':
+    resolution: {integrity: sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==}
+    engines: {node: '>=18.0.0'}
+
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
 
@@ -516,12 +526,15 @@ packages:
   '@multiterm/release-sdk@0.4.1-b.18':
     resolution: {integrity: sha512-vH0zJvuj7KQY0vu/Yfy4GONzpz5flNqLL7BB/csNTEjoBkZgb081fPhFCicIRp/etRZTczHtvlWAsaN67CEqyw==}
 
-  '@multiterm/release@0.4.1-b.19':
-    resolution: {integrity: sha512-FiCdoMvpUHZz8wX/r+2qeeDr4V8YXszPFhGpIXZ4WT1W9lDfv/0kK7kpLipbisKt6RkJdquirIu5Ea/NKQaPvg==}
+  '@multiterm/release@0.4.1-b.20':
+    resolution: {integrity: sha512-4tRMdrnrmqs0TPrk1h3uQT5plgROnTLO8aeUvmj5YBpFXy7dcljisttQyokI5ZgIxn0bEi4L3oLnLnOxIrYdUQ==}
     hasBin: true
 
-  '@multiterm/rune@0.4.1-b.15':
-    resolution: {integrity: sha512-paKP+emnBtiG/hIma00p2f5dwvq+bphQhdXSfKmvUI+T5mXAnwlvQijbTeL1xBiF0QXOY/FO+hmJWMRcNn6KhQ==}
+  '@multiterm/rune-trpc@0.1.0-b.2':
+    resolution: {integrity: sha512-91Q8U+rCghgBPxzawTjxQ3JuJZdI1cQeWdQQ0apuIDHa9/jtZhtqEEmZjibRiUi5pN7ELfITBy+xa+NxuKPUeQ==}
+
+  '@multiterm/rune@0.4.1-b.17':
+    resolution: {integrity: sha512-kk3/VTBlyG0tvHXxs3xlwtSjpHF/ph+mMHUNCAQqdAGJva0vzJIr4dccJck2Gw9XYkGabFsKYK8GEL2Muc7pAg==}
     hasBin: true
 
   '@napi-rs/wasm-runtime@1.1.4':
@@ -654,6 +667,16 @@ packages:
     peerDependenciesMeta:
       rollup:
         optional: true
+
+  '@sandblocks/cli@0.3.0':
+    resolution: {integrity: sha512-mYf5wONXTPhf+Nb8/PcERrYj4RcyzqI/WzbJPZoJRmZDtSGE9j/UjOpZ8IHqwzRP+4PG6MjzphiUe8EtyEmt/Q==}
+    engines: {bun: '>=1.1.0'}
+    hasBin: true
+
+  '@sandblocks/sdk@0.3.0':
+    resolution: {integrity: sha512-QtG7VAph1fuB9Igm1b5vRFm5IPbl5w8KR7NY5ex4WQXdOzO+AaXrJTpBNqO2aUedCN+ZOIFFkuLBDXObg3/C7g==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -805,6 +828,19 @@ packages:
 
   '@tanstack/store@0.9.3':
     resolution: {integrity: sha512-8reSzl/qGWGGVKhBoxXPMWzATSbZLZFWhwBAFO9NAyp0TxzfBP0mIrGb8CP8KrQTmvzXlR/vFPPUrHTLBGyFyw==}
+
+  '@trpc/client@11.18.0':
+    resolution: {integrity: sha512-wOqeg3Fvl25V1ZisQhUD3K8G60ZJDlSGJNSyeXrLH24xAo5w6GSR2Kzb1cSNY9Y+IQ2YZvYGZstBU+V/ulo/ow==}
+    hasBin: true
+    peerDependencies:
+      '@trpc/server': 11.18.0
+      typescript: '>=5.7.2'
+
+  '@trpc/server@11.18.0':
+    resolution: {integrity: sha512-JAvXOuNTxgXjIDfQaOvDq1j66LMNfDJUH1IU7Slfn8EvRv2EkH6ehu3A7zpYhjO0syHHiYg77v2lG2JFJgvw7Q==}
+    hasBin: true
+    peerDependencies:
+      typescript: '>=5.7.2'
 
   '@tybys/wasm-util@0.10.2':
     resolution: {integrity: sha512-RoBvJ2X0wuKlWFIjrwffGw1IqZHKQqzIchKaadZZfnNpsAYp2mM0h36JtPCjNDAHGgYez/15uMBpfGwchhiMgg==}
@@ -1008,6 +1044,10 @@ packages:
 
   chownr@1.1.4:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
+
+  chownr@3.0.0:
+    resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
+    engines: {node: '>=18'}
 
   cliui@8.0.1:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
@@ -1649,6 +1689,14 @@ packages:
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
 
+  minipass@7.1.3:
+    resolution: {integrity: sha512-tEBHqDnIoM/1rXME1zgka9g6Q2lcoCkxHLuc7ODJ5BxbP5d4c2Z5cGgtXAku59200Cx7diuHTOYfSBD8n6mm8A==}
+    engines: {node: '>=16 || 14 >=14.17'}
+
+  minizlib@3.1.0:
+    resolution: {integrity: sha512-KZxYo1BUkWD2TVFLr0MQoM8vUUigWD3LlD83a/75BqC+4qE0Hb1Vo5v1FgcfaNXvfXzr+5EhQ6ing/CaBijTlw==}
+    engines: {node: '>= 18'}
+
   mkdirp-classic@0.5.3:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
 
@@ -2037,6 +2085,10 @@ packages:
     resolution: {integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==}
     engines: {node: '>=6'}
 
+  tar@7.5.22:
+    resolution: {integrity: sha512-MFO/QzvtAOmJbkhOaCTvbGcFN9L9b+JunIsDwaKljSOdcLMea3NJ1k9Usz/rjdfSXTq4dfzfeS7W4p4YOAAHeA==}
+    engines: {node: '>=18'}
+
   thread-stream@4.2.0:
     resolution: {integrity: sha512-e2zZ96wSChazBsbENf/Pcm/4swHt2cEKQ92rhUjkL9GCKiTDJIaTBenjE/m9DXi0QBmTMDkFDdOomUy20A1tDQ==}
     engines: {node: '>=20'}
@@ -2295,6 +2347,10 @@ packages:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
     engines: {node: '>=10'}
 
+  yallist@5.0.0:
+    resolution: {integrity: sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==}
+    engines: {node: '>=18'}
+
   yargs-parser@21.1.1:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
     engines: {node: '>=12'}
@@ -2452,6 +2508,10 @@ snapshots:
     dependencies:
       hono: 4.13.1
 
+  '@isaacs/fs-minipass@4.0.1':
+    dependencies:
+      minipass: 7.1.3
+
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -2497,16 +2557,27 @@ snapshots:
 
   '@multiterm/release-sdk@0.4.1-b.18': {}
 
-  '@multiterm/release@0.4.1-b.19':
+  '@multiterm/release@0.4.1-b.20':
     dependencies:
       '@multiterm/release-sdk': 0.4.1-b.18
 
-  '@multiterm/rune@0.4.1-b.15':
+  '@multiterm/rune-trpc@0.1.0-b.2(typescript@6.0.3)':
+    dependencies:
+      '@trpc/client': 11.18.0(@trpc/server@11.18.0(typescript@6.0.3))(typescript@6.0.3)
+      '@trpc/server': 11.18.0(typescript@6.0.3)
+      zod: 4.4.3
+    transitivePeerDependencies:
+      - typescript
+
+  '@multiterm/rune@0.4.1-b.17(typescript@6.0.3)':
     dependencies:
       '@anthropic-ai/sdk': 0.39.0
+      '@multiterm/rune-trpc': 0.1.0-b.2(typescript@6.0.3)
+      tar: 7.5.22
       tsx: 4.23.12
     transitivePeerDependencies:
       - encoding
+      - typescript
 
   '@napi-rs/wasm-runtime@1.1.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
@@ -2587,6 +2658,10 @@ snapshots:
       '@types/estree': 1.0.9
       estree-walker: 2.0.2
       picomatch: 4.0.4
+
+  '@sandblocks/cli@0.3.0': {}
+
+  '@sandblocks/sdk@0.3.0': {}
 
   '@standard-schema/spec@1.1.0': {}
 
@@ -2711,6 +2786,15 @@ snapshots:
   '@tanstack/store@0.11.0': {}
 
   '@tanstack/store@0.9.3': {}
+
+  '@trpc/client@11.18.0(@trpc/server@11.18.0(typescript@6.0.3))(typescript@6.0.3)':
+    dependencies:
+      '@trpc/server': 11.18.0(typescript@6.0.3)
+      typescript: 6.0.3
+
+  '@trpc/server@11.18.0(typescript@6.0.3)':
+    dependencies:
+      typescript: 6.0.3
 
   '@tybys/wasm-util@0.10.2':
     dependencies:
@@ -2941,6 +3025,8 @@ snapshots:
       fsevents: 2.3.3
 
   chownr@1.1.4: {}
+
+  chownr@3.0.0: {}
 
   cliui@8.0.1:
     dependencies:
@@ -3476,6 +3562,12 @@ snapshots:
 
   minimist@1.2.8: {}
 
+  minipass@7.1.3: {}
+
+  minizlib@3.1.0:
+    dependencies:
+      minipass: 7.1.3
+
   mkdirp-classic@0.5.3: {}
 
   mlly@1.8.2:
@@ -3868,6 +3960,14 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
+  tar@7.5.22:
+    dependencies:
+      '@isaacs/fs-minipass': 4.0.1
+      chownr: 3.0.0
+      minipass: 7.1.3
+      minizlib: 3.1.0
+      yallist: 5.0.0
+
   thread-stream@4.2.0:
     dependencies:
       real-require: 1.0.0
@@ -4103,6 +4203,8 @@ snapshots:
   wrappy@1.0.2: {}
 
   y18n@5.0.8: {}
+
+  yallist@5.0.0: {}
 
   yargs-parser@21.1.1: {}
 

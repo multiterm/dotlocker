@@ -8,3 +8,13 @@ release: pnpm release
 release-dry: pnpm release:dry
 deploy-dev: pnpm deploy-dev
 deploy-dev-stratus: pnpm deploy-dev-stratus
+
+# Sandblocks preview and production deployment.
+sandblocks-validate: pnpm exec sandblocks validate .
+sandblocks-doctor: pnpm exec sandblocks doctor .
+sandblocks-register: pnpm exec sandblocks register . --project ${SANDBLOCKS_PROJECT_ID:?Set SANDBLOCKS_PROJECT_ID}
+sandblocks-preview: pnpm exec sandblocks sandbox up . --environment preview
+sandblocks-production: pnpm exec sandblocks sandbox up . --environment production
+sandblocks-redeploy: pnpm exec sandblocks sandbox redeploy . --environment ${SANDBLOCKS_ENVIRONMENT:-preview}
+sandblocks-status: pnpm exec sandblocks sandbox status . --environment ${SANDBLOCKS_ENVIRONMENT:-preview}
+sandblocks-destroy: pnpm exec sandblocks sandbox down . --environment ${SANDBLOCKS_ENVIRONMENT:-preview}

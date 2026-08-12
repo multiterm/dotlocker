@@ -4,7 +4,7 @@
   "type": "module",
   "packageManager": "pnpm@11.4.0",
   "devDependencies": {
-    "@multiterm/rune": "0.4.1-b.15",
+    "@multiterm/rune": "0.4.1-b.17",
     "@types/node": "^25.8.0",
     "prettier": "^3.8.3",
     "tsc-alias": "^1.8.16",
@@ -13,7 +13,9 @@
     "vite": "^8.0.11",
     "vite-plugin-dts": "^5.0.0",
     "vitest": "^4.1.6",
-    "@multiterm/release": "0.4.1-b.19"
+    "@multiterm/release": "0.4.1-b.20",
+    "@sandblocks/cli": "0.3.0",
+    "@sandblocks/sdk": "0.3.0"
   },
   "description": "Self-hosted runtime file platform with scoped sync, versioned storage, web administration, SDK, CLI, and MCP integrations.",
   "keywords": [
@@ -33,7 +35,15 @@
     "release": "pnpm exec m-release --yes",
     "release:dry": "pnpm exec m-release --dry-run",
     "deploy-dev": "node scripts/workflow/deploy-dev.mjs",
-    "deploy-dev-stratus": "node scripts/workflow/deploy-dev.mjs"
+    "deploy-dev-stratus": "node scripts/workflow/deploy-dev.mjs",
+    "sandblocks:validate": "sandblocks validate .",
+    "sandblocks:doctor": "sandblocks doctor .",
+    "sandblocks:register": "sandblocks register . --project ${SANDBLOCKS_PROJECT_ID:?Set SANDBLOCKS_PROJECT_ID}",
+    "sandblocks:preview": "sandblocks sandbox up . --environment preview",
+    "sandblocks:production": "sandblocks sandbox up . --environment production",
+    "sandblocks:redeploy": "sandblocks sandbox redeploy . --environment ${SANDBLOCKS_ENVIRONMENT:-preview}",
+    "sandblocks:status": "sandblocks sandbox status . --environment ${SANDBLOCKS_ENVIRONMENT:-preview}",
+    "sandblocks:destroy": "sandblocks sandbox down . --environment ${SANDBLOCKS_ENVIRONMENT:-preview}"
   },
   "license": "MIT",
   "repository": {

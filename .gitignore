@@ -6,5 +6,8 @@ dist
 !.env.example
 .DS_Store
 
+# Sandblocks credentials, local managed-environment sources, and sandbox state.
+.sandblocks/
+
 config/release.config.local.mjs
 release.config.local.mjs

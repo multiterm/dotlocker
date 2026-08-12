@@ -1,0 +1,48 @@
+version: 2
+name: pluto
+
+workspace:
+  image: node:22-bookworm
+  setup: [corepack, pnpm, install, --frozen-lockfile]
+
+tasks:
+  build:
+    command: [corepack, pnpm, build]
+    timeout: 20m
+    outputs:
+      - packages/apps/site/dist
+      - packages/apps/webui/dist
+      - packages/libs/cli/dist
+      - packages/libs/client/dist
+      - packages/libs/server/dist
+      - packages/libs/shared/dist
+      - packages/libs/ui/dist
+      - packages/libs/ui-shared/dist
+
+services:
+  pluto:
+    root: packages/libs/cli
+    command: [corepack, pnpm, exec, pluto, serve]
+    port: 3000
+    health: /v1/health
+    resources: { memory: 2g, cpus: "2" }
+
+checks:
+  pluto-preview:
+    image: ./docker/images/Dockerfile.sandblocks-e2e
+    timeout: 2m
+    resources: { memory: 512m, cpus: "1" }
+
+environments:
+  preview:
+    pipeline: [build]
+    services: [pluto]
+    checks: [pluto-preview]
+    routing:
+      sso: true
+  production:
+    pipeline: [build]
+    services: [pluto]
+    checks: [pluto-preview]
+    routing:
+      sso: true
