@@ -20,6 +20,8 @@ interface NavigationItem {
 const workspaceNav: readonly NavigationItem[] = [
   { to: "/", label: "Overview", icon: "⌂" },
   { to: "/files", label: "Files", icon: "□" },
+  { to: "/releases", label: "Runtime releases", icon: "◈" },
+  { to: "/storage", label: "Storage", icon: "▱" },
   { to: "/repos", label: "Repositories", icon: "◇" },
 ];
 const accessNav: readonly NavigationItem[] = [
@@ -32,6 +34,8 @@ const accountNav: readonly NavigationItem[] = [{ to: "/settings", label: "Settin
 const titles: Record<string, [string, string]> = {
   "/": ["Overview", "Operational status and identity."],
   "/files": ["Files", "Browse and manage runtime-scoped files."],
+  "/releases": ["Runtime releases", "Review immutable configuration snapshots."],
+  "/storage": ["Storage", "Inspect Garage usage and object integrity."],
   "/repos": ["Repositories", "Manage projects and runtime repositories."],
   "/users": ["Users", "Provision accounts for Keyname sign-in."],
   "/tokens": ["API Keys", "Manage scoped keys and their access rights."],
@@ -242,7 +246,10 @@ export function AppShell() {
   const matches = useMatches();
   const pathname = matches.at(-1)?.pathname ?? "/";
   const settingsPage = matches.some((match) => match.staticData.shellLayout === "secondary");
-  const [title, subtitle] = titles[pathname] ?? ["dot.locker", "Runtime-aware file infrastructure."];
+  const [title, subtitle] = titles[pathname] ?? [
+    "dot.locker",
+    "Runtime-aware file infrastructure.",
+  ];
   const [loggingOut, setLoggingOut] = useState(false);
   const [switchingOrg, setSwitchingOrg] = useState(false);
   const [addOrgOpen, setAddOrgOpen] = useState(false);
@@ -443,25 +450,25 @@ export function AppShell() {
                   : "p-5 max-sm:p-3 xl:p-6",
               )}
             >
-            {!settingsPage && (
-              <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-                <div>
-                  <Text as="h1" variant="page">
-                    {title}
-                  </Text>
-                  <Text className="mt-1 text-[13px] text-[var(--pl-muted)]">{subtitle}</Text>
+              {!settingsPage && (
+                <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+                  <div>
+                    <Text as="h1" variant="page">
+                      {title}
+                    </Text>
+                    <Text className="mt-1 text-[13px] text-[var(--pl-muted)]">{subtitle}</Text>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary">{org || "No organization"}</Badge>
+                    <Badge variant="secondary" className="hidden sm:inline-flex">
+                      API: {server || "same origin"}
+                    </Badge>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">{org || "No organization"}</Badge>
-                  <Badge variant="secondary" className="hidden sm:inline-flex">
-                    API: {server || "same origin"}
-                  </Badge>
-                </div>
+              )}
+              <div key={`${pathname}:${org}`} className="pl-page-enter">
+                <Outlet />
               </div>
-            )}
-            <div key={`${pathname}:${org}`} className="pl-page-enter">
-              <Outlet />
-            </div>
             </ScrollArea>
           </main>
         </div>

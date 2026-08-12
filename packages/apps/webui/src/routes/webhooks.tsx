@@ -4,6 +4,7 @@ import { Badge, Button, Card, Input, Label, Separator, Text } from "@dotlocker/u
 import { SettingsLayoutRoute } from "./settings-layout";
 import { Dialog } from "~webui/components/Dialog";
 import { useSession } from "~webui/lib/session";
+import { errorMessage } from "~webui/lib/errors";
 import type { WebhookDelivery, WebhookRecord } from "~webui/lib/api";
 
 export const WebhooksRoute = createRoute({
@@ -40,7 +41,7 @@ function WebhooksPage() {
       setWebhooks((await api.webhooks()).webhooks);
       setError("");
     } catch (reason) {
-      setError(`Webhooks are available to organization administrators. ${JSON.stringify(reason)}`);
+      setError(`Webhooks are available to organization administrators. ${errorMessage(reason)}`);
     }
   }, [api]);
 
@@ -60,7 +61,7 @@ function WebhooksPage() {
       setEvents(["version"]);
       await load();
     } catch (reason) {
-      setError(`Could not create webhook: ${JSON.stringify(reason)}`);
+      setError(`Could not create webhook. ${errorMessage(reason)}`);
     } finally {
       setBusy(false);
     }
@@ -73,8 +74,12 @@ function WebhooksPage() {
   };
 
   const showDeliveries = async (webhook: WebhookRecord) => {
-    const result = await api.webhookDeliveries(webhook.id);
-    setDeliveries((current) => ({ ...current, [webhook.id]: result.deliveries }));
+    try {
+      const result = await api.webhookDeliveries(webhook.id);
+      setDeliveries((current) => ({ ...current, [webhook.id]: result.deliveries }));
+    } catch (reason) {
+      setError(`Could not load deliveries. ${errorMessage(reason)}`);
+    }
   };
 
   return (

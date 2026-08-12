@@ -1,0 +1,67 @@
+name: dotlocker-abby-infrastructure
+
+services:
+  postgres:
+    build:
+      context: ../..
+      dockerfile: docker/images/postgres/Dockerfile
+      args:
+        POSTGRES_VERSION: ${POSTGRES_VERSION:-16.8-alpine}
+    image: dotlocker/postgres:${POSTGRES_IMAGE_TAG:-16}
+    container_name: dotlocker-postgres
+    restart: unless-stopped
+    stop_grace_period: 1m
+    environment:
+      POSTGRES_DB: ${POSTGRES_ADMIN_DB:-postgres}
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Set POSTGRES_ADMIN_PASSWORD in the Abby env file}
+      DOTLOCKER_PREVIEW_DB: ${DOTLOCKER_PREVIEW_DB:-pluto_preview}
+      DOTLOCKER_PREVIEW_USER: ${DOTLOCKER_PREVIEW_USER:-pluto_preview}
+      DOTLOCKER_PREVIEW_PASSWORD: ${DOTLOCKER_PREVIEW_PASSWORD:?Set DOTLOCKER_PREVIEW_PASSWORD in the Abby env file}
+      DOTLOCKER_PRODUCTION_DB: ${DOTLOCKER_PRODUCTION_DB:-pluto_prod}
+      DOTLOCKER_PRODUCTION_USER: ${DOTLOCKER_PRODUCTION_USER:-pluto_prod}
+      DOTLOCKER_PRODUCTION_PASSWORD: ${DOTLOCKER_PRODUCTION_PASSWORD:?Set DOTLOCKER_PRODUCTION_PASSWORD in the Abby env file}
+    ports:
+      - "${ABBY_BIND_IP:?Set ABBY_BIND_IP to Abby's tailnet address}:54329:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    volumes:
+      - ${ABBY_DATA_ROOT:-/vol/nvme/docker/pluto}/postgres:/var/lib/postgresql/data
+    networks: [dotlocker]
+
+  garage:
+    build:
+      context: ../..
+      dockerfile: docker/images/garage/Dockerfile
+      args:
+        GARAGE_VERSION: ${GARAGE_VERSION:-v1.1.0}
+    image: dotlocker/garage:${GARAGE_IMAGE_TAG:-1.1}
+    container_name: dotlocker-garage
+    restart: unless-stopped
+    stop_grace_period: 2m
+    environment:
+      GARAGE_RPC_PUBLIC_ADDR: ${ABBY_BIND_IP}:3901
+      GARAGE_RPC_SECRET: ${GARAGE_RPC_SECRET:?Set GARAGE_RPC_SECRET in the Abby env file}
+      GARAGE_ADMIN_TOKEN: ${GARAGE_ADMIN_TOKEN:?Set GARAGE_ADMIN_TOKEN in the Abby env file}
+      GARAGE_METRICS_TOKEN: ${GARAGE_METRICS_TOKEN:?Set GARAGE_METRICS_TOKEN in the Abby env file}
+    ports:
+      - "${ABBY_BIND_IP}:3900:3900"
+      - "${ABBY_BIND_IP}:3901:3901"
+      - "127.0.0.1:3903:3903"
+    healthcheck:
+      test: ["CMD", "/garage", "status"]
+      interval: 15s
+      timeout: 10s
+      retries: 12
+      start_period: 20s
+    volumes:
+      - ${ABBY_DATA_ROOT:-/vol/nvme/docker/pluto}/garage/meta:/var/lib/garage/meta
+      - ${ABBY_DATA_ROOT:-/vol/nvme/docker/pluto}/garage/data:/var/lib/garage/data
+    networks: [dotlocker]
+
+networks:
+  dotlocker:
+    name: dotlocker-abby

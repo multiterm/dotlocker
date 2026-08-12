@@ -4,6 +4,7 @@ import { DotlockerBrand, ModeToggle, ThemeVariantSelect } from "@dotlocker/ui-sh
 import { useState } from "react";
 import { RootRoute } from "./root";
 import { useSession } from "~webui/lib/session";
+import { errorMessage } from "~webui/lib/errors";
 
 export const LoginRoute = createRoute({
   getParentRoute: () => RootRoute,
@@ -20,7 +21,9 @@ const benefits = [
 function KeynameMark() {
   return (
     <span className="inline-flex items-center gap-2 text-xs font-semibold text-[var(--pl-muted)]">
-      <span className="grid h-5 w-5 place-items-center rounded-full border border-[var(--pl-line-strong)] text-[10px] font-black text-[var(--pl-text)]">+</span>
+      <span className="grid h-5 w-5 place-items-center rounded-full border border-[var(--pl-line-strong)] text-[10px] font-black text-[var(--pl-text)]">
+        +
+      </span>
       Secured by Keyname
     </span>
   );
@@ -49,8 +52,7 @@ function LoginPage() {
       session.setMe(await session.api.me());
       await navigate({ to: "/" });
     } catch (reason: unknown) {
-      const value = reason as { error?: string; message?: string };
-      setError(value?.error ?? value?.message ?? "Keyname sign-in could not be completed.");
+      setError(errorMessage(reason));
     } finally {
       setLoading(false);
     }
@@ -82,19 +84,27 @@ function LoginPage() {
           {benefits.map(([title, subtitle]) => (
             <div key={title} className="px-2 text-center">
               <div className="text-[11px] font-semibold text-[var(--pl-text)]">{title}</div>
-              <div className="mt-0.5 hidden text-[9px] leading-3 text-[var(--pl-subtle)] sm:block">{subtitle}</div>
+              <div className="mt-0.5 hidden text-[9px] leading-3 text-[var(--pl-subtle)] sm:block">
+                {subtitle}
+              </div>
             </div>
           ))}
         </div>
 
         {error && (
-          <div id="status" role="alert" className="mb-4 rounded-[var(--pl-radius-xs)] border border-[color-mix(in_srgb,var(--pl-danger)_40%,var(--pl-line))] bg-[color-mix(in_srgb,var(--pl-danger)_8%,var(--pl-surface))] px-3 py-2.5 text-xs text-[var(--pl-danger)]">
+          <div
+            id="status"
+            role="alert"
+            className="mb-4 rounded-[var(--pl-radius-xs)] border border-[color-mix(in_srgb,var(--pl-danger)_40%,var(--pl-line))] bg-[color-mix(in_srgb,var(--pl-danger)_8%,var(--pl-surface))] px-3 py-2.5 text-xs text-[var(--pl-danger)]"
+          >
             {error}
           </div>
         )}
 
         <Button className="w-full" size="lg" disabled={loading} onClick={() => void signIn()}>
-          <span aria-hidden className="text-base">+</span>
+          <span aria-hidden className="text-base">
+            +
+          </span>
           {loading ? "Opening Keyname…" : "Continue with Keyname"}
         </Button>
 
@@ -102,7 +112,8 @@ function LoginPage() {
           <KeynameMark />
         </div>
         <p className="mt-5 border-t border-[var(--pl-line)] pt-4 text-center text-[11px] leading-4 text-[var(--pl-subtle)]">
-          Keyname handles credentials, passkeys, providers, and MFA. dot.locker never receives your password.
+          Keyname handles credentials, passkeys, providers, and MFA. dot.locker never receives your
+          password.
         </p>
       </main>
     </div>

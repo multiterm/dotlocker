@@ -112,6 +112,8 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
       req.routeOptions.url === "/" ||
       req.routeOptions.url === "/login" ||
       req.routeOptions.url === "/files" ||
+      req.routeOptions.url === "/releases" ||
+      req.routeOptions.url === "/storage" ||
       req.routeOptions.url === "/repos" ||
       req.routeOptions.url === "/users" ||
       req.routeOptions.url === "/grants" ||
@@ -191,6 +193,8 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
   app.get("/", sendWebUi);
   app.get("/login", sendWebUi);
   app.get("/files", sendWebUi);
+  app.get("/releases", sendWebUi);
+  app.get("/storage", sendWebUi);
   app.get("/repos", sendWebUi);
   app.get("/users", sendWebUi);
   app.get("/grants", sendWebUi);
@@ -207,7 +211,34 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
     return reply.header("Content-Type", contentType(path)).send(readFileSync(path));
   });
 
-  app.get("/v1/health", async () => ({ ok: true, version }));
+  app.get("/v1/health", async () => ({
+    ok: true,
+    version,
+    releaseSnapshot: process.env.DOTLOCKER_RELEASE_SNAPSHOT ?? null,
+  }));
+
+  app.get("/v1/operations/storage", async (req, reply) => {
+    const token = req.token!;
+    if (!token.userEmail || !(await auth.isOrgAdmin(token.userEmail, token.org)))
+      return reply.code(403).send({ error: "PLUTO_FORBIDDEN" });
+    const files = await metadata.listFiles(token.org);
+    const objects = await store.listOrg(token.org);
+    const metadataPaths = new Set(files.map((file) => file.path));
+    const objectPaths = new Set(objects);
+    const missing = files.filter((file) => !objectPaths.has(file.path)).map((file) => file.path);
+    const orphaned = objects.filter((path) => !metadataPaths.has(path));
+    return {
+      backend: process.env.DOTLOCKER_S3_ENDPOINT ? "garage" : "filesystem",
+      connected: true,
+      bucket: process.env.DOTLOCKER_S3_BUCKET ?? null,
+      files: files.length,
+      bytes: files.reduce((total, file) => total + file.size, 0),
+      objects: objects.length,
+      missing: missing.slice(0, 100),
+      orphaned: orphaned.slice(0, 100),
+      checkedAt: Date.now(),
+    };
+  });
 
   app.post("/v1/auth/keyname/session", async (req, reply) => {
     const header = headerValue(req.headers.authorization);
@@ -439,21 +470,23 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
     const token = req.token!;
     const allRows = await auth.listTokens(token.org);
     const admin = token.userEmail ? await auth.isOrgAdmin(token.userEmail, token.org) : false;
-    const rows = allRows.filter(
-      (t) => !isSessionToken(t) && token.userEmail && (t.userEmail === token.userEmail || admin),
+    const visible = allRows.filter(
+      (t) => token.userEmail && (t.userEmail === token.userEmail || admin),
     );
+    const shape = (t: TokenRecord) => ({
+      id: t.id,
+      org: t.org,
+      label: t.label,
+      userEmail: t.userEmail,
+      service: t.service,
+      scopes: t.scopes,
+      createdAt: t.createdAt,
+      expiresAt: t.expiresAt,
+      revokedAt: t.revokedAt,
+    });
     return {
-      tokens: rows.map((t) => ({
-        id: t.id,
-        org: t.org,
-        label: t.label,
-        userEmail: t.userEmail,
-        service: t.service,
-        scopes: t.scopes,
-        createdAt: t.createdAt,
-        expiresAt: t.expiresAt,
-        revokedAt: t.revokedAt,
-      })),
+      tokens: visible.filter((t) => !isSessionToken(t)).map(shape),
+      sessions: visible.filter(isSessionToken).map(shape),
     };
   });
 

@@ -1,0 +1,21 @@
+metadata_dir = "/var/lib/garage/meta"
+data_dir = "/var/lib/garage/data"
+db_engine = "lmdb"
+replication_factor = 1
+
+# GARAGE_RPC_PUBLIC_ADDR and GARAGE_RPC_SECRET are injected at runtime.
+rpc_bind_addr = "0.0.0.0:3901"
+
+[s3_api]
+s3_region = "garage"
+api_bind_addr = "0.0.0.0:3900"
+root_domain = ".s3.garage.localhost"
+
+[s3_web]
+bind_addr = "0.0.0.0:3902"
+root_domain = ".web.garage.localhost"
+index = "index.html"
+
+[admin]
+# GARAGE_ADMIN_TOKEN and GARAGE_METRICS_TOKEN are injected at runtime.
+api_bind_addr = "0.0.0.0:3903"

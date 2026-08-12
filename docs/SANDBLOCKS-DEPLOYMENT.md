@@ -35,14 +35,16 @@ Upload the complete contents of:
 
 Use the Sandblocks dashboard/API environment editor for the configured project. Values are write-only managed deployment data and are injected into setup, build, service, and check phases without entering source bundles or image layers.
 
-At minimum, dot.locker needs `NODE_ENV`, `HOST`, `PORT`, `DOTLOCKER_DATA_DIR`, and a durable `DOTLOCKER_DATABASE_URL`. Add authentication, Keyname, webhook, and integration variables required by your installation to the local file before upload.
+At minimum, Dotlocker needs `NODE_ENV`, `HOST`, `PORT`, `DOTLOCKER_DATA_DIR`, and a durable `DOTLOCKER_DATABASE_URL`. Set `DOTLOCKER_RELEASE_SNAPSHOT` to the full immutable runtime hash approved for the application candidate; `/v1/health` exposes that non-secret linkage for candidate verification and rollback records. Add authentication, Keyname, webhook, and integration variables required by your installation to the local file before upload.
 
-## Abby PostgreSQL layout
+## Abby durable Docker services
 
-dot.locker uses the existing PostgreSQL 16 service on Abby rather than creating a database inside a Sandblocks sandbox:
+The repository-owned definitions live in [`docker/abby`](../docker/abby/README.md). `compose.infrastructure.yml` builds the pinned PostgreSQL and Garage images under `docker/images`; `lifecycle.sh` validates, updates, health-checks, backs up, and conservatively prunes them. The populated environment file remains root-only on Abby and is never committed.
+
+Dotlocker uses the PostgreSQL 16 service on Abby rather than creating a database inside a Sandblocks sandbox:
 
 - Tailnet endpoint: `100.114.99.85:54329`.
-- Physical cluster data (legacy host path): `/vol/nvme/docker/pluto/postgres`.
+- Physical cluster data: `/vol/nvme/docker/pluto/postgres`.
 - Preview database/login: `pluto_preview`.
 - Production database/login: `pluto_prod`.
 - Root-only credential source on Abby: `/vol/nvme/docker/pluto/runtime-databases.env`.
@@ -71,7 +73,7 @@ SANDBLOCKS_ENVIRONMENT=production pnpm sandblocks:status
 sandblocks sandbox promote --project "$SANDBLOCKS_PROJECT_ID" --sandbox <sandbox-id>
 ```
 
-Use the immutable candidate URL from `status` for final browser and health verification before promotion. Preview deployments have no stable alias; neither production domain moves merely because checks pass.
+Use the immutable candidate URL from `status` for final browser and health verification before promotion. Confirm its `/v1/health` `releaseSnapshot` exactly matches the reviewed Runtime releases hash before promoting. Preview deployments have no stable alias; neither production domain moves merely because checks pass.
 
 Redeploy or destroy the selected environment with:
 

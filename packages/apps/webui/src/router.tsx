@@ -11,10 +11,14 @@ import { SettingsLayoutRoute } from "./routes/settings-layout";
 import { SettingsRoute } from "./routes/settings";
 import { WebhooksRoute } from "./routes/webhooks";
 import { IntegrationsRoute } from "./routes/integrations";
+import { RuntimeReleasesRoute } from "./routes/runtime-releases";
+import { StorageRoute } from "./routes/storage";
 
 const appTree = AppRoute.addChildren([
   OverviewRoute,
   FilesRoute,
+  RuntimeReleasesRoute,
+  StorageRoute,
   ReposRoute,
   UsersRoute,
   TokensRoute,
