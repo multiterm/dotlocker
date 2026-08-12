@@ -1,4 +1,10 @@
 # Pluto workspace tasks
-
+build: pnpm --filter @multiterm/pluto-shared exec rune build && pnpm --filter @multiterm/pluto-client exec rune build && pnpm --filter @multiterm/pluto-server exec rune build && pnpm --filter @multiterm/pluto-ui exec rune build && pnpm --filter @multiterm/pluto-ui-shared exec rune build && pnpm --filter @multiterm/pluto-site exec rune build && pnpm --filter @multiterm/pluto-webui exec rune build && pnpm --filter @multiterm/pluto exec rune build && pnpm exec tsc -p packages/apps/mcp/tsconfig.json
+test: pnpm --filter @multiterm/pluto-client exec rune test && pnpm --filter @multiterm/pluto-server exec rune test && pnpm --filter @multiterm/pluto exec rune test
+typecheck: pnpm --filter @multiterm/pluto-client exec rune typecheck && pnpm --filter @multiterm/pluto-server exec rune typecheck && pnpm --filter @multiterm/pluto exec rune typecheck && pnpm exec tsc -p packages/apps/mcp/tsconfig.json --noEmit
+lint: pnpm --filter @multiterm/pluto-client exec rune lint && pnpm --filter @multiterm/pluto-server exec rune lint
+format: pnpm --filter @multiterm/pluto-client exec rune format && pnpm --filter @multiterm/pluto-server exec rune format
+release: pnpm dlx @multiterm/release@0.4.1-b.16 --yes
+release-dry: pnpm dlx @multiterm/release@0.4.1-b.16 --dry-run
 deploy-dev: node scripts/workflow/deploy-dev.mjs
 deploy-dev-stratus: node scripts/workflow/deploy-dev.mjs

@@ -1,0 +1,27 @@
+{
+  "name": "@multiterm/pluto-mcp",
+  "version": "0.1.0-b.0",
+  "type": "module",
+  "bin": {
+    "pluto-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "SKILL.md"
+  ],
+  "exports": {
+    "./skill": "./SKILL.md"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@multiterm/pluto": "workspace:*",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.0",
+    "typescript": "^6.0.0"
+  }
+}

@@ -4,7 +4,11 @@
   "private": true,
   "type": "module",
   "description": "Pluto design tokens, themes, and themed mode CSS.",
-  "files": ["src", "styles", "tokens"],
+  "files": [
+    "src",
+    "styles",
+    "tokens"
+  ],
   "exports": {
     ".": "./src/index.ts",
     "./styles/themes.css": "./styles/themes.css",
@@ -12,9 +16,6 @@
     "./styles/tailwind/theme.css": "./styles/tailwind/theme.css",
     "./styles/tailwind/typography.css": "./styles/tailwind/typography.css",
     "./tokens": "./tokens/index.ts"
-  },
-  "scripts": {
-    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

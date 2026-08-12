@@ -3,16 +3,6 @@
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.4.0",
-  "scripts": {
-    "build": "pnpm -r build",
-    "test": "pnpm -r test",
-    "typecheck": "pnpm -r typecheck",
-    "lint": "pnpm -r lint",
-    "format": "pnpm -r format",
-    "deploy:dev": "node scripts/workflow/deploy-dev.mjs",
-    "release": "pnpm dlx @multiterm/release@0.4.1-b.16 --yes",
-    "release:dry": "pnpm dlx @multiterm/release@0.4.1-b.16 --dry-run"
-  },
   "devDependencies": {
     "@multiterm/rune": "0.4.1-b.15",
     "@types/node": "^25.8.0",

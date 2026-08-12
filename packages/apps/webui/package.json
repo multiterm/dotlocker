@@ -3,18 +3,12 @@
   "version": "0.2.5",
   "private": true,
   "type": "module",
-  "scripts": {
-    "build": "rune build",
-    "dev": "vite -c configs/vite.config.ts",
-    "test": "echo \"pluto-webui: e2e is run separately (playwright)\"",
-    "typecheck": "rune typecheck",
-    "lint": "rune lint",
-    "format": "rune format"
-  },
   "rune": {
     "extends": "../../../configs/rune.config.ts",
     "scripts": {
-      "build": ["vite build -c configs/vite.config.ts"]
+      "build": [
+        "vite build -c configs/vite.config.ts"
+      ]
     }
   },
   "dependencies": {

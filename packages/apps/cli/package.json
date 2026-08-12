@@ -18,12 +18,14 @@
     "./server": {
       "types": "./dist/server/index.d.ts",
       "default": "./dist/server/index.js"
-    }
+    },
+    "./skill": "./SKILL.md"
   },
   "files": [
     "dist",
     "README.md",
-    "SPEC.md"
+    "SPEC.md",
+    "SKILL.md"
   ],
   "publishConfig": {
     "access": "public"
@@ -35,13 +37,6 @@
     "cli"
   ],
   "license": "MIT",
-  "scripts": {
-    "build": "rune build",
-    "test": "rune test",
-    "typecheck": "rune typecheck",
-    "lint": "rune lint",
-    "format": "rune format"
-  },
   "rune": {
     "extends": "../../../configs/rune.config.ts",
     "scripts": {
