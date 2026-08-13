@@ -14,7 +14,7 @@
     "vite-plugin-dts": "^5.0.0",
     "vitest": "^4.1.6",
     "@multiterm/release": "0.4.1-b.20",
-    "@sandblocks/cli": "0.3.0",
+    "@sandblocks/cli": "0.4.0-b.0",
     "@sandblocks/sdk": "0.3.0"
   },
   "description": "dot.locker workspace for secure runtime-scoped file storage, synchronization, and administration.",

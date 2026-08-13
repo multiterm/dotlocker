@@ -15,8 +15,8 @@ importers:
         specifier: 0.4.1-b.17
         version: 0.4.1-b.17(typescript@6.0.3)
       '@sandblocks/cli':
-        specifier: 0.3.0
-        version: 0.3.0
+        specifier: 0.4.0-b.0
+        version: 0.4.0-b.0
       '@sandblocks/sdk':
         specifier: 0.3.0
         version: 0.3.0
@@ -746,8 +746,8 @@ packages:
       rollup:
         optional: true
 
-  '@sandblocks/cli@0.3.0':
-    resolution: {integrity: sha512-mYf5wONXTPhf+Nb8/PcERrYj4RcyzqI/WzbJPZoJRmZDtSGE9j/UjOpZ8IHqwzRP+4PG6MjzphiUe8EtyEmt/Q==}
+  '@sandblocks/cli@0.4.0-b.0':
+    resolution: {integrity: sha512-1F7pRePomCxDZvwgonLa7ghpDVO9G1XS8qDzZUMHCOGxi8pCa06dDeivLfbey+OOYtw6i5L4hvI4FR+H46Ibiw==}
     engines: {bun: '>=1.1.0'}
     hasBin: true
 
@@ -2929,7 +2929,7 @@ snapshots:
       estree-walker: 2.0.2
       picomatch: 4.0.4
 
-  '@sandblocks/cli@0.3.0': {}
+  '@sandblocks/cli@0.4.0-b.0': {}
 
   '@sandblocks/sdk@0.3.0': {}
 
