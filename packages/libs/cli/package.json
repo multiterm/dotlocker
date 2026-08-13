@@ -1,7 +1,7 @@
 {
   "name": "@dotlocker/dotlocker",
   "description": "dot.locker CLI, server, and SDK for secure runtime-scoped file storage and synchronization.",
-  "version": "0.2.12-b.0",
+  "version": "0.2.12-b.1",
   "type": "module",
   "bin": {
     "dotlocker": "dist/cli.js",
