@@ -33,6 +33,7 @@ describe("dotlocker built CLI (dist/cli.js)", () => {
     expect(stdout).toContain("serve");
     expect(stdout).toContain("pull");
     expect(stdout).toContain("exec");
+    expect(stdout).toContain("capabilities");
   });
 
   it.skipIf(!hasDistCli)("exits 0 on --help", () => {

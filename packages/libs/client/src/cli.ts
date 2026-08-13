@@ -23,11 +23,17 @@ interface CommonFlags extends CliFlags {
 function commonOptions(yargs: Argv): Argv<CommonFlags> {
   return yargs
     .option("server", { type: "string", describe: "dot.locker server URL" })
-    .option("token", { type: "string", describe: "Bearer token (env: DOTLOCKER_TOKEN; legacy: PLUTO_TOKEN)" })
+    .option("token", {
+      type: "string",
+      describe: "Bearer token (env: DOTLOCKER_TOKEN; legacy: PLUTO_TOKEN)",
+    })
     .option("org", { type: "string" })
     .option("repo", { type: "string", describe: "Repository namespace under org" })
     .option("runtime", { type: "string", describe: "Runtime namespace (dev, preview, prod, ...)" })
-    .option("target-dir", { type: "string", describe: "Local directory to sync (default: .locker)" })
+    .option("target-dir", {
+      type: "string",
+      describe: "Local directory to sync (default: .locker)",
+    })
     .option("config", {
       type: "string",
       alias: "c",
@@ -244,8 +250,37 @@ const loginCommand: CommandModule<
         "login requires --server/DOTLOCKER_SERVER, --org/DOTLOCKER_ORG, --email/DOTLOCKER_EMAIL, and --password/DOTLOCKER_PASSWORD",
       );
     const client = new PlutoClient({ server, token: "" });
-    const res = await client.login(email, password, org, args.totp ?? process.env.DOTLOCKER_TOTP ?? process.env.PLUTO_TOTP);
+    const res = await client.login(
+      email,
+      password,
+      org,
+      args.totp ?? process.env.DOTLOCKER_TOTP ?? process.env.PLUTO_TOTP,
+    );
     process.stdout.write(`${res.token}\n`);
+  },
+};
+
+const capabilitiesCommand: CommandModule<unknown, CommonFlags> = {
+  command: "capabilities",
+  describe: "Print server health and client runtime capabilities",
+  builder: (y) => commonOptions(y),
+  handler: async (args) => {
+    const r = await resolve(args);
+    const client = new PlutoClient({ server: r.server, token: r.token });
+    const health = await client.health();
+    process.stdout.write(
+      `${JSON.stringify(
+        {
+          server: r.server,
+          healthy: health.ok,
+          version: health.version,
+          runtime: { org: r.org, repo: r.repo, name: r.runtime },
+          operations: ["pull", "push", "versions", "sync", "exec"],
+        },
+        null,
+        2,
+      )}\n`,
+    );
   },
 };
 
@@ -275,6 +310,7 @@ const statusCommand: CommandModule<unknown, CommonFlags> = {
 };
 
 export const clientCommands: ReadonlyArray<CommandModule<unknown, never>> = [
+  capabilitiesCommand as unknown as CommandModule<unknown, never>,
   loginCommand as unknown as CommandModule<unknown, never>,
   initCommand as unknown as CommandModule<unknown, never>,
   pullCommand as unknown as CommandModule<unknown, never>,
