@@ -33,6 +33,7 @@ import {
   listWebhooks,
   updateWebhook,
 } from "./webhooks.js";
+import { compareTenancyDecision } from "./tenancy.js";
 
 const MAX_BODY_BYTES = 256 * 1024;
 
@@ -1279,12 +1280,22 @@ async function parseAndAuthorize(
   if (parsed.org !== token.org) {
     return new ForbiddenError();
   }
-  if (
-    !authorize(token.scopes, parsed.joined, access) &&
-    !(await auth.authorizeGrant(token.userEmail, parsed.joined, access))
-  ) {
-    return new ForbiddenError();
+  const localAllowed =
+    authorize(token.scopes, parsed.joined, access) ||
+    (await auth.authorizeGrant(token.userEmail, parsed.joined, access));
+  if (token.userEmail) {
+    const subject = await auth.keynameIdentity(token.userEmail);
+    if (subject)
+      void compareTenancyDecision({
+        organization: parsed.org,
+        subject,
+        email: token.userEmail,
+        path: parsed.joined,
+        access,
+        localAllowed,
+      });
   }
+  if (!localAllowed) return new ForbiddenError();
   return parsed;
 }
 
