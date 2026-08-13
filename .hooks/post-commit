@@ -1,0 +1,10 @@
+#!/bin/sh
+# multiterm-release-managed-post-commit
+set -u
+previous="$(dirname "$0")/post-commit.before-multiterm-release"
+if [ -x "$previous" ]; then "$previous" || exit $?; fi
+if [ "${MULTITERM_RELEASE_SKIP_POST_COMMIT:-0}" = "1" ]; then echo "release post-commit skipped by MULTITERM_RELEASE_SKIP_POST_COMMIT"; exit 0; fi
+root=$(git rev-parse --show-toplevel) || exit $?
+cd "$root" || exit $?
+if [ -x node_modules/.bin/m-release ]; then exec node_modules/.bin/m-release hook run post-commit "$root"; fi
+exec m-release hook run post-commit "$root"

@@ -1,0 +1,28 @@
+#!/bin/sh
+# dotlocker-sandblocks-post-commit
+set -u
+
+if [ "${SANDBLOCKS_SKIP_POST_COMMIT:-0}" = "1" ]; then
+  echo "[dotlocker post-commit] skipped by SANDBLOCKS_SKIP_POST_COMMIT"
+  exit 0
+fi
+root=$(git rev-parse --show-toplevel) || exit $?
+branch=$(git -C "$root" branch --show-current) || exit $?
+if [ "$branch" != "develop" ]; then
+  echo "[dotlocker post-commit] skipped on branch ${branch:-detached}"
+  exit 0
+fi
+state="$root/.sandblocks"
+mkdir -p "$state/logs"
+lock="$state/post-commit-deploy.lock"
+if ! mkdir "$lock" 2>/dev/null; then
+  echo "[dotlocker post-commit] skipped because a deployment is already active"
+  exit 0
+fi
+log="$state/logs/post-commit-$(date +%Y%m%d-%H%M%S).log"
+(
+  trap 'rmdir "$lock" 2>/dev/null || true' EXIT INT TERM
+  cd "$root" || exit $?
+  SANDBLOCKS_ENVIRONMENT=preview SANDBLOCKS_SKIP_POST_COMMIT=1 pnpm sandblocks:redeploy
+) >"$log" 2>&1 </dev/null &
+echo "[dotlocker post-commit] preview redeploy started ($log)"

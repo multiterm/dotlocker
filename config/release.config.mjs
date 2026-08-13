@@ -8,4 +8,9 @@ export default {
   checks: ['pnpm build', 'pnpm test'],
   access: 'public',
   github: true,
+  postCommit: {
+    enabled: true,
+    branches: ['develop'],
+    background: true,
+  },
 };

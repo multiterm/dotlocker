@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@multiterm/release':
-        specifier: 0.4.1-b.20
-        version: 0.4.1-b.20
+        specifier: 0.4.1-b.22
+        version: 0.4.1-b.22
       '@multiterm/rune':
         specifier: 0.4.1-b.17
         version: 0.4.1-b.17(typescript@6.0.3)
@@ -601,11 +601,11 @@ packages:
       '@cfworker/json-schema':
         optional: true
 
-  '@multiterm/release-sdk@0.4.1-b.18':
-    resolution: {integrity: sha512-vH0zJvuj7KQY0vu/Yfy4GONzpz5flNqLL7BB/csNTEjoBkZgb081fPhFCicIRp/etRZTczHtvlWAsaN67CEqyw==}
+  '@multiterm/release-sdk@0.4.1-b.21':
+    resolution: {integrity: sha512-RttsUU1p7hDyAY6jOtTXy1Cit1reRjJXZPvQ3NE1mV4bGfITlwSZPJnLLUDXMZ3pQfU5YgrXA1NeDPg1OxpLoA==}
 
-  '@multiterm/release@0.4.1-b.20':
-    resolution: {integrity: sha512-4tRMdrnrmqs0TPrk1h3uQT5plgROnTLO8aeUvmj5YBpFXy7dcljisttQyokI5ZgIxn0bEi4L3oLnLnOxIrYdUQ==}
+  '@multiterm/release@0.4.1-b.22':
+    resolution: {integrity: sha512-xOdLly/+J4TFBdjz89+zQB5lthQsABXAFDHVod4NQ4/9XZYx3xbFFaIP5E8Zv2b6cUMKG98YDbZGZJYa8oPjXw==}
     hasBin: true
 
   '@multiterm/rune-trpc@0.1.0-b.2':
@@ -2825,11 +2825,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@multiterm/release-sdk@0.4.1-b.18': {}
+  '@multiterm/release-sdk@0.4.1-b.21': {}
 
-  '@multiterm/release@0.4.1-b.20':
+  '@multiterm/release@0.4.1-b.22':
     dependencies:
-      '@multiterm/release-sdk': 0.4.1-b.18
+      '@multiterm/release-sdk': 0.4.1-b.21
 
   '@multiterm/rune-trpc@0.1.0-b.2(typescript@6.0.3)':
     dependencies:
