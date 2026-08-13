@@ -106,6 +106,7 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
   app.addHook("onRequest", async (req, reply) => {
     if (
       req.routeOptions.url === "/v1/health" ||
+      req.routeOptions.url === "/public/:id" ||
       req.routeOptions.url === "/v1/auth/login" ||
       req.routeOptions.url === "/v1/auth/tailscale" ||
       req.routeOptions.url === "/v1/auth/keyname/session" ||
@@ -188,6 +189,28 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
 
   // #region -- Routes --------------------------------------
 
+  const publicFile = async (id: string): Promise<{ id: string; path: string } | null> => {
+    if (pgClient) {
+      const [row] = await pgClient`SELECT id,path FROM public_files WHERE id=${id}`;
+      return row ? { id: row.id, path: row.path } : null;
+    }
+    return (
+      (db.prepare("SELECT id,path FROM public_files WHERE id = ?").get(id) as
+        | { id: string; path: string }
+        | undefined) ?? null
+    );
+  };
+  const publicFileForPath = async (path: string): Promise<{ id: string; path: string } | null> => {
+    if (pgClient) {
+      const [row] = await pgClient`SELECT id,path FROM public_files WHERE path=${path}`;
+      return row ? { id: row.id, path: row.path } : null;
+    }
+    return (
+      (db.prepare("SELECT id,path FROM public_files WHERE path = ?").get(path) as
+        | { id: string; path: string }
+        | undefined) ?? null
+    );
+  };
   const sendWebUi = async (_req: FastifyRequest, reply: FastifyReply) =>
     reply.header("Content-Type", "text/html; charset=utf-8").send(webUiHtml());
   app.get("/", sendWebUi);
@@ -216,6 +239,24 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
     version,
     releaseSnapshot: process.env.DOTLOCKER_RELEASE_SNAPSHOT ?? null,
   }));
+
+  app.get("/public/:id", async (req, reply) => {
+    const { id } = req.params as { id: string };
+    if (!/^[a-f0-9]{32}$/.test(id)) return reply.code(404).send({ error: "PLUTO_NOT_FOUND" });
+    const row = await publicFile(id);
+    if (!row) return reply.code(404).send({ error: "PLUTO_NOT_FOUND" });
+    try {
+      const body = await store.read(row.path);
+      return reply
+        .header("Content-Type", publicContentType(row.path))
+        .header("Cache-Control", "public, max-age=300, stale-while-revalidate=60")
+        .header("X-Content-Type-Options", "nosniff")
+        .send(body);
+    } catch (error) {
+      if (error instanceof NotFoundError) return reply.code(404).send({ error: "PLUTO_NOT_FOUND" });
+      throw error;
+    }
+  });
 
   app.get("/v1/operations/storage", async (req, reply) => {
     const token = req.token!;
@@ -773,6 +814,41 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
     return reply.send({ deliveries: listWebhookDeliveries(db, token.org, id) });
   });
 
+  app.post("/v1/public-files", async (req, reply) => {
+    const token = req.token!;
+    const body = req.body as { path?: string } | null;
+    if (!body?.path) return reply.code(400).send({ error: "PLUTO_INVALID_PATH" });
+    const parsed = await parseAndAuthorize(auth, token, body.path, "write");
+    if (parsed instanceof PlutoError) return reply.code(parsed.status).send({ error: parsed.code });
+    const record = await metadata.getFile(parsed.joined);
+    if (!record || record.deletedAt) return reply.code(404).send({ error: "PLUTO_NOT_FOUND" });
+    const id = randomBytes(16).toString("hex");
+    const createdAt = Date.now();
+    if (pgClient)
+      await pgClient`INSERT INTO public_files (id,path,org,created_at,created_by) VALUES (${id},${record.path},${record.org},${createdAt},${token.userEmail}) ON CONFLICT(path) DO UPDATE SET created_at=excluded.created_at,created_by=excluded.created_by RETURNING id`;
+    else
+      db.prepare(
+        "INSERT INTO public_files (id,path,org,created_at,created_by) VALUES (?,?,?,?,?) ON CONFLICT(path) DO UPDATE SET created_at=excluded.created_at,created_by=excluded.created_by",
+      ).run(id, record.path, record.org, createdAt, token.userEmail);
+    const published = await publicFileForPath(record.path);
+    audit(db, req, token, "put", `public/${record.path}`, 201);
+    return reply
+      .code(201)
+      .send({ id: published!.id, path: record.path, url: `/public/${published!.id}` });
+  });
+
+  app.delete("/v1/public-files", async (req, reply) => {
+    const token = req.token!;
+    const body = req.body as { path?: string } | null;
+    if (!body?.path) return reply.code(400).send({ error: "PLUTO_INVALID_PATH" });
+    const parsed = await parseAndAuthorize(auth, token, body.path, "write");
+    if (parsed instanceof PlutoError) return reply.code(parsed.status).send({ error: parsed.code });
+    if (pgClient) await pgClient`DELETE FROM public_files WHERE path=${parsed.joined}`;
+    else db.prepare("DELETE FROM public_files WHERE path = ?").run(parsed.joined);
+    audit(db, req, token, "delete", `public/${parsed.joined}`, 204);
+    return reply.code(204).send();
+  });
+
   app.get("/v1/files-meta/*", async (req, reply) => {
     const token = req.token!;
     const rawPath = (req.params as { "*": string })["*"];
@@ -785,8 +861,10 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
       if (
         authorize(token.scopes, r.path, "read") ||
         (await auth.authorizeGrant(token.userEmail, r.path, "read"))
-      )
-        records.push(r);
+      ) {
+        const published = await publicFileForPath(r.path);
+        records.push({ ...r, publicUrl: published ? `/public/${published.id}` : null });
+      }
     return reply.send({ files: records });
   });
 
@@ -873,6 +951,8 @@ export async function buildServer(opts: BuildServerOptions): Promise<FastifyInst
       if (!(err instanceof NotFoundError)) throw err;
     }
     await metadata.markDeleted(parsed.joined);
+    if (pgClient) await pgClient`DELETE FROM public_files WHERE path=${parsed.joined}`;
+    else db.prepare("DELETE FROM public_files WHERE path = ?").run(parsed.joined);
     audit(db, req, token, "delete", parsed.joined, 204);
     return reply.code(204).send();
   });
@@ -1234,6 +1314,28 @@ function sourceWarning(db: DB, req: FastifyRequest, token: TokenRecord): string 
     headerValue(req.headers["cf-ipcountry"]) ??
     headerValue(req.headers["x-vercel-ip-country"]);
   return serviceWarningForRequest(service, req.ip ?? null, region);
+}
+
+function publicContentType(path: string): string {
+  const extension = path.split(".").at(-1)?.toLowerCase();
+  return (
+    {
+      css: "text/css; charset=utf-8",
+      gif: "image/gif",
+      html: "text/html; charset=utf-8",
+      ico: "image/x-icon",
+      jpeg: "image/jpeg",
+      jpg: "image/jpeg",
+      js: "text/javascript; charset=utf-8",
+      json: "application/json; charset=utf-8",
+      png: "image/png",
+      svg: "image/svg+xml",
+      txt: "text/plain; charset=utf-8",
+      webp: "image/webp",
+      woff: "font/woff",
+      woff2: "font/woff2",
+    }[extension ?? ""] ?? "application/octet-stream"
+  );
 }
 
 function headerValue(value: string | string[] | undefined): string | null {

@@ -115,6 +115,16 @@ function migrate(db: DB): void {
 
     CREATE INDEX IF NOT EXISTS file_records_org_repo_runtime ON file_records(org, repo, runtime, deleted_at);
 
+    CREATE TABLE IF NOT EXISTS public_files (
+      id          TEXT PRIMARY KEY,
+      path        TEXT NOT NULL UNIQUE REFERENCES file_records(path) ON DELETE CASCADE,
+      org         TEXT NOT NULL REFERENCES orgs(name) ON DELETE CASCADE,
+      created_at  INTEGER NOT NULL,
+      created_by  TEXT REFERENCES users(email)
+    );
+
+    CREATE INDEX IF NOT EXISTS public_files_org ON public_files(org, created_at);
+
     CREATE TABLE IF NOT EXISTS runtime_versions (
       hash        TEXT PRIMARY KEY,
       short_hash  TEXT NOT NULL,
@@ -190,7 +200,9 @@ function migrate(db: DB): void {
   ensureColumn(db, "users", "keyname_subject", "TEXT");
   ensureColumn(db, "audit", "warning", "TEXT");
   db.exec("CREATE INDEX IF NOT EXISTS tokens_service ON tokens(org, service)");
-  db.exec("CREATE UNIQUE INDEX IF NOT EXISTS users_keyname_subject ON users(keyname_subject) WHERE keyname_subject IS NOT NULL");
+  db.exec(
+    "CREATE UNIQUE INDEX IF NOT EXISTS users_keyname_subject ON users(keyname_subject) WHERE keyname_subject IS NOT NULL",
+  );
 }
 
 function ensureColumn(db: DB, table: string, column: string, definition: string): void {

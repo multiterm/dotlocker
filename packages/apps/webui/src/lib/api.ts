@@ -20,6 +20,7 @@ export interface FileRecord {
   uploadedBy: string | null;
   createdAt: number;
   updatedAt: number;
+  publicUrl?: string | null;
 }
 
 export interface RuntimeVersionFile {
@@ -241,6 +242,12 @@ export class PlutoApi {
   }
   async deleteFile(path: string): Promise<void> {
     await this.request(`/v1/files/${path}`, { method: "DELETE" }, false);
+  }
+  publishFile(path: string): Promise<{ id: string; path: string; url: string }> {
+    return this.request("/v1/public-files", { method: "POST", body: JSON.stringify({ path }) });
+  }
+  async unpublishFile(path: string): Promise<void> {
+    await this.request("/v1/public-files", { method: "DELETE", body: JSON.stringify({ path }) });
   }
   grants(org: string): Promise<{ grants: GrantRecord[] }> {
     return this.request(`/v1/grants/${org}`, {}, false);

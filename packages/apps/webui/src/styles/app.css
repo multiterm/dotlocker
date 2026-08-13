@@ -62,6 +62,32 @@
   }
 }
 
+@keyframes pl-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pl-chart-line {
+  from {
+    stroke-dashoffset: 300;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes pl-pulse {
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+}
+
 @keyframes pl-popover-enter {
   from {
     opacity: 0;
@@ -81,10 +107,27 @@
   transform-origin: top center;
   animation: pl-popover-enter 140ms var(--pl-ease) both;
 }
+.pl-card-enter {
+  animation: pl-card-enter 260ms var(--pl-ease) both;
+}
+.pl-chart-enter {
+  animation: pl-page-enter 420ms var(--pl-ease) both;
+}
+.pl-chart-line {
+  stroke-dasharray: 300;
+  animation: pl-chart-line 900ms var(--pl-ease) both;
+}
+.pl-pulse {
+  animation: pl-pulse 1.8s ease-in-out infinite;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .pl-page-enter,
-  .pl-popover-enter {
+  .pl-popover-enter,
+  .pl-card-enter,
+  .pl-chart-enter,
+  .pl-chart-line,
+  .pl-pulse {
     animation: none;
   }
 }
@@ -100,7 +143,9 @@
 
   .card {
     @apply min-w-0 overflow-x-auto rounded-[var(--pl-radius-sm)] border border-[var(--pl-line)] bg-[var(--pl-elevated)] p-5;
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.035), 0 8px 24px rgb(0 0 0 / 0.025);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.035),
+      0 8px 24px rgb(0 0 0 / 0.025);
   }
 
   .card h3,

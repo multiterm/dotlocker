@@ -91,21 +91,22 @@ describe("HTTP layer", () => {
       grantOrgAdmin(db, "keyname@example.com", "acme");
       vi.stubGlobal(
         "fetch",
-        vi.fn(async () =>
-          new Response(
-            JSON.stringify({
-              authenticated: true,
-              session: {
-                id: "kn-session",
-                userEmail: "keyname@example.com",
-                principalType: "user",
-                subject: "kn_subject_123",
-                expiresAt: Date.now() + 60_000,
-                revokedAt: null,
-              },
-            }),
-            { status: 200, headers: { "content-type": "application/json" } },
-          ),
+        vi.fn(
+          async () =>
+            new Response(
+              JSON.stringify({
+                authenticated: true,
+                session: {
+                  id: "kn-session",
+                  userEmail: "keyname@example.com",
+                  principalType: "user",
+                  subject: "kn_subject_123",
+                  expiresAt: Date.now() + 60_000,
+                  revokedAt: null,
+                },
+              }),
+              { status: 200, headers: { "content-type": "application/json" } },
+            ),
         ),
       );
 
@@ -129,21 +130,22 @@ describe("HTTP layer", () => {
       process.env.PLUTO_BOOTSTRAP_ORG = "honeycluster";
       vi.stubGlobal(
         "fetch",
-        vi.fn(async () =>
-          new Response(
-            JSON.stringify({
-              authenticated: true,
-              session: {
-                id: "kn-bootstrap-session",
-                userEmail: "owner@honeycluster.io",
-                principalType: "user",
-                subject: "kn_bootstrap_subject",
-                expiresAt: Date.now() + 60_000,
-                revokedAt: null,
-              },
-            }),
-            { status: 200, headers: { "content-type": "application/json" } },
-          ),
+        vi.fn(
+          async () =>
+            new Response(
+              JSON.stringify({
+                authenticated: true,
+                session: {
+                  id: "kn-bootstrap-session",
+                  userEmail: "owner@honeycluster.io",
+                  principalType: "user",
+                  subject: "kn_bootstrap_subject",
+                  expiresAt: Date.now() + 60_000,
+                  revokedAt: null,
+                },
+              }),
+              { status: 200, headers: { "content-type": "application/json" } },
+            ),
         ),
       );
 
@@ -159,10 +161,9 @@ describe("HTTP layer", () => {
         userEmail: "owner@honeycluster.io",
       });
       expect(
-        db.prepare("SELECT role FROM org_memberships WHERE email = ? AND org = ?").get(
-          "owner@honeycluster.io",
-          "honeycluster",
-        ),
+        db
+          .prepare("SELECT role FROM org_memberships WHERE email = ? AND org = ?")
+          .get("owner@honeycluster.io", "honeycluster"),
       ).toMatchObject({ role: "org_admin" });
     });
 
@@ -179,21 +180,22 @@ describe("HTTP layer", () => {
       );
       vi.stubGlobal(
         "fetch",
-        vi.fn(async () =>
-          new Response(
-            JSON.stringify({
-              authenticated: true,
-              session: {
-                id: "kn-legacy-email-session",
-                userEmail: "owner@honeycluster.io",
-                principalType: "user",
-                subject: "kn_immutable_subject",
-                expiresAt: Date.now() + 60_000,
-                revokedAt: null,
-              },
-            }),
-            { status: 200, headers: { "content-type": "application/json" } },
-          ),
+        vi.fn(
+          async () =>
+            new Response(
+              JSON.stringify({
+                authenticated: true,
+                session: {
+                  id: "kn-legacy-email-session",
+                  userEmail: "owner@honeycluster.io",
+                  principalType: "user",
+                  subject: "kn_immutable_subject",
+                  expiresAt: Date.now() + 60_000,
+                  revokedAt: null,
+                },
+              }),
+              { status: 200, headers: { "content-type": "application/json" } },
+            ),
         ),
       );
 
@@ -220,21 +222,22 @@ describe("HTTP layer", () => {
       grantOrgAdmin(db, "admin@legacy.invalid", "acme");
       vi.stubGlobal(
         "fetch",
-        vi.fn(async () =>
-          new Response(
-            JSON.stringify({
-              authenticated: true,
-              session: {
-                id: "kn-migration-session",
-                userEmail: "operator@example.com",
-                principalType: "user",
-                subject: "kn_migrated_subject",
-                expiresAt: Date.now() + 60_000,
-                revokedAt: null,
-              },
-            }),
-            { status: 200, headers: { "content-type": "application/json" } },
-          ),
+        vi.fn(
+          async () =>
+            new Response(
+              JSON.stringify({
+                authenticated: true,
+                session: {
+                  id: "kn-migration-session",
+                  userEmail: "operator@example.com",
+                  principalType: "user",
+                  subject: "kn_migrated_subject",
+                  expiresAt: Date.now() + 60_000,
+                  revokedAt: null,
+                },
+              }),
+              { status: 200, headers: { "content-type": "application/json" } },
+            ),
         ),
       );
 
@@ -323,9 +326,43 @@ describe("HTTP layer", () => {
         payload: Buffer.from("encrypted"),
       });
       expect(r.statusCode).toBe(204);
-      expect(store.read("acme/payments/api/.env.staging").toString()).toBe(
-        "encrypted",
-      );
+      expect(store.read("acme/payments/api/.env.staging").toString()).toBe("encrypted");
+    });
+
+    it("publishes and revokes an opt-in public asset", async () => {
+      const path = "acme/payments/api/.env.staging";
+      await app.inject({
+        method: "PUT",
+        url: `/v1/files/${path}`,
+        headers: {
+          authorization: `Bearer ${acmeWriteToken}`,
+          "content-type": "application/octet-stream",
+        },
+        payload: Buffer.from("public-body"),
+      });
+      const published = await app.inject({
+        method: "POST",
+        url: "/v1/public-files",
+        headers: { authorization: `Bearer ${acmeWriteToken}` },
+        payload: { path },
+      });
+      expect(published.statusCode).toBe(201);
+      const url = (published.json() as { url: string }).url;
+      const publicRead = await app.inject({ method: "GET", url });
+      expect(publicRead.statusCode).toBe(200);
+      expect(publicRead.body).toBe("public-body");
+      expect(publicRead.headers["cache-control"]).toContain("public");
+      expect(
+        (
+          await app.inject({
+            method: "DELETE",
+            url: "/v1/public-files",
+            headers: { authorization: `Bearer ${acmeWriteToken}` },
+            payload: { path },
+          })
+        ).statusCode,
+      ).toBe(204);
+      expect((await app.inject({ method: "GET", url })).statusCode).toBe(404);
     });
 
     it("403 outside narrow write scope", async () => {
@@ -357,15 +394,29 @@ describe("HTTP layer", () => {
 
   describe("auth API + grants", () => {
     it("logs in a user and gates sync to runtime grants", async () => {
-      createUser(db, { email: "agent@example.com", password: "correct-horse-battery-staple", verified: true });
-      grantRuntime(db, { email: "agent@example.com", org: "acme", repo: "portal", runtime: "preview", access: "read" });
+      createUser(db, {
+        email: "agent@example.com",
+        password: "correct-horse-battery-staple",
+        verified: true,
+      });
+      grantRuntime(db, {
+        email: "agent@example.com",
+        org: "acme",
+        repo: "portal",
+        runtime: "preview",
+        access: "read",
+      });
       store.write("acme/portal/dev/.env", Buffer.from("dev"));
       store.write("acme/portal/preview/.env", Buffer.from("preview"));
 
       const login = await app.inject({
         method: "POST",
         url: "/v1/auth/login",
-        payload: { email: "agent@example.com", password: "correct-horse-battery-staple", org: "acme" },
+        payload: {
+          email: "agent@example.com",
+          password: "correct-horse-battery-staple",
+          org: "acme",
+        },
       });
       expect(login.statusCode).toBe(200);
       const token = (login.json() as { token: string }).token;
@@ -379,9 +430,27 @@ describe("HTTP layer", () => {
     });
 
     it("lets a granted user mint and revoke a scoped token via API", async () => {
-      createUser(db, { email: "token-user@example.com", password: "correct-horse-battery-staple", verified: true });
-      grantRuntime(db, { email: "token-user@example.com", org: "acme", repo: "portal", runtime: "preview", access: "read" });
-      const login = await app.inject({ method: "POST", url: "/v1/auth/login", payload: { email: "token-user@example.com", password: "correct-horse-battery-staple", org: "acme" } });
+      createUser(db, {
+        email: "token-user@example.com",
+        password: "correct-horse-battery-staple",
+        verified: true,
+      });
+      grantRuntime(db, {
+        email: "token-user@example.com",
+        org: "acme",
+        repo: "portal",
+        runtime: "preview",
+        access: "read",
+      });
+      const login = await app.inject({
+        method: "POST",
+        url: "/v1/auth/login",
+        payload: {
+          email: "token-user@example.com",
+          password: "correct-horse-battery-staple",
+          org: "acme",
+        },
+      });
       const session = (login.json() as { token: string }).token;
       const minted = await app.inject({
         method: "POST",
@@ -391,23 +460,59 @@ describe("HTTP layer", () => {
       });
       expect(minted.statusCode).toBe(200);
       const id = (minted.json() as { record: { id: string } }).record.id;
-      const listed = await app.inject({ method: "GET", url: "/v1/tokens", headers: { authorization: `Bearer ${session}` } });
+      const listed = await app.inject({
+        method: "GET",
+        url: "/v1/tokens",
+        headers: { authorization: `Bearer ${session}` },
+      });
       expect((listed.json() as { tokens: Array<{ id: string; label: string }> }).tokens).toEqual([
         expect.objectContaining({ id, label: "agent" }),
       ]);
-      const revoked = await app.inject({ method: "DELETE", url: `/v1/tokens/${id}`, headers: { authorization: `Bearer ${session}` } });
+      const revoked = await app.inject({
+        method: "DELETE",
+        url: `/v1/tokens/${id}`,
+        headers: { authorization: `Bearer ${session}` },
+      });
       expect(revoked.statusCode).toBe(204);
     });
 
     it("lets an authenticated user create and switch to an organization", async () => {
-      createUser(db, { email: "org-owner@example.com", password: "correct-horse-battery-staple", verified: true });
-      grantRuntime(db, { email: "org-owner@example.com", org: "acme", repo: "portal", runtime: "preview", access: "read" });
-      const login = await app.inject({ method: "POST", url: "/v1/auth/login", payload: { email: "org-owner@example.com", password: "correct-horse-battery-staple", org: "acme" } });
+      createUser(db, {
+        email: "org-owner@example.com",
+        password: "correct-horse-battery-staple",
+        verified: true,
+      });
+      grantRuntime(db, {
+        email: "org-owner@example.com",
+        org: "acme",
+        repo: "portal",
+        runtime: "preview",
+        access: "read",
+      });
+      const login = await app.inject({
+        method: "POST",
+        url: "/v1/auth/login",
+        payload: {
+          email: "org-owner@example.com",
+          password: "correct-horse-battery-staple",
+          org: "acme",
+        },
+      });
       const session = (login.json() as { token: string }).token;
-      const created = await app.inject({ method: "POST", url: "/v1/orgs", headers: { authorization: `Bearer ${session}` }, payload: { name: "new-team" } });
+      const created = await app.inject({
+        method: "POST",
+        url: "/v1/orgs",
+        headers: { authorization: `Bearer ${session}` },
+        payload: { name: "new-team" },
+      });
       expect(created.statusCode).toBe(201);
       expect(created.json()).toEqual({ org: "new-team" });
-      const switched = await app.inject({ method: "POST", url: "/v1/auth/switch-org", headers: { authorization: `Bearer ${session}` }, payload: { org: "new-team" } });
+      const switched = await app.inject({
+        method: "POST",
+        url: "/v1/auth/switch-org",
+        headers: { authorization: `Bearer ${session}` },
+        payload: { org: "new-team" },
+      });
       expect(switched.statusCode).toBe(200);
       expect(switched.json()).toMatchObject({
         token: { id: (login.json() as { tokenId: string }).tokenId, org: "new-team" },
@@ -424,45 +529,125 @@ describe("HTTP layer", () => {
 
     it("supports Tailscale trusted-header login when enabled", async () => {
       process.env.PLUTO_TRUST_TAILSCALE_HEADERS = "true";
-      createUser(db, { email: "ts@example.com", password: "correct-horse-battery-staple", verified: true });
-      grantRuntime(db, { email: "ts@example.com", org: "acme", repo: "portal", runtime: "preview", access: "read" });
-      const login = await app.inject({ method: "POST", url: "/v1/auth/tailscale", headers: { "tailscale-user-login": "ts@example.com" }, payload: { org: "acme" } });
+      createUser(db, {
+        email: "ts@example.com",
+        password: "correct-horse-battery-staple",
+        verified: true,
+      });
+      grantRuntime(db, {
+        email: "ts@example.com",
+        org: "acme",
+        repo: "portal",
+        runtime: "preview",
+        access: "read",
+      });
+      const login = await app.inject({
+        method: "POST",
+        url: "/v1/auth/tailscale",
+        headers: { "tailscale-user-login": "ts@example.com" },
+        payload: { org: "acme" },
+      });
       delete process.env.PLUTO_TRUST_TAILSCALE_HEADERS;
       expect(login.statusCode).toBe(200);
       expect(login.json()).toHaveProperty("token");
     });
 
     it("retires native TOTP because MFA is managed by Keyname", async () => {
-      createUser(db, { email: "mfa@example.com", password: "correct-horse-battery-staple", verified: true });
+      createUser(db, {
+        email: "mfa@example.com",
+        password: "correct-horse-battery-staple",
+        verified: true,
+      });
       grantOrgAdmin(db, "mfa@example.com", "acme");
-      const login = await app.inject({ method: "POST", url: "/v1/auth/login", payload: { email: "mfa@example.com", password: "correct-horse-battery-staple", org: "acme" } });
+      const login = await app.inject({
+        method: "POST",
+        url: "/v1/auth/login",
+        payload: {
+          email: "mfa@example.com",
+          password: "correct-horse-battery-staple",
+          org: "acme",
+        },
+      });
       const token = (login.json() as { token: string }).token;
-      const setup = await app.inject({ method: "POST", url: "/v1/mfa/totp/setup", headers: { authorization: `Bearer ${token}` } });
+      const setup = await app.inject({
+        method: "POST",
+        url: "/v1/mfa/totp/setup",
+        headers: { authorization: `Bearer ${token}` },
+      });
       expect(setup.statusCode).toBe(410);
       expect(setup.json()).toMatchObject({ error: "PLUTO_KEYNAME_AUTH_REQUIRED" });
     });
 
     it("records file metadata and exposes audit to org admins", async () => {
-      createUser(db, { email: "audit-admin@example.com", password: "correct-horse-battery-staple", verified: true });
+      createUser(db, {
+        email: "audit-admin@example.com",
+        password: "correct-horse-battery-staple",
+        verified: true,
+      });
       grantOrgAdmin(db, "audit-admin@example.com", "acme");
-      const login = await app.inject({ method: "POST", url: "/v1/auth/login", payload: { email: "audit-admin@example.com", password: "correct-horse-battery-staple", org: "acme" } });
+      const login = await app.inject({
+        method: "POST",
+        url: "/v1/auth/login",
+        payload: {
+          email: "audit-admin@example.com",
+          password: "correct-horse-battery-staple",
+          org: "acme",
+        },
+      });
       const token = (login.json() as { token: string }).token;
-      const put = await app.inject({ method: "PUT", url: "/v1/files/acme/portal/preview/test.txt", headers: { authorization: `Bearer ${token}`, "content-type": "application/octet-stream" }, payload: Buffer.from("hello") });
+      const put = await app.inject({
+        method: "PUT",
+        url: "/v1/files/acme/portal/preview/test.txt",
+        headers: { authorization: `Bearer ${token}`, "content-type": "application/octet-stream" },
+        payload: Buffer.from("hello"),
+      });
       expect(put.statusCode).toBe(204);
-      const meta = await app.inject({ method: "GET", url: "/v1/files-meta/acme/portal/preview", headers: { authorization: `Bearer ${token}` } });
-      expect(meta.json()).toMatchObject({ files: [{ path: "acme/portal/preview/test.txt", size: 5, uploadedBy: "audit-admin@example.com" }] });
-      const audit = await app.inject({ method: "GET", url: "/v1/audit/acme", headers: { authorization: `Bearer ${token}` } });
+      const meta = await app.inject({
+        method: "GET",
+        url: "/v1/files-meta/acme/portal/preview",
+        headers: { authorization: `Bearer ${token}` },
+      });
+      expect(meta.json()).toMatchObject({
+        files: [
+          { path: "acme/portal/preview/test.txt", size: 5, uploadedBy: "audit-admin@example.com" },
+        ],
+      });
+      const audit = await app.inject({
+        method: "GET",
+        url: "/v1/audit/acme",
+        headers: { authorization: `Bearer ${token}` },
+      });
       expect(audit.statusCode).toBe(200);
-      expect((audit.json() as { audit: Array<{ action: string }> }).audit.some(a => a.action === "put")).toBe(true);
-      const del = await app.inject({ method: "DELETE", url: "/v1/files/acme/portal/preview/test.txt", headers: { authorization: `Bearer ${token}` } });
+      expect(
+        (audit.json() as { audit: Array<{ action: string }> }).audit.some(
+          (a) => a.action === "put",
+        ),
+      ).toBe(true);
+      const del = await app.inject({
+        method: "DELETE",
+        url: "/v1/files/acme/portal/preview/test.txt",
+        headers: { authorization: `Bearer ${token}` },
+      });
       expect(del.statusCode).toBe(204);
       expect(() => store.read("acme/portal/preview/test.txt")).toThrow();
     });
 
     it("lets org admins configure signed webhooks and records deliveries", async () => {
-      createUser(db, { email: "hooks-admin@example.com", password: "correct-horse-battery-staple", verified: true });
+      createUser(db, {
+        email: "hooks-admin@example.com",
+        password: "correct-horse-battery-staple",
+        verified: true,
+      });
       grantOrgAdmin(db, "hooks-admin@example.com", "acme");
-      const login = await app.inject({ method: "POST", url: "/v1/auth/login", payload: { email: "hooks-admin@example.com", password: "correct-horse-battery-staple", org: "acme" } });
+      const login = await app.inject({
+        method: "POST",
+        url: "/v1/auth/login",
+        payload: {
+          email: "hooks-admin@example.com",
+          password: "correct-horse-battery-staple",
+          org: "acme",
+        },
+      });
       const token = (login.json() as { token: string }).token;
       const fetchMock = vi.fn(async () => new Response("ok", { status: 200 }));
       vi.stubGlobal("fetch", fetchMock);
@@ -470,7 +655,11 @@ describe("HTTP layer", () => {
         method: "POST",
         url: "/v1/webhooks",
         headers: { authorization: `Bearer ${token}` },
-        payload: { name: "runtime events", url: "http://localhost:9876/pluto", events: ["put", "version"] },
+        payload: {
+          name: "runtime events",
+          url: "http://localhost:9876/pluto",
+          events: ["put", "version"],
+        },
       });
       expect(created.statusCode).toBe(201);
       const result = created.json() as { webhook: { id: string }; secret: string };
@@ -494,14 +683,32 @@ describe("HTTP layer", () => {
         headers: { authorization: `Bearer ${token}` },
       });
       expect(deliveries.statusCode).toBe(200);
-      expect(deliveries.json()).toMatchObject({ deliveries: [{ event: "put", status: "delivered", responseStatus: 200 }] });
+      expect(deliveries.json()).toMatchObject({
+        deliveries: [{ event: "put", status: "delivered", responseStatus: 200 }],
+      });
     });
 
     it("org admin can grant repo access via API", async () => {
-      createUser(db, { email: "admin@example.com", password: "correct-horse-battery-staple", verified: true });
-      createUser(db, { email: "dev@example.com", password: "correct-horse-battery-staple", verified: true });
+      createUser(db, {
+        email: "admin@example.com",
+        password: "correct-horse-battery-staple",
+        verified: true,
+      });
+      createUser(db, {
+        email: "dev@example.com",
+        password: "correct-horse-battery-staple",
+        verified: true,
+      });
       grantOrgAdmin(db, "admin@example.com", "acme");
-      const login = await app.inject({ method: "POST", url: "/v1/auth/login", payload: { email: "admin@example.com", password: "correct-horse-battery-staple", org: "acme" } });
+      const login = await app.inject({
+        method: "POST",
+        url: "/v1/auth/login",
+        payload: {
+          email: "admin@example.com",
+          password: "correct-horse-battery-staple",
+          org: "acme",
+        },
+      });
       const token = (login.json() as { token: string }).token;
       const grant = await app.inject({
         method: "POST",
@@ -510,10 +717,21 @@ describe("HTTP layer", () => {
         payload: { email: "dev@example.com", org: "acme", repo: "portal", access: "read" },
       });
       expect(grant.statusCode).toBe(200);
-      expect(grant.json()).toMatchObject({ grant: { email: "dev@example.com", org: "acme", repo: "portal", access: "read" } });
-      const grants = await app.inject({ method: "GET", url: "/v1/grants/acme", headers: { authorization: `Bearer ${token}` } });
+      expect(grant.json()).toMatchObject({
+        grant: { email: "dev@example.com", org: "acme", repo: "portal", access: "read" },
+      });
+      const grants = await app.inject({
+        method: "GET",
+        url: "/v1/grants/acme",
+        headers: { authorization: `Bearer ${token}` },
+      });
       expect((grants.json() as { grants: unknown[] }).grants.length).toBeGreaterThan(0);
-      const revoked = await app.inject({ method: "DELETE", url: "/v1/grants", headers: { authorization: `Bearer ${token}` }, payload: { email: "dev@example.com", org: "acme", repo: "portal" } });
+      const revoked = await app.inject({
+        method: "DELETE",
+        url: "/v1/grants",
+        headers: { authorization: `Bearer ${token}` },
+        payload: { email: "dev@example.com", org: "acme", repo: "portal" },
+      });
       expect(revoked.statusCode).toBe(204);
     });
   });
@@ -554,7 +772,8 @@ describe("HTTP layer", () => {
         },
       });
       expect(first.statusCode).toBe(201);
-      const firstVersion = (first.json() as { version: { hash: string; shortHash: string } }).version;
+      const firstVersion = (first.json() as { version: { hash: string; shortHash: string } })
+        .version;
       expect(firstVersion.hash).toHaveLength(64);
       expect(firstVersion.shortHash).toBe(firstVersion.hash.slice(0, 12));
 
@@ -568,7 +787,10 @@ describe("HTTP layer", () => {
         },
       });
       expect(unchanged.statusCode).toBe(200);
-      expect(unchanged.json()).toMatchObject({ created: false, version: { hash: firstVersion.hash } });
+      expect(unchanged.json()).toMatchObject({
+        created: false,
+        version: { hash: firstVersion.hash },
+      });
 
       const secondBody = Buffer.from("second");
       const secondSha = createHash("sha256").update(secondBody).digest("hex");
@@ -640,10 +862,7 @@ describe("HTTP layer", () => {
       });
       expect(r.statusCode).toBe(200);
       expect(r.json()).toEqual({
-        files: [
-          "acme/payments/api/.env",
-          "acme/payments/api/.env.prod",
-        ],
+        files: ["acme/payments/api/.env", "acme/payments/api/.env.prod"],
       });
     });
 
@@ -685,11 +904,7 @@ describe("HTTP layer", () => {
         headers: { authorization: `Bearer ${acmeReadToken}` },
       });
       expect(admin.json()).toEqual({
-        files: [
-          "acme/portal/dev/.env",
-          "acme/portal/preview/.env",
-          "acme/portal/prod/.env",
-        ],
+        files: ["acme/portal/dev/.env", "acme/portal/preview/.env", "acme/portal/prod/.env"],
       });
     });
 

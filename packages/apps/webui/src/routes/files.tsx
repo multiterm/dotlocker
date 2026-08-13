@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react
 import { Skeleton } from "@dotlocker/ui";
 import { AppRoute } from "./app";
 import { Dialog } from "~webui/components/Dialog";
+import { ViewToggle, useStoredView } from "~webui/components/ViewToggle";
 import { useSession } from "~webui/lib/session";
 import { errorMessage } from "~webui/lib/errors";
 import type { FileRecord } from "~webui/lib/api";
@@ -54,6 +55,7 @@ function FilesPage() {
   const [localFiles, setLocalFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [view, setView] = useStoredView("dotlocker.files.view");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -166,6 +168,22 @@ function FilesPage() {
     }
   };
 
+  const togglePublic = async (file: FileRecord) => {
+    setError("");
+    try {
+      if (file.publicUrl) await api.unpublishFile(file.path);
+      else await api.publishFile(file.path);
+      await load();
+    } catch (reason) {
+      setError(`Could not update public access. ${errorMessage(reason)}`);
+    }
+  };
+
+  const copyPublicUrl = async (file: FileRecord) => {
+    if (!file.publicUrl) return;
+    await navigator.clipboard.writeText(new URL(file.publicUrl, location.origin).href);
+  };
+
   const saveEditor = async () => {
     if (!selectedFile) return;
     setSubmitting(true);
@@ -195,12 +213,15 @@ function FilesPage() {
                 : `${visibleFiles.length} of ${files.length} files in ${org}`}
             </p>
           </div>
-          <button onClick={openUpload} aria-label="Add file">
-            <span className="text-lg leading-none" aria-hidden>
-              +
-            </span>{" "}
-            Add file
-          </button>
+          <div className="flex items-center gap-2">
+            <ViewToggle value={view} onChange={setView} />
+            <button onClick={openUpload} aria-label="Add file">
+              <span className="text-lg leading-none" aria-hidden>
+                +
+              </span>{" "}
+              Add file
+            </button>
+          </div>
         </header>
 
         <div className="grid grid-cols-1 gap-3 border-b border-[var(--pl-line)] bg-[var(--pl-surface)] px-5 py-4 md:grid-cols-[minmax(240px,1fr)_200px_200px]">
@@ -257,109 +278,179 @@ function FilesPage() {
           </div>
         )}
 
-        <div className="overflow-x-auto">
-          <table className="mt-0 min-w-[820px] rounded-none border-0">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Repository</th>
-                <th>Runtime</th>
-                <th>Size</th>
-                <th>Modified</th>
-                <th className="w-20 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                Array.from({ length: 5 }, (_, index) => (
-                  <tr key={`file-skeleton-${index}`}>
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <Skeleton className="h-8 w-8 shrink-0" />
-                        <div className="grid gap-2">
-                          <Skeleton className="h-3.5 w-48" />
-                          <Skeleton className="h-2.5 w-24" />
+        {view === "list" ? (
+          <div className="overflow-x-auto">
+            <table className="mt-0 min-w-[980px] rounded-none border-0">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Repository</th>
+                  <th>Runtime</th>
+                  <th>Size</th>
+                  <th>Modified</th>
+                  <th>Access</th>
+                  <th className="w-20 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  Array.from({ length: 5 }, (_, index) => (
+                    <tr key={`file-skeleton-${index}`}>
+                      <td>
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="h-8 w-8 shrink-0" />
+                          <div className="grid gap-2">
+                            <Skeleton className="h-3.5 w-48" />
+                            <Skeleton className="h-2.5 w-24" />
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <Skeleton className="h-3.5 w-24" />
-                    </td>
-                    <td>
-                      <Skeleton className="h-6 w-20 rounded-full" />
-                    </td>
-                    <td>
-                      <Skeleton className="h-3.5 w-14" />
-                    </td>
-                    <td>
-                      <Skeleton className="h-3.5 w-32" />
-                    </td>
-                    <td>
-                      <Skeleton className="ml-auto h-8 w-16" />
+                      </td>
+                      <td>
+                        <Skeleton className="h-3.5 w-24" />
+                      </td>
+                      <td>
+                        <Skeleton className="h-6 w-20 rounded-full" />
+                      </td>
+                      <td>
+                        <Skeleton className="h-3.5 w-14" />
+                      </td>
+                      <td>
+                        <Skeleton className="h-3.5 w-32" />
+                      </td>
+                      <td>
+                        <Skeleton className="ml-auto h-8 w-16" />
+                      </td>
+                    </tr>
+                  ))
+                ) : visibleFiles.length ? (
+                  visibleFiles.map((file) => (
+                    <tr key={file.path}>
+                      <td>
+                        <div className="flex items-center gap-3">
+                          <span
+                            className="grid h-8 w-8 shrink-0 place-items-center rounded-[var(--pl-radius-xs)] border border-[var(--pl-line)] bg-[var(--pl-surface)] text-[var(--pl-muted)]"
+                            aria-hidden
+                          >
+                            ▤
+                          </span>
+                          <div className="min-w-0">
+                            <code className="block max-w-[340px] truncate font-semibold">
+                              {file.relPath}
+                            </code>
+                            <span className="text-[10px] text-[var(--pl-subtle)]">
+                              {file.sha256.slice(0, 12)}…
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <b className="text-[var(--pl-text)]">{file.repo}</b>
+                      </td>
+                      <td>
+                        <span className="pill">{file.runtime}</span>
+                      </td>
+                      <td>{formatBytes(file.size)}</td>
+                      <td>{new Date(file.updatedAt).toLocaleString()}</td>
+                      <td>
+                        {file.publicUrl ? (
+                          <button
+                            className="secondary inline"
+                            onClick={() => void copyPublicUrl(file)}
+                          >
+                            Public · copy URL
+                          </button>
+                        ) : (
+                          <span className="pill">Private</span>
+                        )}
+                      </td>
+                      <td className="text-right">
+                        <div className="flex justify-end gap-1">
+                          <button
+                            className="secondary inline"
+                            onClick={() => void openEditor(file)}
+                          >
+                            Edit
+                          </button>
+                          <button className="secondary inline" onClick={() => void download(file)}>
+                            Download
+                          </button>
+                          <button
+                            className="secondary inline"
+                            onClick={() => void togglePublic(file)}
+                          >
+                            {file.publicUrl ? "Make private" : "Publish"}
+                          </button>
+                          <button
+                            className="secondary inline"
+                            onClick={() => {
+                              setSelectedFile(file);
+                              setError("");
+                              setModal("delete");
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="py-12 text-center text-[var(--pl-muted)]">
+                      No files match your search and filters.
                     </td>
                   </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            {loading
+              ? Array.from({ length: 8 }, (_, index) => (
+                  <Skeleton key={index} className="h-48 rounded-[var(--pl-radius-sm)]" />
                 ))
-              ) : visibleFiles.length ? (
-                visibleFiles.map((file) => (
-                  <tr key={file.path}>
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <span
-                          className="grid h-8 w-8 shrink-0 place-items-center rounded-[var(--pl-radius-xs)] border border-[var(--pl-line)] bg-[var(--pl-surface)] text-[var(--pl-muted)]"
-                          aria-hidden
-                        >
-                          ▤
-                        </span>
-                        <div className="min-w-0">
-                          <code className="block max-w-[340px] truncate font-semibold">
-                            {file.relPath}
-                          </code>
-                          <span className="text-[10px] text-[var(--pl-subtle)]">
-                            {file.sha256.slice(0, 12)}…
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <b className="text-[var(--pl-text)]">{file.repo}</b>
-                    </td>
-                    <td>
+              : visibleFiles.map((file) => (
+                  <article
+                    key={file.path}
+                    className="pl-card-enter flex min-h-48 flex-col rounded-[var(--pl-radius-sm)] border border-[var(--pl-line)] bg-[var(--pl-elevated)] p-4 shadow-sm"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <span className="grid h-10 w-10 place-items-center rounded border border-[var(--pl-line)] bg-[var(--pl-surface)]">
+                        ▤
+                      </span>
                       <span className="pill">{file.runtime}</span>
-                    </td>
-                    <td>{formatBytes(file.size)}</td>
-                    <td>{new Date(file.updatedAt).toLocaleString()}</td>
-                    <td className="text-right">
-                      <div className="flex justify-end gap-1">
-                        <button className="secondary inline" onClick={() => void openEditor(file)}>
-                          Edit
-                        </button>
-                        <button className="secondary inline" onClick={() => void download(file)}>
-                          Download
-                        </button>
+                    </div>
+                    <code className="mt-4 line-clamp-2 font-semibold">{file.relPath}</code>
+                    <p className="mt-1 text-xs text-[var(--pl-muted)]">
+                      {file.repo} · {formatBytes(file.size)}
+                    </p>
+                    <p className="mt-1 text-[10px] text-[var(--pl-subtle)]">
+                      Updated {new Date(file.updatedAt).toLocaleString()}
+                    </p>
+                    <div className="mt-auto flex flex-wrap gap-1 pt-4">
+                      <button className="secondary inline" onClick={() => void openEditor(file)}>
+                        Edit
+                      </button>
+                      <button className="secondary inline" onClick={() => void download(file)}>
+                        Download
+                      </button>
+                      <button className="secondary inline" onClick={() => void togglePublic(file)}>
+                        {file.publicUrl ? "Private" : "Publish"}
+                      </button>
+                      {file.publicUrl && (
                         <button
                           className="secondary inline"
-                          onClick={() => {
-                            setSelectedFile(file);
-                            setError("");
-                            setModal("delete");
-                          }}
+                          onClick={() => void copyPublicUrl(file)}
                         >
-                          Delete
+                          Copy URL
                         </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-[var(--pl-muted)]">
-                    No files match your search and filters.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                      )}
+                    </div>
+                  </article>
+                ))}
+          </div>
+        )}
       </section>
 
       {modal === "upload" && (
