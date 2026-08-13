@@ -7,7 +7,7 @@ workspace:
 
 tasks:
   build:
-    command: [corepack, pnpm, build]
+    command: [corepack, pnpm, exec, rune, build]
     timeout: 20m
     outputs:
       - packages/apps/site/dist
