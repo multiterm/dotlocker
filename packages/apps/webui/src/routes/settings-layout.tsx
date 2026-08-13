@@ -26,9 +26,9 @@ function SettingsLayout() {
   const path = useMatches().at(-1)?.pathname ?? "/settings";
   const [title, description] = headers[path] ?? headers["/settings"]!;
   return (
-    <div className="grid h-full min-h-0 min-w-0 grid-cols-[248px_minmax(0,1fr)] max-md:h-auto max-md:grid-cols-1">
+    <div className="grid min-h-[calc(100vh-7rem)] min-w-0 grid-cols-[216px_minmax(0,1fr)] max-md:grid-cols-1">
       <SettingsSidebar />
-      <ScrollArea className="grid h-full min-h-0 min-w-0 content-start gap-5 p-5 max-md:h-auto max-md:overflow-visible max-sm:p-3 xl:p-6">
+      <ScrollArea className="grid min-w-0 content-start gap-5 overflow-y-auto p-5 pb-20 max-md:overflow-visible max-sm:p-3 max-sm:pb-24 xl:p-6 xl:pb-20">
         <section className="mb-1">
           <Text as="h1" variant="page">
             {title}

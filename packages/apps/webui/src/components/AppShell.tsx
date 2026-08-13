@@ -1,5 +1,5 @@
 import { Link, Outlet, useMatches, useNavigate } from "@tanstack/react-router";
-import { Badge, Button, ScrollArea, Text, cn } from "@dotlocker/ui";
+import { Badge, Button, ScrollArea, Separator, Text, cn } from "@dotlocker/ui";
 import { DotlockerBrand, ModeToggle, ThemeVariantSelect } from "@dotlocker/ui-shared";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Dialog } from "~webui/components/Dialog";
@@ -24,8 +24,9 @@ const workspaceNav: readonly NavigationItem[] = [
   { to: "/storage", label: "Storage", icon: "▱" },
   { to: "/repos", label: "Repositories", icon: "◇" },
 ];
-const accountNav: readonly NavigationItem[] = [
-  { to: "/settings", label: "Settings & admin", icon: "⚙" },
+const settingsNav: readonly NavigationItem[] = [
+  { to: "/settings", label: "Settings", icon: "⚙" },
+  { to: "/users", label: "Administration", icon: "◎" },
 ];
 
 const titles: Record<string, [string, string]> = {
@@ -379,7 +380,8 @@ export function AppShell() {
             )}
           >
             <NavigationGroup label="Workspace" items={workspaceNav} collapsed={collapsed} />
-            <NavigationGroup label="Account" items={accountNav} collapsed={collapsed} />
+            <Separator />
+            <NavigationGroup label="" items={settingsNav} collapsed={collapsed} />
           </nav>
 
           {!collapsed && (
@@ -399,12 +401,7 @@ export function AppShell() {
         </aside>
 
         <div className="flex h-full min-h-0 min-w-0 flex-col max-lg:h-auto">
-          <header
-            className={cn(
-              "sticky top-0 z-20 h-16 items-center justify-between gap-4 border-b border-[var(--pl-line)] bg-[color-mix(in_srgb,var(--pl-elevated)_94%,transparent)] px-5 backdrop-blur-lg max-lg:hidden",
-              settingsPage ? "hidden" : "flex",
-            )}
-          >
+          <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b border-[var(--pl-line)] bg-[color-mix(in_srgb,var(--pl-elevated)_94%,transparent)] px-5 backdrop-blur-lg max-lg:hidden">
             <button
               type="button"
               aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
