@@ -37,23 +37,23 @@ Use the Sandblocks dashboard/API environment editor for the configured project. 
 
 At minimum, Dotlocker needs `NODE_ENV`, `HOST`, `PORT`, `DOTLOCKER_DATA_DIR`, and a durable `DOTLOCKER_DATABASE_URL`. Set `DOTLOCKER_RELEASE_SNAPSHOT` to the full immutable runtime hash approved for the application candidate; `/v1/health` exposes that non-secret linkage for candidate verification and rollback records. Add authentication, Keyname, webhook, and integration variables required by your installation to the local file before upload.
 
-## Abby durable Docker services
+## Durable services
 
-The repository-owned definitions live in [`docker/abby`](../docker/abby/README.md). `compose.infrastructure.yml` builds the pinned PostgreSQL and Garage images under `docker/images`; `lifecycle.sh` validates, updates, health-checks, backs up, and conservatively prunes them. The populated environment file remains root-only on Abby and is never committed.
+Sandblocks environments use externally managed PostgreSQL and Garage services rather than creating durable databases inside replaceable application sandboxes. The local development stack is defined in [`docker/docker-compose.yml`](../docker/docker-compose.yml); production infrastructure credentials and lifecycle remain operator-managed outside this repository.
 
-Dotlocker uses the PostgreSQL 16 service on Abby rather than creating a database inside a Sandblocks sandbox:
+Dotlocker uses PostgreSQL 16 rather than creating a database inside a Sandblocks sandbox:
 
 - Tailnet endpoint: `100.114.99.85:54329`.
 - Physical cluster data: `/vol/nvme/docker/pluto/postgres`.
 - Preview database/login: `pluto_preview`.
 - Production database/login: `pluto_prod`.
-- Root-only credential source on Abby: `/vol/nvme/docker/pluto/runtime-databases.env`.
+- Root-only credential source on the runtime host: `/vol/nvme/docker/pluto/runtime-databases.env`.
 
 PostgreSQL owns the physical directory and stores databases in internal OID paths, so preview and production are isolated as separate databases and roles—not manually managed subfolders. Do not rename or edit anything below the PostgreSQL data directory.
 
 The local ignored files `.sandblocks/environments/preview.env` and `.sandblocks/environments/production.env` contain the corresponding connection URLs and are the source files to upload to Sandblocks.
 
-The preview was initialized from a transactionally consistent online backup of the legacy Abby SQLite database and its encrypted `data/files` objects. `scripts/workflow/sandblocks-start.mjs` supports this one-time initialization through the write-only `DOTLOCKER_BOOTSTRAP_ARCHIVE_URL` managed environment value when its local data directory is empty. Remove that managed value and stop the temporary archive server immediately after a successful deployment. The current legacy Abby Pluto app and original `/vol/nvme/docker/pluto/data/pluto.db*` files remain untouched.
+The preview was initialized from a transactionally consistent online backup of the legacy SQLite database and its encrypted `data/files` objects. `scripts/workflow/sandblocks-start.mjs` supports this one-time initialization through the write-only `DOTLOCKER_BOOTSTRAP_ARCHIVE_URL` managed environment value when its local data directory is empty. Remove that managed value and stop the temporary archive server immediately after a successful deployment. Preserve the original `/vol/nvme/docker/pluto/data/pluto.db*` files until migration verification is complete.
 
 ## Register and deploy
 
@@ -84,7 +84,7 @@ SANDBLOCKS_ENVIRONMENT=preview pnpm sandblocks:destroy
 
 ## Persistence
 
-Sandblocks service filesystems are replaceable. Dotlocker deployments therefore use two durable services on Abby:
+Sandblocks service filesystems are replaceable. Dotlocker deployments therefore use two externally managed durable services:
 
 - PostgreSQL through `DOTLOCKER_DATABASE_URL` for users, grants, file metadata, runtime versions, and heads.
 - Garage through the `DOTLOCKER_S3_*` managed variables for encrypted file bodies and content-addressed objects.

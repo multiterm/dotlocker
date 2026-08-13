@@ -6,9 +6,6 @@ lint: pnpm lint
 format: pnpm format
 release: pnpm release
 release-dry: pnpm release:dry
-deploy-dev: pnpm deploy-dev
-deploy-dev-stratus: pnpm deploy-dev-stratus
-
 # Sandblocks preview and production deployment.
 sandblocks-validate: pnpm exec sandblocks validate .
 sandblocks-doctor: pnpm exec sandblocks doctor .

@@ -1,8 +1,15 @@
-// Shared rune config for the pluto workspace. Each package references this via
-// `rune.extends` in its package.json and overrides `build` with its own vite
-// invocation. Workspace-wide orchestration is `pnpm -r <script>` (topological).
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+// Shared Rune config for the Dotlocker workspace. Use one repository-local
+// cache even though filtered package commands execute from package directories.
+const workspaceRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 export default {
+  cache: {
+    directory: resolve(workspaceRoot, ".rune/cache"),
+    namespace: "multiterm-dotlocker",
+  },
   scripts: {
     build: [
       "tsc -p configs/tsconfig.build.json",

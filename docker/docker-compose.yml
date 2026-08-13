@@ -1,0 +1,64 @@
+name: dotlocker
+
+services:
+  postgres:
+    image: postgres:16.8-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DOTLOCKER_POSTGRES_DB:-dotlocker}
+      POSTGRES_USER: ${DOTLOCKER_POSTGRES_USER:-dotlocker}
+      POSTGRES_PASSWORD: ${DOTLOCKER_POSTGRES_PASSWORD:?Set DOTLOCKER_POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks: [backend]
+
+  dotlocker:
+    image: ${DOTLOCKER_IMAGE:-dotlocker:local}
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3000"
+      DOTLOCKER_DATA_DIR: /data
+      DOTLOCKER_DATABASE_URL: postgres://${DOTLOCKER_POSTGRES_USER:-dotlocker}:${DOTLOCKER_POSTGRES_PASSWORD}@postgres:5432/${DOTLOCKER_POSTGRES_DB:-dotlocker}
+      DOTLOCKER_COOKIE_SECURE: ${DOTLOCKER_COOKIE_SECURE:-false}
+      KEYNAME_ISSUER_URL: ${KEYNAME_ISSUER_URL:-https://api.keyname.dev}
+      DOTLOCKER_BOOTSTRAP_FIRST_KEYNAME_USER: ${DOTLOCKER_BOOTSTRAP_FIRST_KEYNAME_USER:-false}
+      DOTLOCKER_BOOTSTRAP_KEYNAME_EMAILS: ${DOTLOCKER_BOOTSTRAP_KEYNAME_EMAILS:-}
+      DOTLOCKER_BOOTSTRAP_KEYNAME_DOMAINS: ${DOTLOCKER_BOOTSTRAP_KEYNAME_DOMAINS:-}
+      DOTLOCKER_BOOTSTRAP_ORG: ${DOTLOCKER_BOOTSTRAP_ORG:-multiterm}
+    ports:
+      - "${DOTLOCKER_PORT:-3000}:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    volumes:
+      - dotlocker-data:/data
+    networks: [backend]
+
+volumes:
+  postgres-data:
+  dotlocker-data:
+
+networks:
+  backend:

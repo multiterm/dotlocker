@@ -12,6 +12,8 @@
 - [Documentation](./docs/)
 - [Examples](./examples/)
 - [Package layout](./docs/package-layout.md)
+- [Technical specification](./docs/SPEC.md)
+- [Agent skill](./docs/SKILL.md)
 - [Sandblocks deployment](./docs/SANDBLOCKS-DEPLOYMENT.md)
 - [Product roadmap](./docs/PRODUCT_ROADMAP.md)
 - [CLI package documentation](./packages/libs/cli/README.md)
@@ -53,8 +55,9 @@ The same `dotlocker` binary runs as the server and as the workspace client.
 ## Server quickstart
 
 ```sh
-# Persist /data in a volume.
-docker run -d --name dotlocker -p 3000:3000 -v dotlocker-data:/data ghcr.io/super-repo/dotlocker:latest
+# Build locally, or run the complete PostgreSQL-backed stack.
+docker build -f docker/Dockerfile -t dotlocker:local .
+DOTLOCKER_POSTGRES_PASSWORD='replace-me' docker compose -f docker/docker-compose.yml up -d --build
 
 # Create an org.
 docker exec -it dotlocker dotlocker org create acme
@@ -72,7 +75,7 @@ The plaintext token is printed once. Store it securely.
 
 ## Development deployment
 
-Development is deployed to the Stratus host at `100.78.201.50` and published through `https://dotlocker.dev`. Run `bun run deploy:dev` or `pnpm exec rune deploy-dev-stratus`; see [`scripts/workflow/README.md`](scripts/workflow/README.md) for profiles, safeguards, and split sync/restart commands.
+Development is deployed through Sandblocks from the root [`sandblocks.yml`](./sandblocks.yml). Use `pnpm sandblocks:preview` for the first deployment, `pnpm sandblocks:redeploy` for later candidates, and `pnpm sandblocks:status` to inspect the current preview. See [Sandblocks deployment](./docs/SANDBLOCKS-DEPLOYMENT.md).
 
 ## Workspace quickstart
 
