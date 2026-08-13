@@ -11,7 +11,10 @@ export const SettingsLayoutRoute = createRoute({
 });
 
 const headers: Record<string, [string, string]> = {
-  "/settings": ["Settings", "Organization, connection, and dashboard preferences."],
+  "/settings": ["General settings", "Organization, connection, and dashboard preferences."],
+  "/users": ["Users & access", "Provision Keyname identities and manage organization access."],
+  "/tokens": ["API keys & sessions", "Manage scoped credentials and active browser sessions."],
+  "/logs": ["Admin logs", "Review and export organization security and activity events."],
   "/settings/webhooks": ["Webhooks", "Deliver signed dot.locker events to your systems."],
   "/settings/integrations": [
     "Integrations",
@@ -23,9 +26,9 @@ function SettingsLayout() {
   const path = useMatches().at(-1)?.pathname ?? "/settings";
   const [title, description] = headers[path] ?? headers["/settings"]!;
   return (
-    <div className="grid h-full min-w-0 grid-cols-[216px_minmax(0,1fr)] max-md:h-auto max-md:grid-cols-1">
+    <div className="grid h-full min-h-0 min-w-0 grid-cols-[248px_minmax(0,1fr)] max-md:h-auto max-md:grid-cols-1">
       <SettingsSidebar />
-      <ScrollArea className="grid h-full min-w-0 content-start gap-5 p-5 max-lg:h-auto max-lg:overflow-visible max-sm:p-3 xl:p-6">
+      <ScrollArea className="grid h-full min-h-0 min-w-0 content-start gap-5 p-5 max-md:h-auto max-md:overflow-visible max-sm:p-3 xl:p-6">
         <section className="mb-1">
           <Text as="h1" variant="page">
             {title}

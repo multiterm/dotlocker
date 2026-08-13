@@ -20,10 +20,14 @@ const appTree = AppRoute.addChildren([
   RuntimeReleasesRoute,
   StorageRoute,
   ReposRoute,
-  UsersRoute,
-  TokensRoute,
-  LogsRoute,
-  SettingsLayoutRoute.addChildren([SettingsRoute, WebhooksRoute, IntegrationsRoute]),
+  SettingsLayoutRoute.addChildren([
+    SettingsRoute,
+    UsersRoute,
+    TokensRoute,
+    LogsRoute,
+    WebhooksRoute,
+    IntegrationsRoute,
+  ]),
 ]);
 const routeTree = RootRoute.addChildren([LoginRoute, appTree]);
 

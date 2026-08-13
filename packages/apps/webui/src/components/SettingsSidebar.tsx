@@ -1,10 +1,23 @@
 import { Link } from "@tanstack/react-router";
 import { Text, cn } from "@dotlocker/ui";
 
-const categories = [
-  ["/settings", "General", "⌂"],
-  ["/settings/webhooks", "Webhooks", "↗"],
-  ["/settings/integrations", "Integrations", "◇"],
+const groups = [
+  {
+    label: "Settings",
+    items: [
+      ["/settings", "General", "⌂"],
+      ["/settings/webhooks", "Webhooks", "↗"],
+      ["/settings/integrations", "Integrations", "◇"],
+    ],
+  },
+  {
+    label: "Administration",
+    items: [
+      ["/users", "Users & access", "○"],
+      ["/tokens", "API keys & sessions", "⌁"],
+      ["/logs", "Admin logs", "◎"],
+    ],
+  },
 ] as const;
 
 const linkClass =
@@ -14,27 +27,41 @@ const activeClass =
 
 export function SettingsSidebar() {
   return (
-    <aside className="h-full min-w-0 self-stretch overflow-y-auto border-r border-[var(--pl-line)] bg-[var(--pl-elevated)] px-3 py-5 max-md:h-auto max-md:overflow-visible max-md:border-b max-md:border-r-0 max-md:py-3">
-      <Text variant="label" className="mb-2 h-4 px-2.5 text-[var(--pl-subtle)]">
-        Settings
-      </Text>
+    <aside className="flex h-full min-w-0 flex-col self-stretch overflow-y-auto border-r border-[var(--pl-line)] bg-[var(--pl-elevated)] px-3 py-5 max-md:h-auto max-md:overflow-visible max-md:border-b max-md:border-r-0 max-md:py-3">
+      <div className="mb-5 px-2.5 max-md:hidden">
+        <Text as="h2" variant="title">
+          Settings & admin
+        </Text>
+        <Text className="mt-1 text-xs text-[var(--pl-subtle)]">
+          Organization configuration and administration.
+        </Text>
+      </div>
       <nav
-        className="grid gap-1 max-md:flex max-md:overflow-x-auto"
-        aria-label="Settings navigation"
+        className="grid gap-5 max-md:flex max-md:gap-3 max-md:overflow-x-auto"
+        aria-label="Settings and administration navigation"
       >
-        {categories.map(([to, label, icon]) => (
-          <Link
-            key={to}
-            to={to}
-            activeOptions={{ exact: true, includeSearch: false }}
-            className={linkClass}
-            activeProps={{ className: cn(linkClass, activeClass) }}
-          >
-            <span className="grid w-4 place-items-center" aria-hidden>
-              {icon}
-            </span>
-            {label}
-          </Link>
+        {groups.map((group) => (
+          <section key={group.label} className="min-w-max md:min-w-0">
+            <Text variant="label" className="mb-2 h-4 px-2.5 text-[var(--pl-subtle)]">
+              {group.label}
+            </Text>
+            <div className="grid gap-1 max-md:flex">
+              {group.items.map(([to, label, icon]) => (
+                <Link
+                  key={to}
+                  to={to}
+                  activeOptions={{ exact: true, includeSearch: false }}
+                  className={linkClass}
+                  activeProps={{ className: cn(linkClass, activeClass) }}
+                >
+                  <span className="grid w-4 place-items-center" aria-hidden>
+                    {icon}
+                  </span>
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </section>
         ))}
       </nav>
     </aside>

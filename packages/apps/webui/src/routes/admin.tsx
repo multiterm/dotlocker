@@ -1,7 +1,7 @@
 import { createRoute } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { AppRoute } from "./app";
+import { SettingsLayoutRoute } from "./settings-layout";
 import { useSession } from "~webui/lib/session";
 import { Dialog } from "~webui/components/Dialog";
 import type { ApiKeyRecord } from "~webui/lib/api";
@@ -15,7 +15,7 @@ function Json({ value }: { value: unknown }) {
 }
 
 export const UsersRoute = createRoute({
-  getParentRoute: () => AppRoute,
+  getParentRoute: () => SettingsLayoutRoute,
   path: "/users",
   component: UsersPage,
 });
@@ -73,7 +73,7 @@ function UsersPage() {
 }
 
 export const TokensRoute = createRoute({
-  getParentRoute: () => AppRoute,
+  getParentRoute: () => SettingsLayoutRoute,
   path: "/tokens",
   component: TokensPage,
 });
@@ -505,7 +505,7 @@ function TokensPage() {
 }
 
 export const AuditRoute = createRoute({
-  getParentRoute: () => AppRoute,
+  getParentRoute: () => SettingsLayoutRoute,
   path: "/audit",
   component: AuditPage,
 });
@@ -537,8 +537,8 @@ function AuditPage() {
 }
 
 export const SettingsRoute = createRoute({
-  getParentRoute: () => AppRoute,
-  path: "/settings",
+  getParentRoute: () => SettingsLayoutRoute,
+  path: "/legacy-settings",
   component: SettingsPage,
 });
 function SettingsPage() {

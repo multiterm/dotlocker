@@ -1,12 +1,12 @@
 import { createRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Badge, Button, Card, Input, Skeleton, Text } from "@dotlocker/ui";
-import { AppRoute } from "./app";
+import { SettingsLayoutRoute } from "./settings-layout";
 import { useSession } from "~webui/lib/session";
 import type { AuditEntry } from "~webui/lib/api";
 
 export const LogsRoute = createRoute({
-  getParentRoute: () => AppRoute,
+  getParentRoute: () => SettingsLayoutRoute,
   path: "/logs",
   component: LogsPage,
 });
@@ -117,53 +117,70 @@ function LogsPage() {
             </tr>
           </thead>
           <tbody>
-            {loading ? Array.from({ length: 6 }, (_, index) => (
-              <tr key={`log-skeleton-${index}`} className="border-b border-[var(--pl-line)] last:border-0">
-                <td className="px-5 py-3"><Skeleton className="h-3.5 w-32" /></td>
-                <td className="px-4 py-3"><Skeleton className="h-6 w-20 rounded-full" /></td>
-                <td className="px-4 py-3"><Skeleton className="h-3.5 w-52" /></td>
-                <td className="px-4 py-3"><Skeleton className="h-3.5 w-28" /></td>
-                <td className="px-4 py-3"><Skeleton className="h-3.5 w-24" /></td>
-                <td className="px-5 py-3"><Skeleton className="h-6 w-14 rounded-full" /></td>
-              </tr>
-            )) : visible.map((event, index) => (
-              <tr
-                key={`${event.ts ?? 0}-${event.action}-${event.path}-${index}`}
-                className="border-b border-[var(--pl-line)] last:border-0 hover:bg-[var(--pl-surface)]"
-              >
-                <td className="whitespace-nowrap px-5 py-3 text-xs text-[var(--pl-subtle)]">
-                  {event.ts ? new Date(event.ts).toLocaleString() : "—"}
-                </td>
-                <td className="px-4 py-3">
-                  <Badge
-                    variant={
-                      event.action === "deny" || event.action === "auth_fail"
-                        ? "destructive"
-                        : "secondary"
-                    }
+            {loading
+              ? Array.from({ length: 6 }, (_, index) => (
+                  <tr
+                    key={`log-skeleton-${index}`}
+                    className="border-b border-[var(--pl-line)] last:border-0"
                   >
-                    {event.action}
-                  </Badge>
-                </td>
-                <td
-                  className="max-w-[420px] truncate px-4 py-3 font-mono text-xs"
-                  title={event.path}
-                >
-                  {event.path}
-                </td>
-                <td className="px-4 py-3 font-mono text-xs text-[var(--pl-muted)]">
-                  {event.tokenId ?? "anonymous"}
-                </td>
-                <td className="px-4 py-3 font-mono text-xs text-[var(--pl-muted)]">
-                  {event.ip ?? "—"}
-                </td>
-                <td className="px-5 py-3">
-                  <Badge variant={event.status >= 400 ? "destructive" : "success"}>
-                    {event.status}
-                  </Badge>
-                </td>
-              </tr>
-            ))}
+                    <td className="px-5 py-3">
+                      <Skeleton className="h-3.5 w-32" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <Skeleton className="h-6 w-20 rounded-full" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <Skeleton className="h-3.5 w-52" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <Skeleton className="h-3.5 w-28" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <Skeleton className="h-3.5 w-24" />
+                    </td>
+                    <td className="px-5 py-3">
+                      <Skeleton className="h-6 w-14 rounded-full" />
+                    </td>
+                  </tr>
+                ))
+              : visible.map((event, index) => (
+                  <tr
+                    key={`${event.ts ?? 0}-${event.action}-${event.path}-${index}`}
+                    className="border-b border-[var(--pl-line)] last:border-0 hover:bg-[var(--pl-surface)]"
+                  >
+                    <td className="whitespace-nowrap px-5 py-3 text-xs text-[var(--pl-subtle)]">
+                      {event.ts ? new Date(event.ts).toLocaleString() : "—"}
+                    </td>
+                    <td className="px-4 py-3">
+                      <Badge
+                        variant={
+                          event.action === "deny" || event.action === "auth_fail"
+                            ? "destructive"
+                            : "secondary"
+                        }
+                      >
+                        {event.action}
+                      </Badge>
+                    </td>
+                    <td
+                      className="max-w-[420px] truncate px-4 py-3 font-mono text-xs"
+                      title={event.path}
+                    >
+                      {event.path}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-xs text-[var(--pl-muted)]">
+                      {event.tokenId ?? "anonymous"}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-xs text-[var(--pl-muted)]">
+                      {event.ip ?? "—"}
+                    </td>
+                    <td className="px-5 py-3">
+                      <Badge variant={event.status >= 400 ? "destructive" : "success"}>
+                        {event.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                ))}
           </tbody>
         </table>
         {!visible.length && !loading && !error && (

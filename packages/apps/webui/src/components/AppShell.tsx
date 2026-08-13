@@ -24,12 +24,9 @@ const workspaceNav: readonly NavigationItem[] = [
   { to: "/storage", label: "Storage", icon: "▱" },
   { to: "/repos", label: "Repositories", icon: "◇" },
 ];
-const accessNav: readonly NavigationItem[] = [
-  { to: "/users", label: "Users", icon: "○" },
-  { to: "/tokens", label: "API Keys", icon: "⌁" },
-  { to: "/logs", label: "Admin logs", icon: "◎" },
+const accountNav: readonly NavigationItem[] = [
+  { to: "/settings", label: "Settings & admin", icon: "⚙" },
 ];
-const accountNav: readonly NavigationItem[] = [{ to: "/settings", label: "Settings", icon: "⚙" }];
 
 const titles: Record<string, [string, string]> = {
   "/": ["Overview", "Operational status and identity."],
@@ -382,7 +379,6 @@ export function AppShell() {
             )}
           >
             <NavigationGroup label="Workspace" items={workspaceNav} collapsed={collapsed} />
-            <NavigationGroup label="Administration" items={accessNav} collapsed={collapsed} />
             <NavigationGroup label="Account" items={accountNav} collapsed={collapsed} />
           </nav>
 
@@ -403,7 +399,12 @@ export function AppShell() {
         </aside>
 
         <div className="flex h-full min-h-0 min-w-0 flex-col max-lg:h-auto">
-          <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b border-[var(--pl-line)] bg-[color-mix(in_srgb,var(--pl-elevated)_94%,transparent)] px-5 backdrop-blur-lg max-lg:hidden">
+          <header
+            className={cn(
+              "sticky top-0 z-20 h-16 items-center justify-between gap-4 border-b border-[var(--pl-line)] bg-[color-mix(in_srgb,var(--pl-elevated)_94%,transparent)] px-5 backdrop-blur-lg max-lg:hidden",
+              settingsPage ? "hidden" : "flex",
+            )}
+          >
             <button
               type="button"
               aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
