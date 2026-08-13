@@ -32,7 +32,7 @@ RUN --mount=type=cache,id=dotlocker-pnpm,target=/pnpm/store \
 COPY . .
 RUN --mount=type=cache,id=dotlocker-pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile \
- && pnpm build \
+ && pnpm exec rune build \
  && pnpm --filter @dotlocker/dotlocker deploy --prod --legacy /opt/dotlocker \
  && cd /opt/dotlocker \
  && pnpm rebuild better-sqlite3

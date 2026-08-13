@@ -23,6 +23,6 @@ log="$state/logs/post-commit-$(date +%Y%m%d-%H%M%S).log"
 (
   trap 'rmdir "$lock" 2>/dev/null || true' EXIT INT TERM
   cd "$root" || exit $?
-  SANDBLOCKS_ENVIRONMENT=preview SANDBLOCKS_SKIP_POST_COMMIT=1 pnpm sandblocks:redeploy
+  SANDBLOCKS_ENVIRONMENT=preview SANDBLOCKS_SKIP_POST_COMMIT=1 pnpm exec rune sandblocks-redeploy
 ) >"$log" 2>&1 </dev/null &
 echo "[dotlocker post-commit] preview redeploy started ($log)"

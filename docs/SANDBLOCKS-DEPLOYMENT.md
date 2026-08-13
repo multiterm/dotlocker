@@ -58,18 +58,18 @@ The preview was initialized from a transactionally consistent online backup of t
 ## Register and deploy
 
 ```sh
-pnpm sandblocks:validate
-pnpm sandblocks:doctor
-pnpm sandblocks:register
-pnpm sandblocks:preview
-pnpm sandblocks:status
+pnpm exec rune sandblocks-validate
+pnpm exec rune sandblocks-doctor
+pnpm exec rune sandblocks-register
+pnpm exec rune sandblocks-preview
+pnpm exec rune sandblocks-status
 ```
 
 For production, deployment and promotion are separate operations. A successful deployment remains available only at its immutable candidate URL until a releaser explicitly promotes it. Promotion atomically points both `dotlocker.dev` and `dotlocker.sh` at that revision:
 
 ```sh
-pnpm sandblocks:production
-SANDBLOCKS_ENVIRONMENT=production pnpm sandblocks:status
+pnpm exec rune sandblocks-production
+SANDBLOCKS_ENVIRONMENT=production pnpm exec rune sandblocks-status
 sandblocks sandbox promote --project "$SANDBLOCKS_PROJECT_ID" --sandbox <sandbox-id>
 ```
 
@@ -78,8 +78,8 @@ Use the immutable candidate URL from `status` for final browser and health verif
 Redeploy or destroy the selected environment with:
 
 ```sh
-SANDBLOCKS_ENVIRONMENT=preview pnpm sandblocks:redeploy
-SANDBLOCKS_ENVIRONMENT=preview pnpm sandblocks:destroy
+SANDBLOCKS_ENVIRONMENT=preview pnpm exec rune sandblocks-redeploy
+SANDBLOCKS_ENVIRONMENT=preview pnpm exec rune sandblocks-destroy
 ```
 
 ## Persistence

@@ -1,11 +1,20 @@
-# Pluto workspace tasks
-build: pnpm build
-test: pnpm test
-typecheck: pnpm typecheck
-lint: pnpm lint
-format: pnpm format
-release: pnpm release
-release-dry: pnpm release:dry
+# Workspace quality and build tasks.
+build: pnpm --filter @dotlocker/shared exec rune build && pnpm --filter @dotlocker/client exec rune build && pnpm --filter @dotlocker/server exec rune build && pnpm --filter @dotlocker/ui exec rune build && pnpm --filter @dotlocker/ui-shared exec rune build && pnpm --filter @dotlocker/site exec rune build && pnpm --filter @dotlocker/webui exec rune build && pnpm --filter @dotlocker/dotlocker exec rune build && pnpm exec tsc -p packages/apps/mcp/tsconfig.json
+test: pnpm --filter @dotlocker/client exec rune test && pnpm --filter @dotlocker/server exec rune test && pnpm --filter @dotlocker/dotlocker exec rune test
+typecheck: pnpm --filter @dotlocker/client exec rune typecheck && pnpm --filter @dotlocker/server exec rune typecheck && pnpm --filter @dotlocker/dotlocker exec rune typecheck && pnpm exec tsc -p packages/apps/mcp/tsconfig.json --noEmit
+lint: pnpm --filter @dotlocker/client exec rune lint && pnpm --filter @dotlocker/server exec rune lint
+format: pnpm --filter @dotlocker/client exec rune format && pnpm --filter @dotlocker/server exec rune format
+
+# Public package releases.
+release: pnpm exec m-release --yes
+release-dry: pnpm exec m-release --dry-run
+
+# Local Docker stack.
+docker-build: docker build -f docker/Dockerfile -t dotlocker:local .
+docker-config: docker compose -f docker/docker-compose.yml config
+docker-up: docker compose -f docker/docker-compose.yml up -d --build
+docker-down: docker compose -f docker/docker-compose.yml down
+
 # Sandblocks preview and production deployment.
 sandblocks-validate: pnpm exec sandblocks validate .
 sandblocks-doctor: pnpm exec sandblocks doctor .

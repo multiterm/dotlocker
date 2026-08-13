@@ -75,7 +75,7 @@ The plaintext token is printed once. Store it securely.
 
 ## Development deployment
 
-Development is deployed through Sandblocks from the root [`sandblocks.yml`](./sandblocks.yml). Use `pnpm sandblocks:preview` for the first deployment, `pnpm sandblocks:redeploy` for later candidates, and `pnpm sandblocks:status` to inspect the current preview. See [Sandblocks deployment](./docs/SANDBLOCKS-DEPLOYMENT.md).
+Development is deployed through Sandblocks from the root [`sandblocks.yml`](./sandblocks.yml). Use `pnpm exec rune sandblocks-preview` for the first deployment, `pnpm exec rune sandblocks-redeploy` for later candidates, and `pnpm exec rune sandblocks-status` to inspect the current preview. See [Sandblocks deployment](./docs/SANDBLOCKS-DEPLOYMENT.md).
 
 ## Workspace quickstart
 
